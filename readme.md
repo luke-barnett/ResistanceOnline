@@ -1,4 +1,5 @@
-==Development Process==
+Development Process
+===================
 
 Master branch is automatically deployed to Azure.
 

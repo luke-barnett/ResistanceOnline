@@ -32,6 +32,18 @@ namespace ResistanceOnline.Core
         public List<Player> Players { get; set; }
         public List<Round> Rounds { get; set; }
         public int QuestIndicator { get; set; }
+        public Player AssassinsGuessAtMerlin { get; set; }
+
+        public void GuessMerlin(Player player, Player guess)
+        {
+            if (player.Character != Character.Assassin)
+                throw new Exception("Hax. Player is not assassin.");
+
+            if (AssassinsGuessAtMerlin != null)
+                throw new Exception("Hax. Assassin has already guessed.");
+
+            AssassinsGuessAtMerlin = guess;
+        }
 
         public void AddCharacter(Character character)
         {
@@ -117,7 +129,12 @@ namespace ResistanceOnline.Core
 
             if (Rounds.Select(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
             {
-                //todo - merlin/assassin
+                if (AssassinsGuessAtMerlin == null)
+                    return State.GuessingMerlin;
+
+                if (AssassinsGuessAtMerlin.Character == Character.Merlin)
+                    return State.MerlinDies;
+
                 return State.GoodPrevails;
             }
             

@@ -50,6 +50,14 @@ namespace ResistanceOnline.Core
 
                     return new List<Action.Type>();
                 case Game.State.WaitingForCharacterSetup:
+                    if (player == null)
+                    {
+                        if (game.Players.Count == game.TotalPlayers)
+                            return new List<Action.Type>();
+                        return new List<Action.Type>() { Action.Type.JoinGame };
+                    }
+                    if (game.Players.Count == game.TotalPlayers)
+                        return new List<Action.Type>() { Action.Type.AddCharacterCard };
                     return new List<Action.Type>() { Action.Type.JoinGame, Action.Type.AddCharacterCard };
                 case Game.State.WaitingForPlayers:
                     return new List<Action.Type>() { Action.Type.JoinGame };

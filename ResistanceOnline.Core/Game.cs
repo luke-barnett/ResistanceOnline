@@ -50,6 +50,12 @@ namespace ResistanceOnline.Core
             if (AvailableCharacters.Count == TotalPlayers)
                 throw new Exception("All roles added");
             AvailableCharacters.Add(character);
+
+            //on last character, allocate characters 
+            if (AvailableCharacters.Count == TotalPlayers && Players.Count == TotalPlayers)
+            {
+                Allocate();
+            }
         }
 
         public Guid JoinGame(string playerName)
@@ -63,6 +69,16 @@ namespace ResistanceOnline.Core
             var guid = Guid.NewGuid();
             Players.Add(new Player() { Name = playerName, Guid = guid });
 
+            //on last player, allocate characters if 
+            if (AvailableCharacters.Count == TotalPlayers)
+            {
+                Allocate();
+            }
+            return guid;
+        }
+
+        private void Allocate()
+        {
             //on last player, allocate characters
             if (Players.Count == TotalPlayers)
             {
@@ -82,7 +98,7 @@ namespace ResistanceOnline.Core
                 Rounds.Add(new Round(Players, random.Next(TotalPlayers), 3, 1));
             }
 
-            return guid;
+
         }
 
         public Round CurrentRound { get { return Rounds.Last(); } }

@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="GameEngineTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RoundTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ResistanceOnline.Core\ResistanceOnline.Core.csproj">

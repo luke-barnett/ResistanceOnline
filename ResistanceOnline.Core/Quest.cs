@@ -2,30 +2,48 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ResistanceOnline.Core
 {
+    /// <summary>
+    /// A quest that get's voted on then may go ahead
+    /// </summary>
     public class Quest
     {
-        public enum State
+        public Quest(Player leader)
         {
-            Unstarted,            
-            Voting,
-            Questing,
-            Succeeded,
-            Failed,
-            FailedAllVotes
+            Leader = leader;
+            ProposedPlayers = new List<Player>();
+            Votes = new List<QuestVote>();
+            QuestCards = new List<QuestCard>();
         }
 
-        public int Size { get; set; }
-        public int RequiredFails { get; set; }
+        public void ProposePlayer(Player proposedPlayer) {
+            if (ProposedPlayers.Contains(proposedPlayer))
+                throw new Exception("Player is already on quest..");
 
-        public List<Player> PlayersOnQuest { get; set; }
-        public List<QuestCard> PlayedQuestCards { get; set; }        
+            ProposedPlayers.Add(proposedPlayer);
+        }
 
-        public int VoteTrackIndicator { get; set; }
+        public void VoteForQuest(Player player, bool approve)
+        {
+            if (Votes.Select(v=>v.Player).ToList().Contains(player))
+                throw new Exception("Player has already voted..");
 
+            Votes.Add(new QuestVote { Player = player, Approve = approve });
+        }
 
+        public void SubmitQuest(Player player, bool success)
+        {
+            if (QuestCards.Select(v => v.Player).ToList().Contains(player))
+                throw new Exception("Player has already submitted their quest card..");
+
+            QuestCards.Add(new QuestCard { Player = player, Success = success });
+        }
+
+        public Player Leader { get; set; }
+        public List<Player> ProposedPlayers { get; set; }
+        public List<QuestVote> Votes { get; set; }
+        public List<QuestCard> QuestCards { get; set; }
     }
 }

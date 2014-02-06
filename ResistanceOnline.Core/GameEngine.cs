@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ResistanceOnline.Core
 {
+    /// <summary>
+    /// this is essentially a state machine. State can be determined via the current game data and available actions for a person can be determined via the current state
+    /// </summary>
     public class GameEngine
     {
         /// <summary>

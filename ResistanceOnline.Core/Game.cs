@@ -10,7 +10,7 @@ namespace ResistanceOnline.Core
     {
         public int GameId { get; set; }
         public List<Player> Players { get; set; }
-        public List<Quest> Quests { get; set; }
+        public List<Round> Quests { get; set; }
         public int QuestIndicator { get; set; }
     }
 }

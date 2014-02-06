@@ -44,9 +44,9 @@
     <Compile Include="GameEngine.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Player.cs" />
-    <Compile Include="Quest.cs" />
+    <Compile Include="Round.cs" />
     <Compile Include="QuestCard.cs" />
-    <Compile Include="ProposedQuest.cs" />
+    <Compile Include="Quest.cs" />
     <Compile Include="QuestVote.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

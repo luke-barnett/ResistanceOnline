@@ -27,7 +27,7 @@ namespace ResistanceOnline.Core.Test
             game.JoinGame("d");
             Assert.AreEqual(Game.State.WaitingForPlayers, game.DetermineState());
             game.JoinGame("e");
-            Assert.AreEqual(Game.State.Rounds, game.DetermineState());
+            Assert.AreEqual(Game.State.InPlay, game.DetermineState());
 
             var allocatedCharacters = game.Players.Select(p=> p.Character).ToList();
             Assert.IsTrue(allocatedCharacters.Contains(Character.Assassin));

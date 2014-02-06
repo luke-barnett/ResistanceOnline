@@ -76,7 +76,7 @@ namespace ResistanceOnline.Core
         public State DetermineState()
         {
             //no more than 5 quest votes per round
-            if (Quests.Count >= 5)
+            if (Quests.Count > 5)
                 return State.FailedAllVotes;
             
             //proposing

@@ -98,6 +98,40 @@ namespace ResistanceOnline.Site.Controllers
 
             //game history
             var log = new List<string>();
+            foreach (var round in game.Rounds)
+            {
+                log.Add("Round " + game.Rounds.IndexOf(round) + " - " + round.DetermineState().ToString());
+                log.Add("Round size " + round.Size);
+                log.Add("Required fails " + round.RequiredFails);
+                foreach (var quest in round.Quests)
+                {
+                    log.Add("Quest " + round.Quests.IndexOf(quest));
+                    log.Add("Quest Leader: " + quest.Leader.Name);
+                    foreach (var p in quest.ProposedPlayers)
+                    {
+                        log.Add("Proposed player: " + p.Name);
+                    }
+                    foreach (var v in quest.Votes)
+                    {
+                        log.Add(v.Player.Name + " votes " + (quest.Votes.Count == round.TotalPlayers ? (v.Approve ? "Approve" : "Reject") : "submitted"));
+                    }
+                    if (quest.QuestCards.Count == round.Size)
+                    {
+                        foreach (var q in quest.QuestCards.Select(q=>q.Success).OrderBy(q=>q))
+                        {
+                            log.Add(q?"Success":"Fail");
+                        }
+                    }
+                    else
+                    {
+                        foreach (var q in quest.QuestCards)
+                        {
+                            log.Add(q.Player.Name + " has submitted quest card");
+                        }
+
+                    }
+                }
+            }
             ViewBag.Log = log;
             
             //actions

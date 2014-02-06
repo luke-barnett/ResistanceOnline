@@ -70,7 +70,7 @@
 }
 @if (ViewBag.Actions.Contains(ResistanceOnline.Core.Action.Type.VoteForQuest))
 {
-    <form action="/Home/SubmitQuestCard" method="post">
+    <form action="/Home/VoteForQuest" method="post">
         <input type="radio" name="approve" value="true" />Accept<br />
         <input type="radio" name="approve" value="false" />Reject<br />
         <input type="hidden" name="playerGuid" value="@ViewBag.PlayerGuid" />

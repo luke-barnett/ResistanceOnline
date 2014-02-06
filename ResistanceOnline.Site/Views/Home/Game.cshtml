@@ -25,7 +25,7 @@
 <h2>Available Actions</h2>
 @if (ViewBag.Actions.Contains(ResistanceOnline.Core.Action.Type.AddCharacterCard))
 {
-    <form action="/Home/AddCharacterCard" method="post">
+    <form action="/Home/AddCharacter" method="post">
         @Html.DropDownList("Character", (SelectList)ViewBag.CharactersSelectList);
         <input type="hidden" name="gameid" value="@ViewBag.GameId" />
         <input type="hidden" name="playerGuid" value="@ViewBag.PlayerGuid" />

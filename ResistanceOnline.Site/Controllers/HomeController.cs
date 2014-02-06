@@ -10,21 +10,21 @@ namespace ResistanceOnline.Site.Controllers
 {
 	public class HomeController : Controller
 	{
-        static Game _game = null;
+        static List<Game> _games = new List<Game>();
 
         Game GetGame(int? gameId)
         {            
             //todo - something to do with databases
-            if (gameId.HasValue == false)
+            if (gameId.HasValue == false || gameId.Value >= _games.Count)
                 return null;
 
-            return _game;
+            return _games[gameId.Value];
         }
 
 		public ActionResult Index()
 		{
             ViewBag.Games = new List<Game> { };
-            if (_game != null) ViewBag.Games.Add(_game);
+            ViewBag.Games = _games;
 			return View();
 		}
 
@@ -32,23 +32,24 @@ namespace ResistanceOnline.Site.Controllers
         public ActionResult CreateGame()
         {
             //todo - something with the database :)
-            _game = new Game(6);
+            var game = new Game(6);
+            return RedirectToAction("Game", new { gameId = _games.Count  });
 
-            _game.AddCharacter(Character.LoyalServantOfArthur);
-            _game.AddCharacter(Character.Assassin);
-            _game.AddCharacter(Character.LoyalServantOfArthur);
-            _game.AddCharacter(Character.Percival);
-            _game.AddCharacter(Character.Morcana);
-            _game.AddCharacter(Character.Merlin);
+            game.AddCharacter(Character.LoyalServantOfArthur);
+            game.AddCharacter(Character.Assassin);
+            game.AddCharacter(Character.LoyalServantOfArthur);
+            game.AddCharacter(Character.Percival);
+            game.AddCharacter(Character.Morcana);
+            game.AddCharacter(Character.Merlin);
             
-            _game.JoinGame("Jordan");
-            _game.JoinGame("Luke");
-            _game.JoinGame("Jeffrey");
-            _game.JoinGame("Simon");
-            _game.JoinGame("Jayvin");
-            var guid = _game.JoinGame("Verne");
+            game.JoinGame("Jordan");
+            game.JoinGame("Luke");
+            game.JoinGame("Jeffrey");
+            game.JoinGame("Simon");
+            game.JoinGame("Jayvin");
+            var guid = game.JoinGame("Verne");
 
-            return RedirectToAction("Game", new { gameId=1, playerGuid=guid });
+            return RedirectToAction("Game", new { gameId = _games.Count, playerGuid = guid });
         }
 
         //playerguid can be null for spectators
@@ -67,23 +68,23 @@ namespace ResistanceOnline.Site.Controllers
             ViewBag.Players = game.Players;
 
             //gamestate
-            ViewBag.GameState = _game.DetermineState().ToString();
+            ViewBag.GameState = game.DetermineState().ToString();
 
             //characters
-            ViewBag.Characters = _game.AvailableCharacters.Select(c=>c.ToString()).ToList();
-            ViewBag.CharactersSelectList = new SelectList(Enum.GetNames(typeof(Character)).ToList());
+            ViewBag.Characters = game.AvailableCharacters.Select(c=>c.ToString()).ToList();
+            ViewBag.CharactersSelectList = new SelectList(Enum.GetNames(typeof(Character)).Where(c => c != Character.UnAllocated.ToString()).ToList());
 
             //player info
             var playerInfo = new List<string>();
 
             //me
-            var player = _game.Players.FirstOrDefault(p => p.Guid == playerGuid);
+            var player = game.Players.FirstOrDefault(p => p.Guid == playerGuid);
             if (player!=null) {
                 playerInfo.Add("I am " + player.Character);
             }
 
             //other players
-            foreach (var otherPlayer in _game.Players.Where(p=>p!=player))
+            foreach (var otherPlayer in game.Players.Where(p=>p!=player))
             {
                 if (GameEngine.DetectEvil(player, otherPlayer))
                     playerInfo.Add(otherPlayer.Name + " is evil");

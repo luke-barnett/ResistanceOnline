@@ -33,6 +33,9 @@ namespace ResistanceOnline.Site.Controllers
         {
             //todo - something with the database :)
             var game = new Game(6);
+
+			_games.Add(game);
+
             return RedirectToAction("Game", new { gameId = _games.Count  });
 
             game.AddCharacter(Character.LoyalServantOfArthur);

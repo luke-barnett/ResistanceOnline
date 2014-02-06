@@ -4,7 +4,7 @@
         @foreach (ResistanceOnline.Core.Game game in ViewBag.Games)
         {
         <li>
-            <a href="/Home/Game">Spectate game</a>
+            <a href="/Home/Game?gameId=@ViewBag.Games.IndexOf(game)">Spectate game</a>
         </li>
         }
     </ol>

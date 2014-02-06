@@ -42,5 +42,10 @@ namespace ResistanceOnline.Core
         /// only useful for submitting quest cards
         /// </summary>
         public bool Success { get; set; }
+
+        /// <summary>
+        /// only useful for adding characters to the game before in starts
+        /// </summary>
+        public Character Character { get; set; }
     }
 }

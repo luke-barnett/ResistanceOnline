@@ -78,7 +78,29 @@ namespace ResistanceOnline.Core
             if (!AvailableActions(game,player).Contains(action.ActionType))
                 throw new Exception(String.Format("Hax. Player {0} can't perform action {1}", player.Name, action));
 
-            throw new NotImplementedException();
+            switch (action.ActionType)
+            {
+                case Action.Type.AddCharacterCard:
+                    game.AddCharacter(action.Character);
+                    break;
+                case Action.Type.GuessMerlin:
+                    game.GuessMerlin(player, action.Player);
+                    break;
+                case Action.Type.JoinGame:
+                    game.JoinGame(action.Name);
+                    break;
+                case Action.Type.ProposePersonForQuest:
+                    game.ProposePlayer(action.Player);
+                    break;
+                case Action.Type.SubmitQuestCard:
+                    game.SubmitQuest(player, action.Success);
+                    break;
+                case Action.Type.VoteForQuest:
+                    game.VoteForQuest(player, action.Accept);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
 

@@ -22,7 +22,7 @@ namespace ResistanceOnline.Core
             var gameState = game.DetermineState();
             switch (gameState)
             {
-                case Game.State.Rounds:
+                case Game.State.InPlay:
                     var roundState = game.CurrentRound.DetermineState();
                     var quest = game.CurrentRound.CurrentQuest;
                     switch (roundState)
@@ -34,7 +34,7 @@ namespace ResistanceOnline.Core
                             } 
                             return new List<Action.Type>();
                         case Round.State.Voting:
-                            if (quest.Votes.Select(v => v.Player.Name).ToList().Contains(player.Name))
+                            if (!quest.Votes.Select(v => v.Player.Name).ToList().Contains(player.Name))
                             {
                                 return new List<Action.Type>() { Action.Type.VoteForQuest };
                             } 
@@ -60,7 +60,14 @@ namespace ResistanceOnline.Core
                         return new List<Action.Type>() { Action.Type.AddCharacterCard };
                     return new List<Action.Type>() { Action.Type.JoinGame, Action.Type.AddCharacterCard };
                 case Game.State.WaitingForPlayers:
-                    return new List<Action.Type>() { Action.Type.JoinGame };
+                    if (player == null)
+                    {
+                        return new List<Action.Type>() { Action.Type.JoinGame };
+                    }
+                    else
+                    {
+                        return new List<Action.Type>();
+                    }
 
                 case Game.State.GuessingMerlin:
                     if (player.Character == Character.Assassin)

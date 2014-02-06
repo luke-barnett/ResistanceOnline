@@ -12,7 +12,7 @@ namespace ResistanceOnline.Core
         {
             WaitingForCharacterSetup,
             WaitingForPlayers,
-            Rounds,
+            InPlay,
             EvilTriumphs,
             GoodPrevails,
             GuessingMerlin,
@@ -156,8 +156,8 @@ namespace ResistanceOnline.Core
 
                 return State.GoodPrevails;
             }
-            
-            return State.Rounds;
+
+            return State.InPlay;
         }
     }
 }

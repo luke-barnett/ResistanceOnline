@@ -37,6 +37,7 @@ namespace ResistanceOnline.Core
         public int TotalPlayers { get; set; }
         public int Size { get; set; }
         public int RequiredFails { get; set; }
+        public int NextPlayer { get { return (_currentPlayer + 1) % TotalPlayers; } }
 
         public Quest CurrentQuest { get { return Quests.Last(); } }
 
@@ -57,7 +58,7 @@ namespace ResistanceOnline.Core
                 var rejects = CurrentQuest.Votes.Where(v => !v.Approve).Count();
                 if (rejects >= Math.Ceiling(TotalPlayers / 2.0))
                 {
-                    _currentPlayer= (_currentPlayer++) % TotalPlayers;
+                    _currentPlayer = NextPlayer;
                     Quests.Add(new Quest(_players[_currentPlayer]));
                 }
             }

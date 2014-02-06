@@ -12,23 +12,6 @@ namespace ResistanceOnline.Core
     public class GameEngine
     {
         /// <summary>
-        /// once all players have joined the game, this function allocates the characters to them
-        /// </summary>
-        public static void AllocateCharacters(Game game, List<Character> characters)
-        {
-            if (characters.Count != game.Players.Count)
-                throw new Exception(String.Format("Number of characters {0} does not match player count {1}", characters.Count, game.Players.Count));
-            
-            Random random = new Random();
-            foreach (var player in game.Players)
-            {
-                var roleIndex = random.Next(characters.Count);
-                player.Character = characters[roleIndex];
-                characters.RemoveAt(roleIndex);
-            }
-        }
-
-        /// <summary>
         /// this is the available actions a player has given who they are and the state of the game
         /// this should show a list of buttons on the webpage or something
         /// </summary>
@@ -47,7 +30,7 @@ namespace ResistanceOnline.Core
         public void PerformAction(Game game, Player player, Action action)
         {
             if (!AvailableActions(game,player).Contains(action))
-                throw new Exception(String.Format("Hax. Player {0} can't perform action {1} in game {2}", player.Name, action, game.GameId));
+                throw new Exception(String.Format("Hax. Player {0} can't perform action {1}", player.Name, action));
 
             throw new NotImplementedException();
         }

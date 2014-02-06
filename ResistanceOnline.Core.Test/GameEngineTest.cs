@@ -9,35 +9,6 @@ namespace ResistanceOnline.Core.Test
     public class GameEngineTest
     {
         [TestMethod]
-        public void AllocateCharacters()
-        {
-            var game = new Game
-            {
-                Players = new List<Player> {
-                    new Player(),
-                    new Player(),
-                    new Player(),
-                }
-            };
-
-            var characters = new List<Character>() 
-            {
-                Character.Assassin,
-                Character.LoyalServantOfArthur,
-                Character.Merlin
-            };
-
-            GameEngine.AllocateCharacters(game, characters);
-
-            var allocatedCharacters = game.Players.Select(p=> p.Character).ToList();
-
-            Assert.IsTrue(allocatedCharacters.Contains(Character.Assassin));
-            Assert.IsTrue(allocatedCharacters.Contains(Character.LoyalServantOfArthur));
-            Assert.IsTrue(allocatedCharacters.Contains(Character.Merlin));
-            Assert.IsFalse(allocatedCharacters.Contains(Character.UnAllocated));
-        }
-
-        [TestMethod]
         public void DetectEvil()
         {
             EvilTest(Character.Assassin, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morcana, Character.Mordred });

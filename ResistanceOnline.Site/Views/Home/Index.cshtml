@@ -1,3 +1,14 @@
 ﻿<div class="jumbotron">
-	<h1>This site is pretty bare bones.</h1>
+	<h2>Current Games</h2>
+    <ol>
+        @foreach (ResistanceOnline.Core.Game game in ViewBag.Games)
+        {
+        <li>
+            <a href="/Home/Game">Spectate game</a>
+        </li>
+        }
+    </ol>
+    <form action="/Home/CreateGame" method="post">        
+        <input type="submit" value="Create a new game">
+    </form>
 </div>

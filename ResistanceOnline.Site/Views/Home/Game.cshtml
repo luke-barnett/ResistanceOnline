@@ -27,8 +27,8 @@
 {
     <form action="/Home/AddCharacterCard" method="post">
         @Html.DropDownList("Character", (SelectList)ViewBag.CharactersSelectList);
-        <input type="hidden" id="gameid" value="@ViewBag.GameId" />
-        <input type="hidden" id="playerGuid" value="@ViewBag.PlayerGuid" />
+        <input type="hidden" name="gameid" value="@ViewBag.GameId" />
+        <input type="hidden" name="playerGuid" value="@ViewBag.PlayerGuid" />
         <input type="submit" value="Add Character" />
     </form>
 }
@@ -36,16 +36,16 @@
 {
     <form action="/Home/GuessMerlin" method="post">
         @Html.DropDownList("Guess", (SelectList)ViewBag.PlayersSelectList);
-        <input type="hidden" id="gameid" value="@ViewBag.GameId" />
-        <input type="hidden" id="playerGuid" value="@ViewBag.PlayerGuid" />
+        <input type="hidden" name="gameid" value="@ViewBag.GameId" />
+        <input type="hidden" name="playerGuid" value="@ViewBag.PlayerGuid" />
         <input type="submit" value="Guess Merlin" />
     </form>
 }
 @if (ViewBag.Actions.Contains(ResistanceOnline.Core.Action.Type.JoinGame))
 {
     <form action="/Home/JoinGame" method="post">
-        <input type="text" id="name" />
-        <input type="hidden" id="gameid" value="@ViewBag.GameId" />
+        <input type="text" name="name" />
+        <input type="hidden" name="gameid" value="@ViewBag.GameId" />
         <input type="submit" value="Join Game" />
     </form>
 }
@@ -53,8 +53,8 @@
 {
     <form action="/Home/ProposePersonForQuest" method="post">
         @Html.DropDownList("Person", (SelectList)ViewBag.PlayersSelectList);
-        <input type="hidden" id="playerGuid" value="@ViewBag.PlayerGuid" />
-        <input type="hidden" id="gameid" value="@ViewBag.GameId" />
+        <input type="hidden" name="playerGuid" value="@ViewBag.PlayerGuid" />
+        <input type="hidden" name="gameid" value="@ViewBag.GameId" />
         <input type="submit" value="Put on Quest" />
     </form>
 }
@@ -63,8 +63,8 @@
     <form action="/Home/SubmitQuestCard" method="post">
         <input type="radio" name="success" value="true" />Success<br/>
         <input type="radio" name="success" value="false" />Fail<br/>
-        <input type="hidden" id="playerGuid" value="@ViewBag.PlayerGuid" />
-        <input type="hidden" id="gameid" value="@ViewBag.GameId" />
+        <input type="hidden" name="playerGuid" value="@ViewBag.PlayerGuid" />
+        <input type="hidden" name="gameid" value="@ViewBag.GameId" />
         <input type="submit" value="Submit Quest Card" />
     </form>
 }
@@ -73,8 +73,8 @@
     <form action="/Home/SubmitQuestCard" method="post">
         <input type="radio" name="approve" value="true" />Accept<br />
         <input type="radio" name="approve" value="false" />Reject<br />
-        <input type="hidden" id="playerGuid" value="@ViewBag.PlayerGuid" />
-        <input type="hidden" id="gameid" value="@ViewBag.GameId" />
+        <input type="hidden" name="playerGuid" value="@ViewBag.PlayerGuid" />
+        <input type="hidden" name="gameid" value="@ViewBag.GameId" />
         <input type="submit" value="Vote for Quest" />
     </form>
 }   

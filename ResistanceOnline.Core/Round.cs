@@ -25,8 +25,12 @@ namespace ResistanceOnline.Core
         List<Player> _players;
         int _currentPlayer;
 
-        public Round(List<Player> players, int currentPlayer)
+        public Round(List<Player> players, int currentPlayer, int size, int requiredFails)
         {
+            TotalPlayers = players.Count;
+            Size = size;
+            RequiredFails = requiredFails;
+
             Quests = new List<Quest>();
             Quests.Add(new Quest(players[currentPlayer]));
 

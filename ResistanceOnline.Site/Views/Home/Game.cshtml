@@ -1,0 +1,80 @@
+﻿@{
+    ViewBag.Title = "Game";
+}
+<h1>Game @ViewBag.GameId - @ViewBag.GameState</h1>
+<h2>Debug/Impersonate Others</h2>
+@foreach (ResistanceOnline.Core.Player player in ViewBag.Players)
+{
+    <a href="/Home/Game?gameId=@(ViewBag.GameId)&playerGuid=@(player.Guid)">Impersonate @player.Name</a><br/>
+}
+<h2>Characters In Play</h2>
+@foreach (string s in ViewBag.Characters)
+{
+    <p>@s</p>
+}
+<h2>Player Info</h2>
+@foreach (string s in ViewBag.PlayerInfo)
+{
+    <p>@s</p>
+}
+<h2>Game Log</h2>
+@foreach (string s in ViewBag.Log)
+{
+    <p>@s</p>
+}
+<h2>Available Actions</h2>
+@if (ViewBag.Actions.Contains(ResistanceOnline.Core.Action.Type.AddCharacterCard))
+{
+    <form action="/Home/AddCharacterCard" method="post">
+        @Html.DropDownList("Character", (SelectList)ViewBag.CharactersSelectList);
+        <input type="hidden" id="gameid" value="@ViewBag.GameId" />
+        <input type="hidden" id="playerGuid" value="@ViewBag.PlayerGuid" />
+        <input type="submit" value="Add Character" />
+    </form>
+}
+@if (ViewBag.Actions.Contains(ResistanceOnline.Core.Action.Type.GuessMerlin))
+{
+    <form action="/Home/GuessMerlin" method="post">
+        @Html.DropDownList("Guess", (SelectList)ViewBag.PlayersSelectList);
+        <input type="hidden" id="gameid" value="@ViewBag.GameId" />
+        <input type="hidden" id="playerGuid" value="@ViewBag.PlayerGuid" />
+        <input type="submit" value="Guess Merlin" />
+    </form>
+}
+@if (ViewBag.Actions.Contains(ResistanceOnline.Core.Action.Type.JoinGame))
+{
+    <form action="/Home/JoinGame" method="post">
+        <input type="text" id="name" />
+        <input type="hidden" id="gameid" value="@ViewBag.GameId" />
+        <input type="submit" value="Join Game" />
+    </form>
+}
+@if (ViewBag.Actions.Contains(ResistanceOnline.Core.Action.Type.ProposePersonForQuest))
+{
+    <form action="/Home/ProposePersonForQuest" method="post">
+        @Html.DropDownList("Person", (SelectList)ViewBag.PlayersSelectList);
+        <input type="hidden" id="playerGuid" value="@ViewBag.PlayerGuid" />
+        <input type="hidden" id="gameid" value="@ViewBag.GameId" />
+        <input type="submit" value="Put on Quest" />
+    </form>
+}
+@if (ViewBag.Actions.Contains(ResistanceOnline.Core.Action.Type.SubmitQuestCard))
+{
+    <form action="/Home/SubmitQuestCard" method="post">
+        <input type="radio" name="success" value="true" />Success<br/>
+        <input type="radio" name="success" value="false" />Fail<br/>
+        <input type="hidden" id="playerGuid" value="@ViewBag.PlayerGuid" />
+        <input type="hidden" id="gameid" value="@ViewBag.GameId" />
+        <input type="submit" value="Submit Quest Card" />
+    </form>
+}
+@if (ViewBag.Actions.Contains(ResistanceOnline.Core.Action.Type.VoteForQuest))
+{
+    <form action="/Home/SubmitQuestCard" method="post">
+        <input type="radio" name="approve" value="true" />Accept<br />
+        <input type="radio" name="approve" value="false" />Reject<br />
+        <input type="hidden" id="playerGuid" value="@ViewBag.PlayerGuid" />
+        <input type="hidden" id="gameid" value="@ViewBag.GameId" />
+        <input type="submit" value="Vote for Quest" />
+    </form>
+}   

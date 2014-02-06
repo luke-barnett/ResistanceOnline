@@ -79,7 +79,7 @@ namespace ResistanceOnline.Core
                 }
 
                 //create first round
-                Rounds.Add(new Round(Players, random.Next(TotalPlayers)));
+                Rounds.Add(new Round(Players, random.Next(TotalPlayers), 3, 1));
             }
 
             return guid;
@@ -114,7 +114,7 @@ namespace ResistanceOnline.Core
                     return;
 
                 //create the next round
-                Rounds.Add(new Round(Players, CurrentRound.NextPlayer));
+                Rounds.Add(new Round(Players, CurrentRound.NextPlayer, 4, 1));
             }
 
         }

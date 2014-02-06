@@ -12,6 +12,15 @@ namespace ResistanceOnline.Site.Controllers
 	{
         static Game _game = null;
 
+        Game GetGame(int? gameId)
+        {            
+            //todo - something to do with databases
+            if (gameId.HasValue == false)
+                return null;
+
+            return _game;
+        }
+
 		public ActionResult Index()
 		{
             ViewBag.Games = new List<Game> { };
@@ -44,10 +53,8 @@ namespace ResistanceOnline.Site.Controllers
 
         //playerguid can be null for spectators
         public ActionResult Game(int? gameId, Guid? playerGuid)        
-        {            
-            //todo - database something
-            var game = _game;
-
+        {
+            var game = GetGame(gameId);
             if (game == null)
             {
                 return RedirectToAction("Index");
@@ -81,7 +88,7 @@ namespace ResistanceOnline.Site.Controllers
                 if (GameEngine.DetectEvil(player, otherPlayer))
                     playerInfo.Add(otherPlayer.Name + " is evil");
                 if (GameEngine.DetectMerlin(player, otherPlayer))
-                    playerInfo.Add(otherPlayer.Name + " coulid be merlin");
+                    playerInfo.Add(otherPlayer.Name + " could be merlin");
             }
             ViewBag.PlayerInfo = playerInfo;
 
@@ -99,32 +106,49 @@ namespace ResistanceOnline.Site.Controllers
         [HttpPost]
         public ActionResult AddCharacter(int gameId, Guid playerGuid, string character) 
         {
-            throw new NotImplementedException();
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.AddCharacter((Character)Enum.Parse(typeof(Character), character));
+            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }        
         [HttpPost]
         public ActionResult ProposePersonForQuest(int gameId, Guid playerGuid, string person) 
         {
-            throw new NotImplementedException();
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.ProposePlayer(game.Players.First(p => p.Name == person));
+            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }        
         [HttpPost]
         public ActionResult SubmitQuestCard(int gameId, Guid playerGuid, bool success) 
         {
-            throw new NotImplementedException();
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.SubmitQuest(player, success);
+            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }        
         [HttpPost]
-        public ActionResult VoteForQuest(int gameId, Guid playerGuid, bool accept) 
+        public ActionResult VoteForQuest(int gameId, Guid playerGuid, bool approve) 
         {
-            throw new NotImplementedException();
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.VoteForQuest(player, approve);
+            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }                             
         [HttpPost]
         public ActionResult JoinGame(int gameId, string name) 
         {
-            throw new NotImplementedException();
+            var game = GetGame(gameId);
+            var playerGuid = game.JoinGame(name);
+            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }        
         [HttpPost]
         public ActionResult GuessMerlin(int gameId, Guid playerGuid, string guess) 
         {
-            throw new NotImplementedException();
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
+            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }        
 
 	}

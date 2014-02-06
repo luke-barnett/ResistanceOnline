@@ -17,7 +17,7 @@ namespace ResistanceOnline.Core
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
-        public List<Action.Type> AvailableActions(Game game, Player player)
+        public static List<Action.Type> AvailableActions(Game game, Player player)
         {
             var gameState = game.DetermineState();
             switch (gameState)
@@ -73,7 +73,7 @@ namespace ResistanceOnline.Core
         /// </summary>
         /// <param name="player"></param>
         /// <param name="action"></param>
-        public void PerformAction(Game game, Player player, Action action)
+        public static void PerformAction(Game game, Player player, Action action)
         {
             if (!AvailableActions(game,player).Contains(action.ActionType))
                 throw new Exception(String.Format("Hax. Player {0} can't perform action {1}", player.Name, action));
@@ -112,6 +112,9 @@ namespace ResistanceOnline.Core
         /// <returns></returns>
         public static bool DetectEvil(Player myself, Player someoneelse)
         {
+            if (myself == null)
+                return false;
+
             //minions know each other (except oberon)
             if (myself.Character == Character.Assassin || myself.Character == Character.Morcana || myself.Character == Character.MinionOfMordred || myself.Character == Character.Mordred)
             {
@@ -141,6 +144,9 @@ namespace ResistanceOnline.Core
         /// <returns></returns>
         public static bool DetectMerlin(Player myself, Player someoneelse)
         {
+            if (myself == null)
+                return false;
+
             if (myself.Character == Character.Percival)
             {
                 if (someoneelse.Character == Character.Merlin || someoneelse.Character == Character.Morcana)

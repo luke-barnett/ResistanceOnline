@@ -52,7 +52,7 @@ namespace ResistanceOnline.Core
             AvailableCharacters.Add(character);
         }
 
-        public void JoinGame(string playerName)
+        public Guid JoinGame(string playerName)
         {
             if (Players.Count == TotalPlayers)
                 throw new Exception("Game already full");
@@ -60,7 +60,8 @@ namespace ResistanceOnline.Core
             if (Players.Select(p=>p.Name).Contains(playerName))
                 throw new Exception("Player name already taken");
 
-            Players.Add(new Player() { Name = playerName });
+            var guid = Guid.NewGuid();
+            Players.Add(new Player() { Name = playerName, Guid = guid });
 
             //on last player, allocate characters
             if (Players.Count == TotalPlayers)
@@ -79,7 +80,9 @@ namespace ResistanceOnline.Core
 
                 //create first round
                 Rounds.Add(new Round(Players, random.Next(TotalPlayers)));
-            }                
+            }
+
+            return guid;
         }
 
         public Round CurrentRound { get { return Rounds.Last(); } }

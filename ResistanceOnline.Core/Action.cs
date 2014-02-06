@@ -13,6 +13,7 @@ namespace ResistanceOnline.Core
     {
         public enum Type
         {
+            AddCharacterCard,
             JoinGame,
             ProposePersonForQuest,
             VoteForQuest,

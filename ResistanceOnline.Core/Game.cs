@@ -82,7 +82,7 @@ namespace ResistanceOnline.Core
             }                
         }
 
-        private Round CurrentRound { get { return Rounds.Last(); } }
+        public Round CurrentRound { get { return Rounds.Last(); } }
 
         public void ProposePlayer(Player proposedPlayer)
         {

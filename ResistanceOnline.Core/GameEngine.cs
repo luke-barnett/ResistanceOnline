@@ -17,9 +17,55 @@ namespace ResistanceOnline.Core
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
-        public List<Action> AvailableActions(Game game, Player player)
+        public List<Action.Type> AvailableActions(Game game, Player player)
         {
-            throw new NotImplementedException();
+            var gameState = game.DetermineState();
+            switch (gameState)
+            {
+                case Game.State.Rounds:
+                    var roundState = game.CurrentRound.DetermineState();
+                    var quest = game.CurrentRound.CurrentQuest;
+                    switch (roundState)
+                    {
+                        case Round.State.ProposingPlayers:
+                            if (quest.Leader.Name == player.Name)
+                            {
+                                return new List<Action.Type>() { Action.Type.ProposePersonForQuest };
+                            } 
+                            return new List<Action.Type>();
+                        case Round.State.Voting:
+                            if (quest.Votes.Select(v => v.Player.Name).ToList().Contains(player.Name))
+                            {
+                                return new List<Action.Type>() { Action.Type.VoteForQuest };
+                            } 
+                            return new List<Action.Type>();
+                        case Round.State.Questing:
+                            if (quest.ProposedPlayers.Select(v => v.Name).ToList().Contains(player.Name) &&
+                                !quest.QuestCards.Select(q=>q.Player.Name).ToList().Contains(player.Name))
+                            {
+                                return new List<Action.Type>() { Action.Type.SubmitQuestCard };
+                            } 
+                            return new List<Action.Type>();
+                    }
+
+                    return new List<Action.Type>();
+                case Game.State.WaitingForCharacterSetup:
+                    return new List<Action.Type>() { Action.Type.JoinGame, Action.Type.AddCharacterCard };
+                case Game.State.WaitingForPlayers:
+                    return new List<Action.Type>() { Action.Type.JoinGame };
+
+                case Game.State.GuessingMerlin:
+                    if (player.Character == Character.Assassin)
+                        return new List<Action.Type>() { Action.Type.GuessMerlin };
+                    return new List<Action.Type>();
+
+                case Game.State.EvilTriumphs:
+                case Game.State.GoodPrevails:
+                case Game.State.MerlinDies:
+                    return new List<Action.Type>();
+            }
+            return new List<Action.Type>();                
+
         }
 
         /// <summary>
@@ -29,7 +75,7 @@ namespace ResistanceOnline.Core
         /// <param name="action"></param>
         public void PerformAction(Game game, Player player, Action action)
         {
-            if (!AvailableActions(game,player).Contains(action))
+            if (!AvailableActions(game,player).Contains(action.ActionType))
                 throw new Exception(String.Format("Hax. Player {0} can't perform action {1}", player.Name, action));
 
             throw new NotImplementedException();

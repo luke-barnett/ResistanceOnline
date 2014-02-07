@@ -10,7 +10,6 @@ namespace ResistanceOnline.Core
     {
         public string Name { get; set; }
         public Character Character { get; set; }
-
         public Guid Guid { get; set; }
     }
 }

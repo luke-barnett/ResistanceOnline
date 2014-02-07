@@ -20,10 +20,10 @@ namespace ResistanceOnline.Core.Test
 			Assert.AreEqual(Round.State.ProposingPlayers, round.DetermineState());
 
 			//select the players for the quest
-			round.ProposePlayer(players[0]);
+			round.PutOnQuest(players[0]);
 			Assert.AreEqual(Round.State.ProposingPlayers, round.DetermineState());
-			round.ProposePlayer(players[1]);
-			round.ProposePlayer(players[2]);
+			round.PutOnQuest(players[1]);
+			round.PutOnQuest(players[2]);
 
 			Assert.AreEqual(Round.State.Voting, round.DetermineState());
 
@@ -55,10 +55,10 @@ namespace ResistanceOnline.Core.Test
 			Assert.AreEqual(Round.State.ProposingPlayers, round.DetermineState());
 
 			//select the players for the quest
-			round.ProposePlayer(players[0]);
+			round.PutOnQuest(players[0]);
 			Assert.AreEqual(Round.State.ProposingPlayers, round.DetermineState());
-			round.ProposePlayer(players[1]);
-			round.ProposePlayer(players[2]);
+			round.PutOnQuest(players[1]);
+			round.PutOnQuest(players[2]);
 
 			Assert.AreEqual(Round.State.Voting, round.DetermineState());
 
@@ -72,10 +72,10 @@ namespace ResistanceOnline.Core.Test
 
 			//nope, try again
 			Assert.AreEqual(Round.State.ProposingPlayers, round.DetermineState());
-			round.ProposePlayer(players[2]);
+			round.PutOnQuest(players[2]);
 			Assert.AreEqual(Round.State.ProposingPlayers, round.DetermineState());
-			round.ProposePlayer(players[3]);
-			round.ProposePlayer(players[4]);
+			round.PutOnQuest(players[3]);
+			round.PutOnQuest(players[4]);
 
 			Assert.AreEqual(Round.State.Voting, round.DetermineState());
 

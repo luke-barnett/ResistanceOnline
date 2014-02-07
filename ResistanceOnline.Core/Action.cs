@@ -15,7 +15,7 @@ namespace ResistanceOnline.Core
         {
             AddCharacterCard,
             JoinGame,
-            ProposePersonForQuest,
+            PutOnQuest,
             VoteForQuest,
             SubmitQuestCard,
             GuessMerlin

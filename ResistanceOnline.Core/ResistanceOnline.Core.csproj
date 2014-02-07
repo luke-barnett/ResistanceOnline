@@ -41,7 +41,6 @@
   <ItemGroup>
     <Compile Include="Action.cs" />
     <Compile Include="Character.cs" />
-    <Compile Include="GameEngine.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Round.cs" />

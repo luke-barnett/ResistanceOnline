@@ -19,16 +19,66 @@ namespace ResistanceOnline.Core
             MerlinDies
         }
 
-        public Game(int players)
+        public Game(int players, bool impersonationEnabled)
         {
+            ImpersonationEnabled = impersonationEnabled;
             Players = new List<Player>();
             Rounds = new List<Round>();
             AvailableCharacters = new List<Character>();
             TotalPlayers = players;
         }
 
+        private class TableausRound
+        {
+            public int Round { get; set; }
+            public int Players { get; set; }
+            public int QuestSize { get; set; }
+            public int RequiredFails { get; set; }
+        }
+
+        List<TableausRound> TablausRoundDefinitions = new List<TableausRound>()
+        {
+            new TableausRound{ Players = 5, Round = 1, QuestSize=2, RequiredFails = 1 },
+            new TableausRound{ Players = 5, Round = 2, QuestSize=3, RequiredFails = 1 },
+            new TableausRound{ Players = 5, Round = 3, QuestSize=2, RequiredFails = 1 },
+            new TableausRound{ Players = 5, Round = 4, QuestSize=3, RequiredFails = 1 },
+            new TableausRound{ Players = 5, Round = 5, QuestSize=3, RequiredFails = 1 },
+
+            new TableausRound{ Players = 6, Round = 1, QuestSize=2, RequiredFails = 1 },
+            new TableausRound{ Players = 6, Round = 2, QuestSize=3, RequiredFails = 1 },
+            new TableausRound{ Players = 6, Round = 3, QuestSize=4, RequiredFails = 1 },
+            new TableausRound{ Players = 6, Round = 4, QuestSize=3, RequiredFails = 1 },
+            new TableausRound{ Players = 6, Round = 5, QuestSize=4, RequiredFails = 1 },
+
+            new TableausRound{ Players = 7, Round = 1, QuestSize=2, RequiredFails = 1 },
+            new TableausRound{ Players = 7, Round = 2, QuestSize=3, RequiredFails = 1 },
+            new TableausRound{ Players = 7, Round = 3, QuestSize=3, RequiredFails = 1 },
+            new TableausRound{ Players = 7, Round = 4, QuestSize=4, RequiredFails = 2 },
+            new TableausRound{ Players = 7, Round = 5, QuestSize=4, RequiredFails = 1 },
+
+            new TableausRound{ Players = 8, Round = 1, QuestSize=3, RequiredFails = 1 },
+            new TableausRound{ Players = 8, Round = 2, QuestSize=4, RequiredFails = 1 },
+            new TableausRound{ Players = 8, Round = 3, QuestSize=4, RequiredFails = 1 },
+            new TableausRound{ Players = 8, Round = 4, QuestSize=5, RequiredFails = 2 },
+            new TableausRound{ Players = 8, Round = 5, QuestSize=5, RequiredFails = 1 },
+
+            new TableausRound{ Players = 9, Round = 1, QuestSize=3, RequiredFails = 1 },
+            new TableausRound{ Players = 9, Round = 2, QuestSize=4, RequiredFails = 1 },
+            new TableausRound{ Players = 9, Round = 3, QuestSize=4, RequiredFails = 1 },
+            new TableausRound{ Players = 9, Round = 4, QuestSize=5, RequiredFails = 2 },
+            new TableausRound{ Players = 9, Round = 5, QuestSize=5, RequiredFails = 1 },
+
+            new TableausRound{ Players = 10, Round = 1, QuestSize=3, RequiredFails = 1 },
+            new TableausRound{ Players = 10, Round = 2, QuestSize=4, RequiredFails = 1 },
+            new TableausRound{ Players = 10, Round = 3, QuestSize=4, RequiredFails = 1 },
+            new TableausRound{ Players = 10, Round = 4, QuestSize=5, RequiredFails = 2 },
+            new TableausRound{ Players = 10, Round = 5, QuestSize=5, RequiredFails = 1 },
+
+        };
+
         public List<Character> AvailableCharacters { get; set; }
         public int TotalPlayers { get; set; }
+        public bool ImpersonationEnabled { get; set; }
         public List<Player> Players { get; set; }
         public List<Round> Rounds { get; set; }
         public int QuestIndicator { get; set; }
@@ -95,17 +145,26 @@ namespace ResistanceOnline.Core
                 }
 
                 //create first round
-                Rounds.Add(new Round(Players, random.Next(TotalPlayers), 3, 1));
+                CreateRound(random.Next(TotalPlayers));
             }
 
 
         }
 
+        private void CreateRound(int leader)
+        {
+            var tablaus = TablausRoundDefinitions.FirstOrDefault(t => t.Players == TotalPlayers && t.Round == 1);
+            if (tablaus == null)
+                throw new Exception("Missing definitions for games with " + TotalPlayers + " players in round " + 1);
+            Rounds.Add(new Round(Players, leader, tablaus.QuestSize, tablaus.RequiredFails));
+
+        }
+
         public Round CurrentRound { get { return Rounds.Last(); } }
 
-        public void ProposePlayer(Player proposedPlayer)
+        public void PutOnQuest(Player proposedPlayer)
         {
-            CurrentRound.ProposePlayer(proposedPlayer);
+            CurrentRound.PutOnQuest(proposedPlayer);
         }
 
         public void VoteForQuest(Player player, bool approve)
@@ -130,7 +189,7 @@ namespace ResistanceOnline.Core
                     return;
 
                 //create the next round
-                Rounds.Add(new Round(Players, CurrentRound.NextPlayer, 4, 1));
+                CreateRound(CurrentRound.NextPlayer);
             }
 
         }
@@ -159,5 +218,169 @@ namespace ResistanceOnline.Core
 
             return State.InPlay;
         }
+
+        /// <summary>
+        /// this is the available actions a player has given who they are and the state of the game
+        /// this should show a list of buttons on the webpage or something
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns></returns>
+        public List<Action.Type> AvailableActions(Player player)
+        {
+            var gameState = DetermineState();
+            switch (gameState)
+            {
+                case Game.State.InPlay:
+                    var roundState = CurrentRound.DetermineState();
+                    var quest = CurrentRound.CurrentQuest;
+                    switch (roundState)
+                    {
+                        case Round.State.ProposingPlayers:
+                            if (quest.Leader.Name == player.Name)
+                            {
+                                return new List<Action.Type>() { Action.Type.PutOnQuest };
+                            }
+                            return new List<Action.Type>();
+                        case Round.State.Voting:
+                            if (!quest.Votes.Select(v => v.Player.Name).ToList().Contains(player.Name))
+                            {
+                                return new List<Action.Type>() { Action.Type.VoteForQuest };
+                            }
+                            return new List<Action.Type>();
+                        case Round.State.Questing:
+                            if (quest.ProposedPlayers.Select(v => v.Name).ToList().Contains(player.Name) &&
+                                !quest.QuestCards.Select(q => q.Player.Name).ToList().Contains(player.Name))
+                            {
+                                return new List<Action.Type>() { Action.Type.SubmitQuestCard };
+                            }
+                            return new List<Action.Type>();
+                    }
+
+                    return new List<Action.Type>();
+                case Game.State.WaitingForCharacterSetup:
+                    if (player == null)
+                    {
+                        if (Players.Count == TotalPlayers)
+                            return new List<Action.Type>();
+                        return new List<Action.Type>() { Action.Type.JoinGame };
+                    }
+                    if (Players.Count == TotalPlayers)
+                        return new List<Action.Type>() { Action.Type.AddCharacterCard };
+                    return new List<Action.Type>() { Action.Type.JoinGame, Action.Type.AddCharacterCard };
+                case Game.State.WaitingForPlayers:
+                    if (player == null)
+                    {
+                        return new List<Action.Type>() { Action.Type.JoinGame };
+                    }
+                    else
+                    {
+                        return new List<Action.Type>();
+                    }
+
+                case Game.State.GuessingMerlin:
+                    if (player.Character == Character.Assassin)
+                        return new List<Action.Type>() { Action.Type.GuessMerlin };
+                    return new List<Action.Type>();
+
+                case Game.State.EvilTriumphs:
+                case Game.State.GoodPrevails:
+                case Game.State.MerlinDies:
+                    return new List<Action.Type>();
+            }
+            return new List<Action.Type>();
+
+        }
+
+        /// <summary>
+        /// once a player performs an action, this should update the game state appropriately
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="action"></param>
+        public void PerformAction(Player player, Action action)
+        {
+            if (!AvailableActions(player).Contains(action.ActionType))
+                throw new Exception(String.Format("Hax. Player {0} can't perform action {1}", player.Name, action));
+
+            switch (action.ActionType)
+            {
+                case Action.Type.AddCharacterCard:
+                    AddCharacter(action.Character);
+                    break;
+                case Action.Type.GuessMerlin:
+                    GuessMerlin(player, action.Player);
+                    break;
+                case Action.Type.JoinGame:
+                    JoinGame(action.Name);
+                    break;
+                case Action.Type.PutOnQuest:
+                    PutOnQuest(action.Player);
+                    break;
+                case Action.Type.SubmitQuestCard:
+                    SubmitQuest(player, action.Success);
+                    break;
+                case Action.Type.VoteForQuest:
+                    VoteForQuest(player, action.Accept);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+
+        /// <summary>
+        /// does myself know someoneelse is evil. e.g. they are both minions, or myself is merlin
+        /// </summary>
+        /// <param name="playerSelf"></param>
+        /// <param name="playerTarget"></param>
+        /// <returns></returns>
+        public static bool DetectEvil(Player myself, Player someoneelse)
+        {
+            if (myself == null)
+                return false;
+
+            //minions know each other (except oberon)
+            if (myself.Character == Character.Assassin || myself.Character == Character.Morcana || myself.Character == Character.MinionOfMordred || myself.Character == Character.Mordred)
+            {
+                if (someoneelse.Character == Character.Assassin || someoneelse.Character == Character.Morcana || someoneelse.Character == Character.MinionOfMordred || someoneelse.Character == Character.Mordred)
+                {
+                    return true;
+                }
+            }
+
+            //merlin knows minions (except mordred)
+            if (myself.Character == Character.Merlin)
+            {
+                if (someoneelse.Character == Character.Assassin || someoneelse.Character == Character.Morcana || someoneelse.Character == Character.MinionOfMordred || someoneelse.Character == Character.Oberon)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// does myself know someoneelse is merlin (or morcana), e.g. myself is percival
+        /// </summary>
+        /// <param name="playerSelf"></param>
+        /// <param name="playerTarget"></param>
+        /// <returns></returns>
+        public static bool DetectMerlin(Player myself, Player someoneelse)
+        {
+            if (myself == null)
+                return false;
+
+            if (myself.Character == Character.Percival)
+            {
+                if (someoneelse.Character == Character.Merlin || someoneelse.Character == Character.Morcana)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public int GameId { get; set; }
     }
 }

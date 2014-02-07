@@ -162,9 +162,9 @@ namespace ResistanceOnline.Core
 
         public Round CurrentRound { get { return Rounds.Last(); } }
 
-        public void PutOnQuest(Player proposedPlayer)
+        public void PutOnQuest(Player player, Player proposedPlayer)
         {
-            CurrentRound.PutOnQuest(proposedPlayer);
+            CurrentRound.PutOnQuest(player, proposedPlayer);
         }
 
         public void VoteForQuest(Player player, bool approve)
@@ -313,7 +313,7 @@ namespace ResistanceOnline.Core
                     JoinGame(action.Name);
                     break;
                 case Action.Type.PutOnQuest:
-                    PutOnQuest(action.Player);
+                    PutOnQuest(player, action.Player);
                     break;
                 case Action.Type.SubmitQuestCard:
                     SubmitQuest(player, action.Success);

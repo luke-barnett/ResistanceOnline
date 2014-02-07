@@ -18,9 +18,13 @@ namespace ResistanceOnline.Core
             QuestCards = new List<QuestCard>();
         }
 
-        public void ProposePlayer(Player proposedPlayer) {
+        public void ProposePlayer(Player player, Player proposedPlayer)
+        {
             if (ProposedPlayers.Contains(proposedPlayer))
                 throw new Exception("Player is already on quest..");
+
+            if (player != Leader)
+                throw new Exception("Hax. Player is not the leader of this quest");
 
             ProposedPlayers.Add(proposedPlayer);
         }

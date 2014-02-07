@@ -232,7 +232,7 @@ namespace ResistanceOnline.Core
                     switch (roundState)
                     {
                         case Round.State.ProposingPlayers:
-                            if (quest.Leader.Name == player.Name)
+                            if (player!=null && quest.Leader.Name == player.Name)
                             {
                                 return new List<Action.Type>() { Action.Type.PutOnQuest };
                             }

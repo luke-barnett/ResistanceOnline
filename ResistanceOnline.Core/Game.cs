@@ -10,9 +10,8 @@ namespace ResistanceOnline.Core
     {
         public enum State
         {
-            WaitingForCharacterSetup,
-            WaitingForPlayers,
-            InPlay,
+            GameSetup,
+            Playing,
             EvilTriumphs,
             GoodPrevails,
             GuessingMerlin,
@@ -196,11 +195,8 @@ namespace ResistanceOnline.Core
 
         public State DetermineState()
         {
-            if (AvailableCharacters.Count < TotalPlayers)
-                return State.WaitingForCharacterSetup;
-
-            if (Players.Count < TotalPlayers)
-                return State.WaitingForPlayers;
+            if (AvailableCharacters.Count < TotalPlayers || Players.Count < TotalPlayers)
+                return State.GameSetup;
 
             if (Rounds.Select(r => r.DetermineState() == Round.State.Failed).Count() >= 3)
                 return State.EvilTriumphs;
@@ -216,7 +212,7 @@ namespace ResistanceOnline.Core
                 return State.GoodPrevails;
             }
 
-            return State.InPlay;
+            return State.Playing;
         }
 
         /// <summary>
@@ -230,7 +226,7 @@ namespace ResistanceOnline.Core
             var gameState = DetermineState();
             switch (gameState)
             {
-                case Game.State.InPlay:
+                case Game.State.Playing:
                     var roundState = CurrentRound.DetermineState();
                     var quest = CurrentRound.CurrentQuest;
                     switch (roundState)
@@ -257,7 +253,8 @@ namespace ResistanceOnline.Core
                     }
 
                     return new List<Action.Type>();
-                case Game.State.WaitingForCharacterSetup:
+                
+                case Game.State.GameSetup:
                     if (player == null)
                     {
                         if (Players.Count == TotalPlayers)
@@ -267,16 +264,7 @@ namespace ResistanceOnline.Core
                     if (Players.Count == TotalPlayers)
                         return new List<Action.Type>() { Action.Type.AddCharacterCard };
                     return new List<Action.Type>() { Action.Type.JoinGame, Action.Type.AddCharacterCard };
-                case Game.State.WaitingForPlayers:
-                    if (player == null)
-                    {
-                        return new List<Action.Type>() { Action.Type.JoinGame };
-                    }
-                    else
-                    {
-                        return new List<Action.Type>();
-                    }
-
+                
                 case Game.State.GuessingMerlin:
                     if (player.Character == Character.Assassin)
                         return new List<Action.Type>() { Action.Type.GuessMerlin };

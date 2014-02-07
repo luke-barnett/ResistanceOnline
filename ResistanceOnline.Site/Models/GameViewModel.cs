@@ -61,10 +61,7 @@ namespace ResistanceOnline.Site.Models
             CharactersInGame = game.AvailableCharacters.ToList();
             AllCharactersSelectList = new SelectList(Enum.GetNames(typeof(Character)).Where(c => c != Character.UnAllocated.ToString()).ToList());
             PlayersSelectList = new SelectList(game.Players.Select(p => p.Name));
-            if (player != null)
-            {
-                Actions = game.AvailableActions(player);
-            }
+            Actions = game.AvailableActions(player);
 
             PlayerInfo = new List<PlayerInfoModel>();
             Waiting = new List<OtherActions>();

@@ -91,7 +91,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
-            game.PutOnQuest(game.Players.First(p => p.Name == person));
+            game.PutOnQuest(player, game.Players.First(p => p.Name == person));
             return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }        
         [HttpPost]

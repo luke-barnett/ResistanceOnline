@@ -10,9 +10,8 @@ namespace ResistanceOnline.Core
     {
         public enum State
         {
-            WaitingForCharacterSetup,
-            WaitingForPlayers,
-            InPlay,
+            GameSetup,
+            Playing,
             EvilTriumphs,
             GoodPrevails,
             GuessingMerlin,
@@ -162,9 +161,9 @@ namespace ResistanceOnline.Core
 
         public Round CurrentRound { get { return Rounds.Last(); } }
 
-        public void PutOnQuest(Player proposedPlayer)
+        public void PutOnQuest(Player player, Player proposedPlayer)
         {
-            CurrentRound.PutOnQuest(proposedPlayer);
+            CurrentRound.PutOnQuest(player, proposedPlayer);
         }
 
         public void VoteForQuest(Player player, bool approve)
@@ -196,11 +195,8 @@ namespace ResistanceOnline.Core
 
         public State DetermineState()
         {
-            if (AvailableCharacters.Count < TotalPlayers)
-                return State.WaitingForCharacterSetup;
-
-            if (Players.Count < TotalPlayers)
-                return State.WaitingForPlayers;
+            if (AvailableCharacters.Count < TotalPlayers || Players.Count < TotalPlayers)
+                return State.GameSetup;
 
             if (Rounds.Select(r => r.DetermineState() == Round.State.Failed).Count() >= 3)
                 return State.EvilTriumphs;
@@ -216,7 +212,7 @@ namespace ResistanceOnline.Core
                 return State.GoodPrevails;
             }
 
-            return State.InPlay;
+            return State.Playing;
         }
 
         /// <summary>
@@ -230,7 +226,7 @@ namespace ResistanceOnline.Core
             var gameState = DetermineState();
             switch (gameState)
             {
-                case Game.State.InPlay:
+                case Game.State.Playing:
                     var roundState = CurrentRound.DetermineState();
                     var quest = CurrentRound.CurrentQuest;
                     switch (roundState)
@@ -257,26 +253,19 @@ namespace ResistanceOnline.Core
                     }
 
                     return new List<Action.Type>();
-                case Game.State.WaitingForCharacterSetup:
-                    if (player == null)
+                
+                case Game.State.GameSetup:
+                    var actions = new List<Action.Type>();
+                    if (player == null && Players.Count < TotalPlayers)
                     {
-                        if (Players.Count == TotalPlayers)
-                            return new List<Action.Type>();
-                        return new List<Action.Type>() { Action.Type.JoinGame };
+                        actions.Add(Action.Type.JoinGame);
                     }
-                    if (Players.Count == TotalPlayers)
-                        return new List<Action.Type>() { Action.Type.AddCharacterCard };
-                    return new List<Action.Type>() { Action.Type.JoinGame, Action.Type.AddCharacterCard };
-                case Game.State.WaitingForPlayers:
-                    if (player == null)
+                    if (player != null && AvailableCharacters.Count < TotalPlayers)
                     {
-                        return new List<Action.Type>() { Action.Type.JoinGame };
+                        actions.Add(Action.Type.AddCharacterCard);
                     }
-                    else
-                    {
-                        return new List<Action.Type>();
-                    }
-
+                    return actions;
+                
                 case Game.State.GuessingMerlin:
                     if (player.Character == Character.Assassin)
                         return new List<Action.Type>() { Action.Type.GuessMerlin };
@@ -313,7 +302,7 @@ namespace ResistanceOnline.Core
                     JoinGame(action.Name);
                     break;
                 case Action.Type.PutOnQuest:
-                    PutOnQuest(action.Player);
+                    PutOnQuest(player, action.Player);
                     break;
                 case Action.Type.SubmitQuestCard:
                     SubmitQuest(player, action.Success);

@@ -10,7 +10,7 @@
     @foreach (var waiting in Model.Waiting)
     {
         <li>@(waiting.Name)/@(waiting.Action)
-        @if (Model.ImpersonationList.Select(i => i.Name).Contains(waiting.Name))
+        @if (Model.ImpersonationList!=null && Model.ImpersonationList.Select(i => i.Name).Contains(waiting.Name))
         {
             <span>@Html.ActionLink("Impersonate", "Game", new { gameId = Model.GameId, playerGuid = Model.ImpersonationList.First(i=>i.Name==waiting.Name).Guid })</span>
         }
@@ -53,7 +53,7 @@
     <p>@s</p>
 }
 
-@if (!Model.IsSpectator && Model.Actions.Count>0) { 
+@if (Model.Actions.Count>0) { 
     <h2>Available Actions</h2>
     if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.AddCharacterCard))
     {

@@ -47,9 +47,9 @@ namespace ResistanceOnline.Core
 
         public List<Quest> Quests { get; set; }
 
-        public void PutOnQuest(Player proposedPlayer)
+        public void PutOnQuest(Player player, Player proposedPlayer)
         {
-            CurrentQuest.ProposePlayer(proposedPlayer);
+            CurrentQuest.ProposePlayer(player, proposedPlayer);
         }
 
         public void VoteForQuest(Player player, bool approve)

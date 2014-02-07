@@ -61,10 +61,7 @@ namespace ResistanceOnline.Site.Models
             CharactersInGame = game.AvailableCharacters.ToList();
             AllCharactersSelectList = new SelectList(Enum.GetNames(typeof(Character)).Where(c => c != Character.UnAllocated.ToString()).ToList());
             PlayersSelectList = new SelectList(game.Players.Select(p => p.Name));
-            if (player != null)
-            {
-                Actions = game.AvailableActions(player);
-            }
+            Actions = game.AvailableActions(player);
 
             PlayerInfo = new List<PlayerInfoModel>();
             Waiting = new List<OtherActions>();
@@ -78,7 +75,7 @@ namespace ResistanceOnline.Site.Models
                 };
 
                 //always know own character, or all characters if game is over
-                if (p==player || GameState == Game.State.EvilTriumphs || GameState == Game.State.GoodPrevails || GameState == Game.State.MerlinDies) {
+                if ((p==player || GameState == Game.State.EvilTriumphs || GameState == Game.State.GoodPrevails || GameState == Game.State.MerlinDies) && p.Character != Character.UnAllocated) {
                     playerInfo.CharacterCard = p.Character; 
                 }
 

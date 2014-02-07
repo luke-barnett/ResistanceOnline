@@ -11,8 +11,8 @@ namespace ResistanceOnline.Site
 
 			routes.MapRoute(
 				name: "Default",
-				url: "{action}/{gameid}",
-				defaults: new { controller = "Game", action = "Index", gameid = UrlParameter.Optional }
+				url: "{action}/{gameid}/{playerguid}",
+				defaults: new { controller = "Game", action = "Index", gameid = UrlParameter.Optional, playerguid = UrlParameter.Optional }
 			);
 		}
 	}

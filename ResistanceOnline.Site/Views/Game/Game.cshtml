@@ -1,0 +1,115 @@
+﻿@model ResistanceOnline.Site.Models.GameViewModel
+@{
+    ViewBag.Title = "Game " + Model.GameId;
+}
+<h1>Game @Model.GameId - @Model.GameState</h1>
+
+@if (Model.Waiting.Count > 0) { 
+<h2>Waiting for actions</h2>
+<ul>
+    @foreach (var waiting in Model.Waiting)
+    {
+        <li>@(waiting.Name)/@(waiting.Action)
+        @if (Model.ImpersonationList.Select(i => i.Name).Contains(waiting.Name))
+        {
+            <span>@Html.ActionLink("Impersonate", "Game", new { gameId = Model.GameId, playerGuid = Model.ImpersonationList.First(i=>i.Name==waiting.Name).Guid })</span>
+        }
+        </li>
+    }
+</ul>
+}
+
+<h2>Game Characters In Play</h2>
+<ul>
+    @foreach (var c in Model.CharactersInGame)
+    {
+        <li>@(c.ToString())</li>
+    }
+</ul>
+<h2>Player Info</h2>
+<ul>
+    @foreach (var p in Model.PlayerInfo)
+    {
+        <li>
+            <span>@p.Name</span>
+            @if (p.IsEvil)
+            {
+                <span>Evil</span>
+            }
+            @if (p.CouldBeMerlin)
+            {
+                <span>Could be Merlin</span>
+            }
+            @if (p.CharacterCard.HasValue)
+            {
+                <span>@(p.CharacterCard.ToString())</span>
+            }
+        </li>
+    }
+</ul>
+<h2>Game Log</h2>
+@foreach (string s in Model.Log)
+{
+    <p>@s</p>
+}
+
+@if (!Model.IsSpectator && Model.Actions.Count>0) { 
+    <h2>Available Actions</h2>
+    if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.AddCharacterCard))
+    {
+        <form action="/AddCharacter" method="post">
+            @Html.DropDownList("Character", (SelectList)Model.AllCharactersSelectList);
+            <input type="hidden" name="gameid" value="@Model.GameId" />
+            <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+            <input type="submit" value="Add Character" />
+        </form>
+    }
+    if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.GuessMerlin))
+    {
+        <form action="/GuessMerlin" method="post">
+            @Html.DropDownList("Guess", (SelectList)Model.AllCharactersSelectList);
+            <input type="hidden" name="gameid" value="@Model.GameId" />
+            <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+            <input type="submit" value="Guess Merlin" />
+        </form>
+    }
+    if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.JoinGame))
+    {
+        <form action="/JoinGame" method="post">
+            <input type="text" name="name" />
+            <input type="hidden" name="gameid" value="@Model.GameId" />
+            <input type="submit" value="Join Game" />
+        </form>
+    }
+    if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.PutOnQuest))
+    {
+        <form action="/PutOnQuest" method="post">
+            @Html.DropDownList("Person", (SelectList)Model.PlayersSelectList);
+            <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+            <input type="hidden" name="gameId" value="@Model.GameId" />
+            <input type="submit" value="Put on Quest" />
+        </form>
+    }
+    if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.SubmitQuestCard))
+    {
+        <form action="/SubmitQuestCard" method="post">
+            <input type="radio" name="success" value="true" />Success<br/>
+            <input type="radio" name="success" value="false" />Fail<br/>
+            <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+            <input type="hidden" name="gameid" value="@Model.GameId" />
+            <input type="submit" value="Submit Quest Card" />
+        </form>
+    }
+    if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.VoteForQuest))
+    {
+        <form action="/VoteForQuest" method="post">
+            <input type="radio" name="approve" value="true" />Accept<br />
+            <input type="radio" name="approve" value="false" />Reject<br />
+            <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+            <input type="hidden" name="gameid" value="@Model.GameId" />
+            <input type="submit" value="Vote for Quest" />
+        </form>
+    }   
+}
+
+

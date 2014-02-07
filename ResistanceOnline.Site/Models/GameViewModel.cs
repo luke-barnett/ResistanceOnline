@@ -72,11 +72,16 @@ namespace ResistanceOnline.Site.Models
             {
                 var playerInfo = new PlayerInfoModel 
                 { 
-                    CharacterCard = p==player? p.Character : (Character?)null, 
                     Name = p.Name, 
                     CouldBeMerlin = Game.DetectMerlin(player, p), 
                     IsEvil = Game.DetectEvil(player, p) 
                 };
+
+                //always know own character, or all characters if game is over
+                if (p==player || GameState == Game.State.EvilTriumphs || GameState == Game.State.GoodPrevails || GameState == Game.State.MerlinDies) {
+                    playerInfo.CharacterCard = p.Character; 
+                }
+
                 PlayerInfo.Add(playerInfo);
 
                 Waiting.AddRange(game.AvailableActions(p).Select(a => new OtherActions { Action = a.ToString(), Name = p.Name }));

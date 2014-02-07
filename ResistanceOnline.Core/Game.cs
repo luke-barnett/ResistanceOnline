@@ -255,15 +255,16 @@ namespace ResistanceOnline.Core
                     return new List<Action.Type>();
                 
                 case Game.State.GameSetup:
-                    if (player == null)
+                    var actions = new List<Action.Type>();
+                    if (player == null && Players.Count < TotalPlayers)
                     {
-                        if (Players.Count == TotalPlayers)
-                            return new List<Action.Type>();
-                        return new List<Action.Type>() { Action.Type.JoinGame };
+                        actions.Add(Action.Type.JoinGame);
                     }
-                    if (Players.Count == TotalPlayers)
-                        return new List<Action.Type>() { Action.Type.AddCharacterCard };
-                    return new List<Action.Type>() { Action.Type.JoinGame, Action.Type.AddCharacterCard };
+                    if (player != null && AvailableCharacters.Count < TotalPlayers)
+                    {
+                        actions.Add(Action.Type.AddCharacterCard);
+                    }
+                    return actions;
                 
                 case Game.State.GuessingMerlin:
                     if (player.Character == Character.Assassin)

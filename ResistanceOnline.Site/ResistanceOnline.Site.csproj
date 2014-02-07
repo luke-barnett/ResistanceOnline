@@ -99,6 +99,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\avalon.png" />
+    <Content Include="Images\evil.png" />
+    <Content Include="Images\good.png" />
+    <Content Include="Images\ladyofthelake.png" />
+    <Content Include="Images\leadertoken.png" />
+    <Content Include="Images\loyalservantofarthur.png" />
+    <Content Include="Images\merlin.png" />
+    <Content Include="Images\minionofmordred.png" />
+    <Content Include="Images\mordred.png" />
+    <Content Include="Images\morgana.png" />
+    <Content Include="Images\oberon.png" />
+    <Content Include="Images\percival.png" />
+    <Content Include="Images\quest.png" />
+    <Content Include="Images\questfail.png" />
+    <Content Include="Images\questsuccess.png" />
+    <Content Include="Images\teamtoken.png" />
+    <Content Include="Images\vote.png" />
+    <Content Include="Images\voteapprove.png" />
+    <Content Include="Images\votereject.png" />
     <Content Include="packages.config" />
     <Content Include="Views\Game\Game.cshtml" />
     <None Include="Web.Debug.config">
@@ -149,7 +168,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Images\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ResistanceOnline.Core\ResistanceOnline.Core.csproj">

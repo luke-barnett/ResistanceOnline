@@ -1,5 +1,4 @@
 ﻿body {
-    padding-top: 50px;
     padding-bottom: 20px;
 }
 
@@ -39,4 +38,27 @@ input[type="checkbox"].input-validation-error {
 
 .validation-summary-valid {
     display: none;
+}
+
+ul.cards li {
+    float:left;
+    margin-right:4px;
+    list-style-type:none;
+    width:52px;
+    overflow:hidden;
+}
+
+.clear {
+    clear:both;
+}
+
+ul {
+    padding-left:0;
+}
+
+.quest .setup {
+    margin-bottom:6px;
+}
+.quest .results {
+    margin-top:6px;
 }

@@ -4,7 +4,7 @@
 		@foreach (ResistanceOnline.Core.Game game in ViewBag.Games)
 		{
 		<li>
-			<span>@game.TotalPlayers players</span>
+			<span>@game.GameSize players</span>
 			@if (game.ImpersonationEnabled)
 			{
 				<span>(Impersonation Enabled)</span>

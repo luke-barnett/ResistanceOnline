@@ -1,4 +1,4 @@
-﻿@model ResistanceOnline.Site.Models.GameViewModel
+﻿@model ResistanceOnline.Site.Models.GameModel
 @{
 
 	ViewBag.Title = "Game " + Model.GameId;
@@ -60,26 +60,26 @@
 @foreach (var round in Model.Rounds)
 {
 	<h3>Round @(Model.Rounds.IndexOf(round)+1), @round.TeamSize players, @round.FailsRequired fail@(round.FailsRequired==2?"s":"") required</h3>
-	foreach (var quest in round.Quests)
+	foreach (var team in round.Teams)
 	{
 		<div class="quest">
 			<div class="setup">
 				<img src="/Images/leadertoken.png" />
-				<span class="leader">@quest.Leader</span>
-				@if (quest.PlayersOnQuest.Count > 0)
+				<span class="leader">@team.Leader</span>
+				@if (team.TeamMembers.Count > 0)
 				{
 				<img src="/Images/teamtoken.png" />
-				<span class="team">@String.Join(",", quest.PlayersOnQuest)</span>
+				<span class="team">@String.Join(",", team.TeamMembers)</span>
 				}
-				@foreach (var vote in quest.Vote)
+				@foreach (var vote in team.Vote)
 				{
 					<img class="vote" src="/images/@(vote.Image).png" title="@vote.Player" />
 				}
 			</div>
-			@if (quest.QuestCards.Count > 0) 
+			@if (team.QuestCards.Count > 0) 
 			{ 
 			<div class="results">
-				@foreach (var card in quest.QuestCards)
+				@foreach (var card in team.QuestCards)
 				{
 					<img class="card" src="/images/@(card.Image).png" />
 				}
@@ -90,7 +90,7 @@
 }
 
 @if (Model.Actions.Count>0) { 
-	if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.AddCharacterCard))
+	if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.AddCharacter))
 	{
 		<form role="form" action="/AddCharacter" method="post">
 			<input type="hidden" name="gameid" value="@Model.GameId" />
@@ -121,20 +121,20 @@
 			</div>
 			<input class="btn btn-default" type="submit" value="Join Game" />
 		</form>
-	}
-	if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.PutOnQuest))
-	{
-		<form role="form" action="/PutOnQuest" method="post">
-			<input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
-			<input type="hidden" name="gameId" value="@Model.GameId" />
-			<div class="form-group">
-				@Html.DropDownList("Person", Model.PlayersSelectList, new { @class = "form-control" })
-			</div>
-			<input class="btn btn-default" type="submit" value="Put on Quest" />
-		</form>
-	}
-	if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.SubmitQuestCard))
-	{
+    }
+    if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.AddToTeam))
+    {
+        <form role="form" action="/AddToTeam" method="post">
+            <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+            <input type="hidden" name="gameId" value="@Model.GameId" />
+            <div class="form-group">
+                @Html.DropDownList("Person", Model.PlayersSelectList, new { @class = "form-control" })
+            </div>
+            <input class="btn btn-default" type="submit" value="Add to Team" />
+        </form>
+    }
+    if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.SubmitQuestCard))
+    {
 		<form role="form" action="/SubmitQuestCard" method="post">
 			<input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
 			<input type="hidden" name="gameid" value="@Model.GameId" />
@@ -150,25 +150,25 @@
 			</div>
 			<input class="btn btn-default" type="submit" value="Submit Quest Card" />
 		</form>
-	}
-	if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.VoteForQuest))
-	{
-		<form role="form" action="/VoteForQuest" method="post">
-			<input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
-			<input type="hidden" name="gameid" value="@Model.GameId" />
-			<div class="radio">
-				<label>
-					<input type="radio" name="approve" value="true" />Accept
-				</label>
-			</div>
-			<div class="radio">
-				<label>
-					<input type="radio" name="approve" value="false" />Reject
-				</label>
-			</div>
-			<input class="btn btn-default" type="submit" value="Vote for Quest" />
-		</form>
-	}
+    }
+    if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.VoteForTeam))
+    {
+        <form role="form" action="/VoteForTeam" method="post">
+            <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+            <input type="hidden" name="gameid" value="@Model.GameId" />
+            <div class="radio">
+                <label>
+                    <input type="radio" name="approve" value="true" />Accept
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="approve" value="false" />Reject
+                </label>
+            </div>
+            <input class="btn btn-default" type="submit" value="Vote for Team" />
+        </form>
+    }
 }
 
 @if (Model.Waiting.Count > 0)

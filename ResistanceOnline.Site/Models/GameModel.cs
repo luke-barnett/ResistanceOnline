@@ -8,7 +8,7 @@ using Humanizer;
 
 namespace ResistanceOnline.Site.Models
 {
-	public class GameViewModel
+	public class GameModel
 	{
 		public int GameId { get; set; }
 
@@ -32,17 +32,20 @@ namespace ResistanceOnline.Site.Models
 
 		public List<RoundModel> Rounds { get; set; }
 
+        public List<Tableaus> Tableaus { get; set; } 
+
 		public bool IsSpectator { get; set; }
 
         public int GameSize { get; set; }
 
         public int CharactersMissing { get { return GameSize - CharactersInGame.Count; } }
 
-		public GameViewModel(Game game, Guid? playerGuid)
+		public GameModel(Game game, Guid? playerGuid)
 		{
 			GameId = game.GameId;
 			PlayerGuid = playerGuid;
-            GameSize = game.TotalPlayers;
+            GameSize = game.GameSize;
+
 
 			var player = game.Players.FirstOrDefault(p => p.Guid == playerGuid);
 			IsSpectator = player == null;

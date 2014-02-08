@@ -20,20 +20,20 @@ namespace ResistanceOnline.Core.Test
 			Assert.AreEqual(Round.State.ProposingPlayers, round.DetermineState());
 
 			//select the players for the quest
-			round.PutOnQuest(players[0], players[0]);
+			round.AddToTeam(players[0], players[0]);
 			Assert.AreEqual(Round.State.ProposingPlayers, round.DetermineState());
-            round.PutOnQuest(players[0], players[1]);
-            round.PutOnQuest(players[0], players[2]);
+            round.AddToTeam(players[0], players[1]);
+            round.AddToTeam(players[0], players[2]);
 
 			Assert.AreEqual(Round.State.Voting, round.DetermineState());
 
 			//do some voting to see if everyone approves
-			round.VoteForQuest(players[0], true);
+			round.VoteForTeam(players[0], true);
 			Assert.AreEqual(Round.State.Voting, round.DetermineState());
-			round.VoteForQuest(players[1], true);
-			round.VoteForQuest(players[2], false);
-			round.VoteForQuest(players[3], false);
-			round.VoteForQuest(players[4], true);
+			round.VoteForTeam(players[1], true);
+			round.VoteForTeam(players[2], false);
+			round.VoteForTeam(players[3], false);
+			round.VoteForTeam(players[4], true);
 			
 			//do the quest
 			Assert.AreEqual(Round.State.Questing, round.DetermineState());
@@ -55,37 +55,37 @@ namespace ResistanceOnline.Core.Test
 			Assert.AreEqual(Round.State.ProposingPlayers, round.DetermineState());
 
 			//select the players for the quest
-            round.PutOnQuest(players[0], players[0]);
+            round.AddToTeam(players[0], players[0]);
 			Assert.AreEqual(Round.State.ProposingPlayers, round.DetermineState());
-            round.PutOnQuest(players[0], players[1]);
-            round.PutOnQuest(players[0], players[2]);
+            round.AddToTeam(players[0], players[1]);
+            round.AddToTeam(players[0], players[2]);
 
 			Assert.AreEqual(Round.State.Voting, round.DetermineState());
 
 			//do some voting to see if everyone approves
-			round.VoteForQuest(players[0], true);
+			round.VoteForTeam(players[0], true);
 			Assert.AreEqual(Round.State.Voting, round.DetermineState());
-			round.VoteForQuest(players[1], false);
-			round.VoteForQuest(players[2], false);
-			round.VoteForQuest(players[3], false);
-			round.VoteForQuest(players[4], true);
+			round.VoteForTeam(players[1], false);
+			round.VoteForTeam(players[2], false);
+			round.VoteForTeam(players[3], false);
+			round.VoteForTeam(players[4], true);
 
 			//nope, try again
 			Assert.AreEqual(Round.State.ProposingPlayers, round.DetermineState());
-            round.PutOnQuest(players[1], players[2]);
+            round.AddToTeam(players[1], players[2]);
 			Assert.AreEqual(Round.State.ProposingPlayers, round.DetermineState());
-            round.PutOnQuest(players[1], players[3]);
-            round.PutOnQuest(players[1], players[4]);
+            round.AddToTeam(players[1], players[3]);
+            round.AddToTeam(players[1], players[4]);
 
 			Assert.AreEqual(Round.State.Voting, round.DetermineState());
 
 			//do some voting to see if everyone approves
-			round.VoteForQuest(players[0], true);
+			round.VoteForTeam(players[0], true);
 			Assert.AreEqual(Round.State.Voting, round.DetermineState());
-			round.VoteForQuest(players[1], true);
-			round.VoteForQuest(players[2], false);
-			round.VoteForQuest(players[3], false);
-			round.VoteForQuest(players[4], true);
+			round.VoteForTeam(players[1], true);
+			round.VoteForTeam(players[2], false);
+			round.VoteForTeam(players[3], false);
+			round.VoteForTeam(players[4], true);
 
 			//do the quest
 			Assert.AreEqual(Round.State.Questing, round.DetermineState());

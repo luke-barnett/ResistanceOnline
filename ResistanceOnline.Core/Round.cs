@@ -25,10 +25,10 @@ namespace ResistanceOnline.Core
         List<Player> _players;
         int _currentPlayer;
 
-        public Round(List<Player> players, int currentPlayer, int size, int requiredFails)
+        public Round(List<Player> players, int currentPlayer, int teamSize, int requiredFails)
         {
             TotalPlayers = players.Count;
-            Size = size;
+            TeamSize = teamSize;
             RequiredFails = requiredFails;
 
             Quests = new List<Quest>();
@@ -39,7 +39,7 @@ namespace ResistanceOnline.Core
         }
 
         public int TotalPlayers { get; set; }
-        public int Size { get; set; }
+        public int TeamSize { get; set; }
         public int RequiredFails { get; set; }
         public int NextPlayer { get { return (_currentPlayer + 1) % TotalPlayers; } }
 
@@ -80,7 +80,7 @@ namespace ResistanceOnline.Core
                 return State.FailedAllVotes;
             
             //proposing
-            if (CurrentQuest.ProposedPlayers.Count < Size)
+            if (CurrentQuest.ProposedPlayers.Count < TeamSize)
                 return State.ProposingPlayers;
 
             //voting on proposing
@@ -88,7 +88,7 @@ namespace ResistanceOnline.Core
                 return State.Voting;
 
             //questing
-            if (CurrentQuest.QuestCards.Count < Size)
+            if (CurrentQuest.QuestCards.Count < TeamSize)
                 return State.Questing;
 
             //finished

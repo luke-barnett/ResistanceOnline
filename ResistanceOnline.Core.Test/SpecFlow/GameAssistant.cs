@@ -32,7 +32,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 			var game = ContextAccess.Game;
 			var leader = game.CurrentRound.CurrentQuest.Leader;
 			game.CurrentRound.PutOnQuest(leader, leader);
-			foreach (var player in game.Players.Where(player => player != leader).Take(game.CurrentRound.Size - 1))
+			foreach (var player in game.Players.Where(player => player != leader).Take(game.CurrentRound.TeamSize - 1))
 			{
 				game.CurrentRound.PutOnQuest(leader, player);
 			}

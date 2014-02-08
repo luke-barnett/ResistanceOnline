@@ -109,7 +109,7 @@
 			<input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
 			<input type="hidden" name="gameId" value="@Model.GameId" />
 			<div class="form-group">
-				@Html.DropDownList("Person", Model.PlayersSelectList)
+				@Html.DropDownList("Person", Model.PlayersSelectList, new { @class = "form-control" })
 			</div>
 			<input class="btn btn-default" type="submit" value="Put on Quest" />
 		</form>

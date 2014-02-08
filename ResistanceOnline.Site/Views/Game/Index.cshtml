@@ -1,24 +1,35 @@
 ﻿<div class="jumbotron">
 	<h2>Current Games</h2>
-    <ol>
-        @foreach (ResistanceOnline.Core.Game game in ViewBag.Games)
-        {
-        <li>
-            <span>@game.TotalPlayers players</span>
-            @if (game.ImpersonationEnabled)
-            {
-                <span>(Impersonation Enabled)</span>
-            }
-            <span>@game.DetermineState().ToString()</span>
-            <a href="/Game/@ViewBag.Games.IndexOf(game)">Spectate Game</a>
-        </li>
-        }
-    </ol>
-    <h2>Create a new game</h2>
-    <form action="/CreateGame" method="post">
-        <label for="players">Players</label><input type="number" value="5" id="players" name="players" /><br />
-        <input type="radio" name="impersonationEnabled" value="true" />Impersonation Enabled<br />
-        <input type="radio" name="impersonationEnabled" value="false" checked />Impersonation Disabled<br />
-        <input type="submit" value="Create game">
-    </form>
+	<ol>
+		@foreach (ResistanceOnline.Core.Game game in ViewBag.Games)
+		{
+		<li>
+			<span>@game.TotalPlayers players</span>
+			@if (game.ImpersonationEnabled)
+			{
+				<span>(Impersonation Enabled)</span>
+			}
+			<span>@game.DetermineState().Humanize(Humanizer.LetterCasing.Sentence)</span>
+			<a href="/Game/@ViewBag.Games.IndexOf(game)">Spectate Game</a>
+		</li>
+		}
+	</ol>
+	<h2>Create a new game</h2>
+	<form role="form" action="/CreateGame" method="post">
+		<div class="form-group">
+			<label for="players">Players</label>
+			<input type="number" class="form-control" value="5" id="players" name="players" />
+		</div>
+		<div class="radio">
+			<label>
+				<input type="radio" name="impersonationEnabled" value="true" />Impersonation Enabled
+			</label>
+		</div>
+		<div class="radio">
+			<label>
+				<input type="radio" name="impersonationEnabled" value="false" checked />Impersonation Disabled
+			</label>
+		</div>
+		<input class="btn btn-default" type="submit" value="Create game">
+</form>
 </div>

@@ -9,19 +9,6 @@ namespace ResistanceOnline.Site.Models
 {
     public class GameViewModel
     {
-        public class PlayerInfoModel
-        {
-            public string Name { get; set; }
-            public bool IsEvil { get; set; }
-            public bool CouldBeMerlin { get; set; }
-            public Character? CharacterCard { get; set; }
-        }
-
-        public class OtherActions {
-            public string Name { get; set; }
-            public string Action { get; set; }
-        }
-
         public int GameId { get; set; }
 
         public Guid? PlayerGuid { get; set; }
@@ -38,9 +25,11 @@ namespace ResistanceOnline.Site.Models
 
         public List<Core.Action.Type> Actions { get; set; }
 
-        public List<OtherActions> Waiting { get; set; }
+        public List<WaitingActionsModel> Waiting { get; set; }
 
         public List<PlayerInfoModel> PlayerInfo { get; set; }
+
+        public List<RoundModel> Rounds { get; set; }
 
         public bool IsSpectator { get; set; }
 
@@ -64,7 +53,7 @@ namespace ResistanceOnline.Site.Models
             Actions = game.AvailableActions(player);
 
             PlayerInfo = new List<PlayerInfoModel>();
-            Waiting = new List<OtherActions>();
+            Waiting = new List<WaitingActionsModel>();
             foreach (var p in game.Players)
             {
                 var playerInfo = new PlayerInfoModel 
@@ -81,48 +70,15 @@ namespace ResistanceOnline.Site.Models
 
                 PlayerInfo.Add(playerInfo);
 
-                Waiting.AddRange(game.AvailableActions(p).Select(a => new OtherActions { Action = a.ToString(), Name = p.Name }));
+                Waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a.ToString(), Name = p.Name }));
             }
             
             //game history
-            var log = new List<string>();
+            Rounds = new List<RoundModel>();
             foreach (var round in game.Rounds)
             {
-                log.Add("Round " + game.Rounds.IndexOf(round) + " - " + round.DetermineState().ToString());
-                log.Add("Round size " + round.Size);
-                log.Add("Required fails " + round.RequiredFails);
-                foreach (var quest in round.Quests)
-                {
-                    log.Add("Quest " + round.Quests.IndexOf(quest));
-                    log.Add("Quest Leader: " + quest.Leader.Name);
-                    foreach (var p in quest.ProposedPlayers)
-                    {
-                        log.Add("Proposed player: " + p.Name);
-                    }
-                    foreach (var v in quest.Votes)
-                    {
-                        log.Add(v.Player.Name + " votes " + (quest.Votes.Count == round.TotalPlayers ? (v.Approve ? "Approve" : "Reject") : "submitted"));
-                    }
-                    if (quest.QuestCards.Count == round.Size)
-                    {
-                        foreach (var q in quest.QuestCards.Select(q => q.Success).OrderBy(q => q))
-                        {
-                            log.Add(q ? "Success" : "Fail");
-                        }
-                    }
-                    else
-                    {
-                        foreach (var q in quest.QuestCards)
-                        {
-                            log.Add(q.Player.Name + " has submitted quest card");
-                        }
-
-                    }
-                }
+                Rounds.Add(new RoundModel(round));
             }
-            Log = log;
-
-
         }
 
 

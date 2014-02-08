@@ -16,6 +16,6 @@ namespace ResistanceOnline.Core
         Mordred,
         Oberon,
         Assassin,
-        Morcana
+        Morgana
     }
 }

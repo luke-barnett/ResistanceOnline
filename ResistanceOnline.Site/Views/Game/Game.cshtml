@@ -3,7 +3,7 @@
 
 	ViewBag.Title = "Game " + Model.GameId;
 }
-<h3>@Model.PlayerInfo.Count Characters</h3>
+<h3>@Model.CharactersInGame.Count Characters@(Model.CharactersMissing == 0 ? "" : " added so far, " + Model.CharactersMissing.ToString() + " to go")</h3>
 <ul class="cards">
 	@foreach (var c in Model.CharactersInGame)
 	{

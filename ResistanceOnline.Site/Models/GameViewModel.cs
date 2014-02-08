@@ -34,10 +34,15 @@ namespace ResistanceOnline.Site.Models
 
 		public bool IsSpectator { get; set; }
 
+        public int GameSize { get; set; }
+
+        public int CharactersMissing { get { return GameSize - CharactersInGame.Count; } }
+
 		public GameViewModel(Game game, Guid? playerGuid)
 		{
 			GameId = game.GameId;
 			PlayerGuid = playerGuid;
+            GameSize = game.TotalPlayers;
 
 			var player = game.Players.FirstOrDefault(p => p.Guid == playerGuid);
 			IsSpectator = player == null;

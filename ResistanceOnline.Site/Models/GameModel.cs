@@ -22,7 +22,8 @@ namespace ResistanceOnline.Site.Models
 
 		public List<SelectListItem> AllCharactersSelectList { get; set; }
 
-		public SelectList PlayersSelectList { get; set; }
+        public SelectList GuessMerlinPlayersSelectList { get; set; }
+        public SelectList AddToTeamPlayersSelectList { get; set; }
 
 		public List<Core.Action.Type> Actions { get; set; }
 
@@ -65,7 +66,13 @@ namespace ResistanceOnline.Site.Models
 					.Where(c => c != Character.UnAllocated)
 					.Select(c => new SelectListItem { Text = c.Humanize(LetterCasing.Sentence), Value = c.ToString() })
 					.ToList();
-			PlayersSelectList = new SelectList(game.Players.Select(p => p.Name));
+
+            //can guess anyone but self
+            GuessMerlinPlayersSelectList = new SelectList(game.Players.Where(p=>p!=player).Select(p => p.Name));
+
+            //can put anyone on a team who isn't already on it
+			AddToTeamPlayersSelectList = new SelectList(game.Players.Where(p=> !game.CurrentRound.CurrentTeam.TeamMembers.Select(t=>t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
+
 			Actions = game.AvailableActions(player);
 
 			PlayerInfo = new List<PlayerInfoModel>();

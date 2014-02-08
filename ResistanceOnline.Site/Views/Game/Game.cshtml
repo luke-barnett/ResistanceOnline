@@ -3,13 +3,17 @@
 
 	ViewBag.Title = "Game " + Model.GameId;
 }
+@if (Model.PlayerGuid.HasValue)
+{
+    <p class="bookmark-instructions">Hello @Model.PlayerName, don't forget to bookmark this URL!</p>
+}
 <h3>Game setup</h3>
 <p>
     @Model.GameSize player game with the following characters
     @if (Model.CharactersMissing > 0)
     {
     <span class="important">(@Model.CharactersMissing still to be added)</span>
-    }
+    }        
 </p>
 <ul class="cards">
 	@foreach (var c in Model.CharactersInGame)
@@ -17,6 +21,19 @@
 		<li><img class="card" src="/Images/@(c).png" alt="@c.Humanize()" title="@c.Humanize()" /></li>
 	}
 </ul>
+@if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.AddCharacter))
+{
+    <form role="form" action="/AddCharacter" method="post">
+        <input type="hidden" name="gameid" value="@Model.GameId" />
+        <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+        <div class="form-group">
+            @Html.DropDownList("Character", Model.AllCharactersSelectList, new { @class = "form-control" })
+        </div>
+        <input class="btn btn-default" type="submit" value="Add Character" />
+    </form>
+}
+
+
 <div class="clear"></div>
 
 @if (Model.PlayerInfo.Count > 0) { 
@@ -90,17 +107,6 @@
 }
 
 @if (Model.Actions.Count>0) { 
-	if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.AddCharacter))
-	{
-		<form role="form" action="/AddCharacter" method="post">
-			<input type="hidden" name="gameid" value="@Model.GameId" />
-			<input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
-			<div class="form-group">
-				@Html.DropDownList("Character", Model.AllCharactersSelectList, new { @class = "form-control" })
-			</div>
-			<input class="btn btn-default" type="submit" value="Add Character" />
-		</form>
-	}
 	if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.GuessMerlin))
 	{
 		<form role="form" action="/GuessMerlin" method="post">

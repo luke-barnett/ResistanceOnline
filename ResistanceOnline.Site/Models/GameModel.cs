@@ -50,6 +50,8 @@ namespace ResistanceOnline.Site.Models
 			var player = game.Players.FirstOrDefault(p => p.Guid == playerGuid);
 			IsSpectator = player == null;
 
+            PlayerName = player == null ? "Spectator" : player.Name;
+
 			if (game.ImpersonationEnabled)
 			{
 				ImpersonationList = game.Players.ToList();
@@ -95,7 +97,6 @@ namespace ResistanceOnline.Site.Models
 			}
 		}
 
-
-		public List<string> Log { get; set; }
-	}
+        public object PlayerName { get; set; }
+    }
 }

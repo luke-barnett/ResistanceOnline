@@ -34,12 +34,22 @@
 
 @section scripts {
 <script>
-	$(function () {
-		$(".playercard").hover(function () {
-			$(this).attr('src', $(this).attr('data-actual'));
-		}, function () {
-			$(this).attr('src', '/images/player.png');
-		});
+    $(function () {
+        //show extra info on mouse over
+	    $(".playercard").hover(function () {
+	        $(this).attr('src', $(this).attr('data-actual'));
+	    }, function () {
+	        $(this).attr('src', '/images/player.png');
+	    });
+        //show extra info on click for touchscreen devices
+	    $(".playercard").click(function () {
+	        $(this).unbind("mouseenter mouseleave");
+	        if ($(this).attr('src') == $(this).attr('data-actual')) {
+	            $(this).attr('src', '/images/player.png');
+	        } else {
+	            $(this).attr('src', $(this).attr('data-actual'));
+	        }
+	    });
 	});
 </script>
 }

@@ -7,13 +7,13 @@ namespace ResistanceOnline.Site.Models
 {
     public class RoundModel
     {
-        public int Players { get; set; }
+        public int TeamSize { get; set; }
         public int FailsRequired { get; set; }
         public List<QuestModel> Quests { get; set; }
 
         public RoundModel(Core.Round round)
         {
-            Players = round.TotalPlayers;
+            TeamSize = round.TeamSize;
             FailsRequired = round.RequiredFails;
 
             Quests = new List<QuestModel>();

@@ -23,7 +23,7 @@ namespace ResistanceOnline.Site.Models
             }
         }
 
-        public VoteModel(Core.QuestVote vote, bool hidden)
+        public VoteModel(Core.Vote vote, bool hidden)
         {
             if (!hidden)
                 Player = vote.Player.Name;

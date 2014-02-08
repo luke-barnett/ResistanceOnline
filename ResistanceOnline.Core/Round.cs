@@ -31,8 +31,8 @@ namespace ResistanceOnline.Core
             TeamSize = teamSize;
             RequiredFails = requiredFails;
 
-            Quests = new List<Quest>();
-            Quests.Add(new Quest(players[currentPlayer]));
+            Teams = new List<Team>();
+            Teams.Add(new Team(players[currentPlayer]));
 
             _players = players;
             _currentPlayer = currentPlayer;
@@ -43,56 +43,56 @@ namespace ResistanceOnline.Core
         public int RequiredFails { get; set; }
         public int NextPlayer { get { return (_currentPlayer + 1) % TotalPlayers; } }
 
-        public Quest CurrentQuest { get { return Quests.Last(); } }
+        public Team CurrentTeam { get { return Teams.Last(); } }
 
-        public List<Quest> Quests { get; set; }
+        public List<Team> Teams { get; set; }
 
-        public void PutOnQuest(Player player, Player proposedPlayer)
+        public void AddToTeam(Player player, Player proposedPlayer)
         {
-            CurrentQuest.ProposePlayer(player, proposedPlayer);
+            CurrentTeam.AddToTeam(player, proposedPlayer);
         }
 
-        public void VoteForQuest(Player player, bool approve)
+        public void VoteForTeam(Player player, bool approve)
         {
-            CurrentQuest.VoteForQuest(player, approve);
+            CurrentTeam.VoteForTeam(player, approve);
 
             //on the last vote, if it fails, create the next quest
-            if (CurrentQuest.Votes.Count == TotalPlayers)
+            if (CurrentTeam.Votes.Count == TotalPlayers)
             {
-                var rejects = CurrentQuest.Votes.Where(v => !v.Approve).Count();
+                var rejects = CurrentTeam.Votes.Where(v => !v.Approve).Count();
                 if (rejects >= Math.Ceiling(TotalPlayers / 2.0))
                 {
                     _currentPlayer = NextPlayer;
-                    Quests.Add(new Quest(_players[_currentPlayer]));
+                    Teams.Add(new Team(_players[_currentPlayer]));
                 }
             }
         }
 
         public void SubmitQuest(Player player, bool success)
         {
-            CurrentQuest.SubmitQuest(player, success);
+            CurrentTeam.SubmitQuest(player, success);
         }
 
         public State DetermineState()
         {
             //no more than 5 quest votes per round
-            if (Quests.Count > 5)
+            if (Teams.Count > 5)
                 return State.FailedAllVotes;
             
             //proposing
-            if (CurrentQuest.ProposedPlayers.Count < TeamSize)
+            if (CurrentTeam.TeamMembers.Count < TeamSize)
                 return State.ProposingPlayers;
 
             //voting on proposing
-            if (CurrentQuest.Votes.Count < TotalPlayers)
+            if (CurrentTeam.Votes.Count < TotalPlayers)
                 return State.Voting;
 
             //questing
-            if (CurrentQuest.QuestCards.Count < TeamSize)
+            if (CurrentTeam.Quests.Count < TeamSize)
                 return State.Questing;
 
             //finished
-            var fails = CurrentQuest.QuestCards.Where(c => !c.Success).Count();
+            var fails = CurrentTeam.Quests.Where(c => !c.Success).Count();
             if (fails >= RequiredFails)
                 return State.Failed;
 

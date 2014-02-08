@@ -24,64 +24,66 @@ namespace ResistanceOnline.Core
             Players = new List<Player>();
             Rounds = new List<Round>();
             AvailableCharacters = new List<Character>();
-            TotalPlayers = players;
-        }
+            GameSize = players;
 
-        private class TableausRound
-        {
-            public int Round { get; set; }
-            public int Players { get; set; }
-            public int QuestSize { get; set; }
-            public int RequiredFails { get; set; }
-        }
-
-        List<TableausRound> TablausRoundDefinitions = new List<TableausRound>()
-        {
-            new TableausRound{ Players = 5, Round = 1, QuestSize=2, RequiredFails = 1 },
-            new TableausRound{ Players = 5, Round = 2, QuestSize=3, RequiredFails = 1 },
-            new TableausRound{ Players = 5, Round = 3, QuestSize=2, RequiredFails = 1 },
-            new TableausRound{ Players = 5, Round = 4, QuestSize=3, RequiredFails = 1 },
-            new TableausRound{ Players = 5, Round = 5, QuestSize=3, RequiredFails = 1 },
-
-            new TableausRound{ Players = 6, Round = 1, QuestSize=2, RequiredFails = 1 },
-            new TableausRound{ Players = 6, Round = 2, QuestSize=3, RequiredFails = 1 },
-            new TableausRound{ Players = 6, Round = 3, QuestSize=4, RequiredFails = 1 },
-            new TableausRound{ Players = 6, Round = 4, QuestSize=3, RequiredFails = 1 },
-            new TableausRound{ Players = 6, Round = 5, QuestSize=4, RequiredFails = 1 },
-
-            new TableausRound{ Players = 7, Round = 1, QuestSize=2, RequiredFails = 1 },
-            new TableausRound{ Players = 7, Round = 2, QuestSize=3, RequiredFails = 1 },
-            new TableausRound{ Players = 7, Round = 3, QuestSize=3, RequiredFails = 1 },
-            new TableausRound{ Players = 7, Round = 4, QuestSize=4, RequiredFails = 2 },
-            new TableausRound{ Players = 7, Round = 5, QuestSize=4, RequiredFails = 1 },
-
-            new TableausRound{ Players = 8, Round = 1, QuestSize=3, RequiredFails = 1 },
-            new TableausRound{ Players = 8, Round = 2, QuestSize=4, RequiredFails = 1 },
-            new TableausRound{ Players = 8, Round = 3, QuestSize=4, RequiredFails = 1 },
-            new TableausRound{ Players = 8, Round = 4, QuestSize=5, RequiredFails = 2 },
-            new TableausRound{ Players = 8, Round = 5, QuestSize=5, RequiredFails = 1 },
-
-            new TableausRound{ Players = 9, Round = 1, QuestSize=3, RequiredFails = 1 },
-            new TableausRound{ Players = 9, Round = 2, QuestSize=4, RequiredFails = 1 },
-            new TableausRound{ Players = 9, Round = 3, QuestSize=4, RequiredFails = 1 },
-            new TableausRound{ Players = 9, Round = 4, QuestSize=5, RequiredFails = 2 },
-            new TableausRound{ Players = 9, Round = 5, QuestSize=5, RequiredFails = 1 },
-
-            new TableausRound{ Players = 10, Round = 1, QuestSize=3, RequiredFails = 1 },
-            new TableausRound{ Players = 10, Round = 2, QuestSize=4, RequiredFails = 1 },
-            new TableausRound{ Players = 10, Round = 3, QuestSize=4, RequiredFails = 1 },
-            new TableausRound{ Players = 10, Round = 4, QuestSize=5, RequiredFails = 2 },
-            new TableausRound{ Players = 10, Round = 5, QuestSize=5, RequiredFails = 1 },
-
-        };
+            Tableaus = new List<Tableaus>();
+            switch (players)
+            {
+                case 5:
+                    Tableaus.Add(new Tableaus(2));
+                    Tableaus.Add(new Tableaus(3));
+                    Tableaus.Add(new Tableaus(2));
+                    Tableaus.Add(new Tableaus(3));
+                    Tableaus.Add(new Tableaus(3));
+                    break;
+                case 6:
+                    Tableaus.Add(new Tableaus(2));
+                    Tableaus.Add(new Tableaus(3));
+                    Tableaus.Add(new Tableaus(4));
+                    Tableaus.Add(new Tableaus(3));
+                    Tableaus.Add(new Tableaus(4));
+                    break;
+                case 7:
+                    Tableaus.Add(new Tableaus(2));
+                    Tableaus.Add(new Tableaus(3));
+                    Tableaus.Add(new Tableaus(3));
+                    Tableaus.Add(new Tableaus(4,2));
+                    Tableaus.Add(new Tableaus(4));
+                    break;
+                case 8:
+                    Tableaus.Add(new Tableaus(3));
+                    Tableaus.Add(new Tableaus(4));
+                    Tableaus.Add(new Tableaus(4));
+                    Tableaus.Add(new Tableaus(5,2));
+                    Tableaus.Add(new Tableaus(5));
+                    break;
+                case 9:
+                    Tableaus.Add(new Tableaus(3));
+                    Tableaus.Add(new Tableaus(4));
+                    Tableaus.Add(new Tableaus(4));
+                    Tableaus.Add(new Tableaus(5,2));
+                    Tableaus.Add(new Tableaus(5));
+                    break;
+                case 10:
+                    Tableaus.Add(new Tableaus(3));
+                    Tableaus.Add(new Tableaus(4));
+                    Tableaus.Add(new Tableaus(4));
+                    Tableaus.Add(new Tableaus(5,2));
+                    Tableaus.Add(new Tableaus(5));
+                    break;
+                default:
+                    throw new Exception("No tableaus for games with " + players + " players");
+            }
+        }                  
 
         public List<Character> AvailableCharacters { get; set; }
-        public int TotalPlayers { get; set; }
+        public int GameSize { get; set; }
         public bool ImpersonationEnabled { get; set; }
         public List<Player> Players { get; set; }
         public List<Round> Rounds { get; set; }
         public int QuestIndicator { get; set; }
         public Player AssassinsGuessAtMerlin { get; set; }
+        public List<Tableaus> Tableaus { get; set; }
 
         public void GuessMerlin(Player player, Player guess)
         {
@@ -96,12 +98,12 @@ namespace ResistanceOnline.Core
 
         public void AddCharacter(Character character)
         {
-            if (AvailableCharacters.Count == TotalPlayers)
+            if (AvailableCharacters.Count == GameSize)
                 throw new Exception("All roles added");
             AvailableCharacters.Add(character);
 
             //on last character, allocate characters 
-            if (AvailableCharacters.Count == TotalPlayers && Players.Count == TotalPlayers)
+            if (AvailableCharacters.Count == GameSize && Players.Count == GameSize)
             {
                 Allocate();
             }
@@ -109,7 +111,7 @@ namespace ResistanceOnline.Core
 
         public Guid JoinGame(string playerName)
         {
-            if (Players.Count == TotalPlayers)
+            if (Players.Count == GameSize)
                 throw new Exception("Game already full");
 
             if (Players.Select(p=>p.Name).Contains(playerName))
@@ -119,7 +121,7 @@ namespace ResistanceOnline.Core
             Players.Add(new Player() { Name = playerName, Guid = guid });
 
             //on last player, allocate characters if 
-            if (AvailableCharacters.Count == TotalPlayers)
+            if (AvailableCharacters.Count == GameSize)
             {
                 Allocate();
             }
@@ -129,9 +131,9 @@ namespace ResistanceOnline.Core
         private void Allocate()
         {
             //on last player, allocate characters
-            if (Players.Count == TotalPlayers)
+            if (Players.Count == GameSize)
             {
-                if (AvailableCharacters.Count != TotalPlayers)
+                if (AvailableCharacters.Count != GameSize)
                     throw new Exception("Not Enough Characters for Players");
 
                 var characterCards = AvailableCharacters.ToList();
@@ -144,7 +146,7 @@ namespace ResistanceOnline.Core
                 }
 
                 //create first round
-                CreateRound(random.Next(TotalPlayers));
+                CreateRound(random.Next(GameSize));
             }
 
 
@@ -152,23 +154,24 @@ namespace ResistanceOnline.Core
 
         private void CreateRound(int leader)
         {
-            var tablaus = TablausRoundDefinitions.FirstOrDefault(t => t.Players == TotalPlayers && t.Round == 1);
-            if (tablaus == null)
-                throw new Exception("Missing definitions for games with " + TotalPlayers + " players in round " + 1);
-            Rounds.Add(new Round(Players, leader, tablaus.QuestSize, tablaus.RequiredFails));
+            if (Rounds.Count > Tableaus.Count)
+                throw new Exception("round overrun");
+
+            var tableaus = Tableaus[Rounds.Count];
+            Rounds.Add(new Round(Players, leader, tableaus.TeamSize, tableaus.RequiredFails));
 
         }
 
         public Round CurrentRound { get { return Rounds.Last(); } }
 
-        public void PutOnQuest(Player player, Player proposedPlayer)
+        public void AddToTeam(Player player, Player proposedPlayer)
         {
-            CurrentRound.PutOnQuest(player, proposedPlayer);
+            CurrentRound.AddToTeam(player, proposedPlayer);
         }
 
-        public void VoteForQuest(Player player, bool approve)
+        public void VoteForTeam(Player player, bool approve)
         {
-            CurrentRound.VoteForQuest(player, approve);           
+            CurrentRound.VoteForTeam(player, approve);           
         }
 
         public void SubmitQuest(Player player, bool success)
@@ -195,7 +198,7 @@ namespace ResistanceOnline.Core
 
         public State DetermineState()
         {
-            if (AvailableCharacters.Count < TotalPlayers || Players.Count < TotalPlayers)
+            if (AvailableCharacters.Count < GameSize || Players.Count < GameSize)
                 return State.GameSetup;
 
             if (Rounds.Select(r => r.DetermineState() == Round.State.Failed).Count() >= 3)
@@ -228,24 +231,24 @@ namespace ResistanceOnline.Core
             {
                 case Game.State.Playing:
                     var roundState = CurrentRound.DetermineState();
-                    var quest = CurrentRound.CurrentQuest;
+                    var quest = CurrentRound.CurrentTeam;
                     switch (roundState)
                     {
                         case Round.State.ProposingPlayers:
                             if (player!=null && quest.Leader.Name == player.Name)
                             {
-                                return new List<Action.Type>() { Action.Type.PutOnQuest };
+                                return new List<Action.Type>() { Action.Type.AddToTeam };
                             }
                             return new List<Action.Type>();
                         case Round.State.Voting:
                             if (player!=null && !quest.Votes.Select(v => v.Player.Name).ToList().Contains(player.Name))
                             {
-                                return new List<Action.Type>() { Action.Type.VoteForQuest };
+                                return new List<Action.Type>() { Action.Type.VoteForTeam };
                             }
                             return new List<Action.Type>();
                         case Round.State.Questing:
-                            if (quest.ProposedPlayers.Select(v => v.Name).ToList().Contains(player.Name) &&
-                                !quest.QuestCards.Select(q => q.Player.Name).ToList().Contains(player.Name))
+                            if (quest.TeamMembers.Select(v => v.Name).ToList().Contains(player.Name) &&
+                                !quest.Quests.Select(q => q.Player.Name).ToList().Contains(player.Name))
                             {
                                 return new List<Action.Type>() { Action.Type.SubmitQuestCard };
                             }
@@ -256,13 +259,13 @@ namespace ResistanceOnline.Core
                 
                 case Game.State.GameSetup:
                     var actions = new List<Action.Type>();
-                    if (player == null && Players.Count < TotalPlayers)
+                    if (player == null && Players.Count < GameSize)
                     {
                         actions.Add(Action.Type.JoinGame);
                     }
-                    if (player != null && AvailableCharacters.Count < TotalPlayers)
+                    if (player != null && AvailableCharacters.Count < GameSize)
                     {
-                        actions.Add(Action.Type.AddCharacterCard);
+                        actions.Add(Action.Type.AddCharacter);
                     }
                     return actions;
                 
@@ -292,7 +295,7 @@ namespace ResistanceOnline.Core
 
             switch (action.ActionType)
             {
-                case Action.Type.AddCharacterCard:
+                case Action.Type.AddCharacter:
                     AddCharacter(action.Character);
                     break;
                 case Action.Type.GuessMerlin:
@@ -301,14 +304,14 @@ namespace ResistanceOnline.Core
                 case Action.Type.JoinGame:
                     JoinGame(action.Name);
                     break;
-                case Action.Type.PutOnQuest:
-                    PutOnQuest(player, action.Player);
+                case Action.Type.AddToTeam:
+                    AddToTeam(player, action.Player);
                     break;
                 case Action.Type.SubmitQuestCard:
                     SubmitQuest(player, action.Success);
                     break;
-                case Action.Type.VoteForQuest:
-                    VoteForQuest(player, action.Accept);
+                case Action.Type.VoteForTeam:
+                    VoteForTeam(player, action.Accept);
                     break;
                 default:
                     throw new NotImplementedException();

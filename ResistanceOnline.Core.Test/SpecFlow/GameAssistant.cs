@@ -30,17 +30,17 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 		internal void ChooseCrew()
 		{
 			var game = ContextAccess.Game;
-			var leader = game.CurrentRound.CurrentQuest.Leader;
-			game.CurrentRound.PutOnQuest(leader, leader);
+			var leader = game.CurrentRound.CurrentTeam.Leader;
+			game.CurrentRound.AddToTeam(leader, leader);
 			foreach (var player in game.Players.Where(player => player != leader).Take(game.CurrentRound.TeamSize - 1))
 			{
-				game.CurrentRound.PutOnQuest(leader, player);
+				game.CurrentRound.AddToTeam(leader, player);
 			}
 		}
 
 		internal void AllApproveTeam()
 		{
-			VoteForTeam(ContextAccess.Game.TotalPlayers);
+			VoteForTeam(ContextAccess.Game.GameSize);
 		}
 
 		internal void AllDeclineTeam()
@@ -54,12 +54,12 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 
 			foreach (var player in ContextAccess.Game.Players.Take(numberOfPlayersForTeam))
 			{
-				round.VoteForQuest(player, true);
+				round.VoteForTeam(player, true);
 			}
 
 			foreach (var player in ContextAccess.Game.Players.Skip(numberOfPlayersForTeam))
 			{
-				round.VoteForQuest(player, false);
+				round.VoteForTeam(player, false);
 			}
 		}
 

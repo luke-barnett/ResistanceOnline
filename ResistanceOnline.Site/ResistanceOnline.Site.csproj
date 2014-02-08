@@ -176,10 +176,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\GameViewModel.cs" />
+    <Compile Include="Models\GameModel.cs" />
     <Compile Include="Models\PlayerInfoModel.cs" />
-    <Compile Include="Models\QuestCardModel.cs" />
     <Compile Include="Models\QuestModel.cs" />
+    <Compile Include="Models\TeamModel.cs" />
     <Compile Include="Models\RoundModel.cs" />
     <Compile Include="Models\VoteModel.cs" />
     <Compile Include="Models\WaitingActionsModel.cs" />

@@ -73,7 +73,7 @@ namespace ResistanceOnline.Site.Controllers
                 return RedirectToAction("Index");
             }
 
-            var viewModel = new GameViewModel(game, playerGuid);
+            var viewModel = new GameModel(game, playerGuid);
 
             return View(viewModel);
         }
@@ -87,11 +87,11 @@ namespace ResistanceOnline.Site.Controllers
             return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }        
         [HttpPost]
-        public ActionResult PutOnQuest(int gameId, Guid playerGuid, string person) 
+        public ActionResult AddToTeam(int gameId, Guid playerGuid, string person) 
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
-            game.PutOnQuest(player, game.Players.First(p => p.Name == person));
+            game.AddToTeam(player, game.Players.First(p => p.Name == person));
             return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }        
         [HttpPost]
@@ -103,11 +103,11 @@ namespace ResistanceOnline.Site.Controllers
             return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }        
         [HttpPost]
-        public ActionResult VoteForQuest(int gameId, Guid playerGuid, bool approve) 
+        public ActionResult VoteForTeam(int gameId, Guid playerGuid, bool approve) 
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
-            game.VoteForQuest(player, approve);
+            game.VoteForTeam(player, approve);
             return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }                             
         [HttpPost]

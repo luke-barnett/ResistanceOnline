@@ -99,6 +99,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Images\assassin.png" />
     <Content Include="Images\avalon.png" />
     <Content Include="Images\evil.png" />
     <Content Include="Images\good.png" />
@@ -111,6 +112,7 @@
     <Content Include="Images\morgana.png" />
     <Content Include="Images\oberon.png" />
     <Content Include="Images\percival.png" />
+    <Content Include="Images\player.png" />
     <Content Include="Images\quest.png" />
     <Content Include="Images\questfail.png" />
     <Content Include="Images\questsuccess.png" />
@@ -164,6 +166,12 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\GameViewModel.cs" />
+    <Compile Include="Models\PlayerInfoModel.cs" />
+    <Compile Include="Models\QuestCardModel.cs" />
+    <Compile Include="Models\QuestModel.cs" />
+    <Compile Include="Models\RoundModel.cs" />
+    <Compile Include="Models\VoteModel.cs" />
+    <Compile Include="Models\WaitingActionsModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

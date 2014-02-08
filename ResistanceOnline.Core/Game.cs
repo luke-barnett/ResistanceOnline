@@ -328,9 +328,9 @@ namespace ResistanceOnline.Core
                 return false;
 
             //minions know each other (except oberon)
-            if (myself.Character == Character.Assassin || myself.Character == Character.Morcana || myself.Character == Character.MinionOfMordred || myself.Character == Character.Mordred)
+            if (myself.Character == Character.Assassin || myself.Character == Character.Morgana || myself.Character == Character.MinionOfMordred || myself.Character == Character.Mordred)
             {
-                if (someoneelse.Character == Character.Assassin || someoneelse.Character == Character.Morcana || someoneelse.Character == Character.MinionOfMordred || someoneelse.Character == Character.Mordred)
+                if (someoneelse.Character == Character.Assassin || someoneelse.Character == Character.Morgana || someoneelse.Character == Character.MinionOfMordred || someoneelse.Character == Character.Mordred)
                 {
                     return true;
                 }
@@ -339,7 +339,7 @@ namespace ResistanceOnline.Core
             //merlin knows minions (except mordred)
             if (myself.Character == Character.Merlin)
             {
-                if (someoneelse.Character == Character.Assassin || someoneelse.Character == Character.Morcana || someoneelse.Character == Character.MinionOfMordred || someoneelse.Character == Character.Oberon)
+                if (someoneelse.Character == Character.Assassin || someoneelse.Character == Character.Morgana || someoneelse.Character == Character.MinionOfMordred || someoneelse.Character == Character.Oberon)
                 {
                     return true;
                 }
@@ -361,7 +361,7 @@ namespace ResistanceOnline.Core
 
             if (myself.Character == Character.Percival)
             {
-                if (someoneelse.Character == Character.Merlin || someoneelse.Character == Character.Morcana)
+                if (someoneelse.Character == Character.Merlin || someoneelse.Character == Character.Morgana)
                 {
                     return true;
                 }

@@ -23,7 +23,7 @@ namespace ResistanceOnline.Site.Controllers
                 game.AddCharacter(Character.Assassin);
                 game.AddCharacter(Character.LoyalServantOfArthur);
                 game.AddCharacter(Character.Percival);
-                game.AddCharacter(Character.Morcana);
+                game.AddCharacter(Character.Morgana);
                 game.AddCharacter(Character.Merlin);
                 game.JoinGame("Jordan");
                 game.JoinGame("Luke");

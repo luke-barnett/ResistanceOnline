@@ -11,14 +11,14 @@ namespace ResistanceOnline.Core.Test
         [TestMethod]
         public void DetectEvil()
         {
-            EvilTest(Character.Assassin, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morcana, Character.Mordred });
-            EvilTest(Character.MinionOfMordred, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morcana, Character.Mordred });
-            EvilTest(Character.Morcana, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morcana, Character.Mordred });
-            EvilTest(Character.Mordred, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morcana, Character.Mordred });
+            EvilTest(Character.Assassin, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred });
+            EvilTest(Character.MinionOfMordred, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred });
+            EvilTest(Character.Morgana, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred });
+            EvilTest(Character.Mordred, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred });
             EvilTest(Character.Oberon, new List<Character> { });
             EvilTest(Character.LoyalServantOfArthur, new List<Character> { });
             EvilTest(Character.Percival, new List<Character> { });
-            EvilTest(Character.Merlin, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morcana, Character.Oberon });
+            EvilTest(Character.Merlin, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Oberon });
         }
 
         private void EvilTest(Character character, List<Character> expected)
@@ -39,11 +39,11 @@ namespace ResistanceOnline.Core.Test
         {
             MerlinTest(Character.Assassin, new List<Character> { });
             MerlinTest(Character.MinionOfMordred, new List<Character> { });
-            MerlinTest(Character.Morcana, new List<Character> { });
+            MerlinTest(Character.Morgana, new List<Character> { });
             MerlinTest(Character.Mordred, new List<Character> { });
             MerlinTest(Character.Oberon, new List<Character> { });
             MerlinTest(Character.LoyalServantOfArthur, new List<Character> { });
-            MerlinTest(Character.Percival, new List<Character> { Character.Morcana, Character.Merlin });
+            MerlinTest(Character.Percival, new List<Character> { Character.Morgana, Character.Merlin });
             MerlinTest(Character.Merlin, new List<Character> { });
         }
 
@@ -69,7 +69,7 @@ namespace ResistanceOnline.Core.Test
             game.AddCharacter(Character.Assassin);
             game.AddCharacter(Character.LoyalServantOfArthur);
             game.AddCharacter(Character.Percival);
-            game.AddCharacter(Character.Morcana);
+            game.AddCharacter(Character.Morgana);
             game.AddCharacter(Character.Merlin);
 
             Assert.AreEqual(Game.State.GameSetup, game.DetermineState());
@@ -85,7 +85,7 @@ namespace ResistanceOnline.Core.Test
             Assert.IsTrue(allocatedCharacters.Contains(Character.Assassin));
             Assert.IsTrue(allocatedCharacters.Contains(Character.LoyalServantOfArthur));
             Assert.IsTrue(allocatedCharacters.Contains(Character.Percival));
-            Assert.IsTrue(allocatedCharacters.Contains(Character.Morcana));
+            Assert.IsTrue(allocatedCharacters.Contains(Character.Morgana));
             Assert.IsTrue(allocatedCharacters.Contains(Character.Merlin));
             Assert.IsFalse(allocatedCharacters.Contains(Character.UnAllocated));
         }        

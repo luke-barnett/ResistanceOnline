@@ -39,7 +39,7 @@
 
 @foreach (var round in Model.Rounds)
 {
-	<h3>Round @Model.Rounds.IndexOf(round), @round.Players players, @round.FailsRequired fail@(round.FailsRequired==2?"s":"") required</h3>
+	<h3>Round @(Model.Rounds.IndexOf(round)+1), @round.Players players, @round.FailsRequired fail@(round.FailsRequired==2?"s":"") required</h3>
 	foreach (var quest in round.Quests)
 	{
 		<div class="quest">

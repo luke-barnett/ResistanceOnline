@@ -64,6 +64,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GameRounds.feature</DependentUpon>
     </Compile>
+    <Compile Include="SpecFlow\GameAssistant.cs" />
     <Compile Include="SpecFlow\Steps\GameSteps.cs" />
   </ItemGroup>
   <ItemGroup>

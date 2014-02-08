@@ -114,8 +114,10 @@
     <Content Include="Images\assassin.png" />
     <Content Include="Images\avalon.png" />
     <Content Include="Images\evil.png" />
+    <Content Include="Images\evillancelot.png" />
     <Content Include="Images\good.png" />
     <Content Include="Images\ladyofthelake.png" />
+    <Content Include="Images\lancelot.png" />
     <Content Include="Images\leadertoken.png" />
     <Content Include="Images\loyalservantofarthur.png" />
     <Content Include="Images\merlin.png" />

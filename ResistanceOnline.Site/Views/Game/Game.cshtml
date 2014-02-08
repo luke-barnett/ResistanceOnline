@@ -12,6 +12,7 @@
 </ul>
 <div class="clear"></div>
 
+@if (Model.PlayerInfo.Count > 0) { 
 <h3>Oracle</h3>
 <ul class="cards">
 	@foreach (var p in Model.PlayerInfo)
@@ -22,6 +23,7 @@
 		</li>
 	}
 </ul>
+
 @section scripts {
 <script>
 	$(function () {
@@ -33,7 +35,7 @@
 	});
 </script>
 }
-
+}
 
 <div class="clear"></div>
 

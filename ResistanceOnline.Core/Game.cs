@@ -238,7 +238,7 @@ namespace ResistanceOnline.Core
                             }
                             return new List<Action.Type>();
                         case Round.State.Voting:
-                            if (!quest.Votes.Select(v => v.Player.Name).ToList().Contains(player.Name))
+                            if (player!=null && !quest.Votes.Select(v => v.Player.Name).ToList().Contains(player.Name))
                             {
                                 return new List<Action.Type>() { Action.Type.VoteForQuest };
                             }

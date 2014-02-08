@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
 using TechTalk.SpecFlow;
 
 namespace ResistanceOnline.Core.Test.SpecFlow.Steps
@@ -7,19 +6,17 @@ namespace ResistanceOnline.Core.Test.SpecFlow.Steps
 	[Binding]
 	public class GameSteps
 	{
+		readonly GameAssistant _gameAssistant;
+
+		internal GameSteps(GameAssistant gameAssistant)
+		{
+			_gameAssistant = gameAssistant;
+		}
+
 		[Given(@"there is a standard game of (.*) players")]
 		public void GivenThereIsAStandardGameOfPlayers(int numberOfPlayers)
 		{
-			var game = new Game(numberOfPlayers, false);
-
-			//TODO: map to standard game types for good/evil numbers
-			for (var i = 0; i < numberOfPlayers; i++)
-			{
-				game.AddCharacter(Character.LoyalServantOfArthur);
-				game.JoinGame(string.Format("player{0}", i));
-			}
-
-			ContextAccess.Game = game;
+			_gameAssistant.CreateStandardGame(numberOfPlayers);
 		}
 
 		[Given(@"the game is in the (first|second|third|fourth|fifth) round")]
@@ -33,19 +30,19 @@ namespace ResistanceOnline.Core.Test.SpecFlow.Steps
 					break;
 
 				case "second":
-					ScenarioContext.Current.Pending();
+					_gameAssistant.ProgressToRound(2);
 					break;
 
 				case "third":
-					ScenarioContext.Current.Pending();
+					_gameAssistant.ProgressToRound(3);
 					break;
 
 				case "fourth":
-					ScenarioContext.Current.Pending();
+					_gameAssistant.ProgressToRound(4);
 					break;
 
 				case "fifth":
-					ScenarioContext.Current.Pending();
+					_gameAssistant.ProgressToRound(5);
 					break;
 			}
 		}
@@ -53,40 +50,84 @@ namespace ResistanceOnline.Core.Test.SpecFlow.Steps
 		[Given(@"the leader has chosen his crew")]
 		public void GivenTheLeaderHasChosenHisCrew()
 		{
-			var game = ContextAccess.Game;
-			var leader = game.CurrentRound.CurrentQuest.Leader;
-			game.CurrentRound.PutOnQuest(leader, leader);
-			foreach (var player in game.Players.Where(player => player != leader).Take(game.CurrentRound.Size - 1))
-			{
-				game.CurrentRound.PutOnQuest(leader, player);
-			}
+			_gameAssistant.ChooseCrew();
+		}
+
+		[Given(@"merlin is not a character")]
+		public void GivenMerlinIsNotACharacter()
+		{
+			_gameAssistant.RemoveMerlin();
+		}
+
+		[Given(@"merlin is a character")]
+		public void GivenMerlinIsACharacter()
+		{
+			_gameAssistant.AddMerlin();
 		}
 
 		[When(@"everyone approves the quest")]
-		public void WhenAllPlayersApproveTheQuest()
+		public void WhenEveryoneApprovesTheQuest()
 		{
-			var round = ContextAccess.Game.CurrentRound;
+			_gameAssistant.AllApproveTeam();
+		}
 
-			foreach (var player in ContextAccess.Game.Players)
-			{
-				round.VoteForQuest(player, true);
-			}
+		[When(@"everyone rejects the quest")]
+		public void WhenEveryoneRejectsTheQuest()
+		{
+			_gameAssistant.AllDeclineTeam();
 		}
 
 		[When(@"(.*) players approve the quest")]
 		public void WhenApproveTheQuest(int playersApprovingTheQuest)
 		{
-			var round = ContextAccess.Game.CurrentRound;
+			_gameAssistant.VoteForTeam(playersApprovingTheQuest);
+		}
 
-			foreach (var player in ContextAccess.Game.Players.Take(playersApprovingTheQuest))
+		[When(@"the (first|second|third|fourth|fifth) quest is (successful|sabotaged)")]
+		public void WhenQuestIsCompleted(string round, string result)
+		{
+			switch (round)
 			{
-				round.VoteForQuest(player, true);
-			}
+				case "first":
+					_gameAssistant.CompleteQuest(1, result == "successful");
+					break;
 
-			foreach (var player in ContextAccess.Game.Players.Skip(playersApprovingTheQuest))
-			{
-				round.VoteForQuest(player, false);
+				case "second":
+					_gameAssistant.CompleteQuest(2, result == "successful");
+					break;
+
+				case "third":
+					_gameAssistant.CompleteQuest(3, result == "successful");
+					break;
+
+				case "fourth":
+					_gameAssistant.CompleteQuest(4, result == "successful");
+					break;
+
+				case "fifth":
+					_gameAssistant.CompleteQuest(5, result == "successful");
+					break;
 			}
+		}
+
+		[Given(@"good have completed three quests")]
+		[When(@"good have completed three quests")]
+		public void GoodHaveCompletedThreeQuests()
+		{
+			for (var i = 1; i <= 3; i++ )
+				_gameAssistant.CompleteQuest(i, true);
+		}
+
+		[When(@"the assasin fails to pick merlin")]
+		public void TheAssasinFailsToPickMerlin()
+		{
+			_gameAssistant.PickMerlin(false);
+		}
+
+		[When(@"the assasin successfully picks merlin")]
+		public void TheAssasinSuccessfullyPicksMerlin()
+		{
+			_gameAssistant.PickMerlin(true);
 		}
 
 		[Then(@"the quest goes ahead")]
@@ -95,10 +136,34 @@ namespace ResistanceOnline.Core.Test.SpecFlow.Steps
 			Assert.AreEqual(ResistanceOnline.Core.Round.State.Questing, ContextAccess.Game.CurrentRound.DetermineState());
 		}
 
-		[Then(@"the quest does not goes ahead")]
+		[Then(@"the quest does not go ahead")]
 		public void ThenTheQuestDoesNotGoesAhead()
 		{
 			Assert.AreEqual(ResistanceOnline.Core.Round.State.ProposingPlayers, ContextAccess.Game.CurrentRound.DetermineState());
+		}
+
+		[Then(@"evil wins the game")]
+		public void ThenEvilWinsTheGame()
+		{
+			Assert.AreEqual(ResistanceOnline.Core.Game.State.EvilTriumphs, ContextAccess.Game.DetermineState());
+		}
+
+		[Then(@"good wins the game")]
+		public void ThenGoodlWinsTheGame()
+		{
+			Assert.AreEqual(ResistanceOnline.Core.Game.State.GoodPrevails, ContextAccess.Game.DetermineState());
+		}
+
+		[Then(@"merlin dies")]
+		public void ThenMerlinDies()
+		{
+			Assert.AreEqual(ResistanceOnline.Core.Game.State.MerlinDies, ContextAccess.Game.DetermineState());
+		}
+
+		[Then(@"assasin is to pick merlin")]
+		public void AssasinIsToPickMerlin()
+		{
+			Assert.AreEqual(ResistanceOnline.Core.Game.State.GuessingMerlin, ContextAccess.Game.DetermineState());
 		}
 	}
 }

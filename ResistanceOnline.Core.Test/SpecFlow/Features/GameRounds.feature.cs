@@ -138,18 +138,87 @@ this.ScenarioSetup(scenarioInfo);
             this.WhenEveryoneVotesForTheQuestThenTheQuestGoesAhead("fifth", ((string[])(null)));
         }
         
-        public virtual void AQuestOnlyGoesAheadIfThereIsAMajorityVoteForIt(string numberOfPlayers, string numberOfPlayersApprovingQuest, string[] exampleTags)
+        public virtual void WhenEveryoneDecinesTheQuestThenTheQuestDoesNotGoAhead(string roundNumber, string[] exampleTags)
         {
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("A quest only goes ahead if there is a majority vote for it", exampleTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("When everyone decines the quest then the quest does not go ahead", exampleTags);
 #line 21
 this.ScenarioSetup(scenarioInfo);
 #line 22
- testRunner.Given(string.Format("there is a standard game of {0} players", numberOfPlayers), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("there is a standard game of 5 players", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line 23
- testRunner.And("the leader has chosen his crew", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And(string.Format("the game is in the {0} round", roundNumber), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 24
- testRunner.When(string.Format("{0} players approve the quest", numberOfPlayersApprovingQuest), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.And("the leader has chosen his crew", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line 25
+ testRunner.When("everyone rejects the quest", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 26
+ testRunner.Then("the quest does not go ahead", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("When everyone decines the quest then the quest does not go ahead")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "first")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:RoundNumber", "first")]
+        public virtual void WhenEveryoneDecinesTheQuestThenTheQuestDoesNotGoAhead_First()
+        {
+            this.WhenEveryoneDecinesTheQuestThenTheQuestDoesNotGoAhead("first", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("When everyone decines the quest then the quest does not go ahead")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "second")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:RoundNumber", "second")]
+        public virtual void WhenEveryoneDecinesTheQuestThenTheQuestDoesNotGoAhead_Second()
+        {
+            this.WhenEveryoneDecinesTheQuestThenTheQuestDoesNotGoAhead("second", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("When everyone decines the quest then the quest does not go ahead")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "third")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:RoundNumber", "third")]
+        public virtual void WhenEveryoneDecinesTheQuestThenTheQuestDoesNotGoAhead_Third()
+        {
+            this.WhenEveryoneDecinesTheQuestThenTheQuestDoesNotGoAhead("third", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("When everyone decines the quest then the quest does not go ahead")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "fourth")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:RoundNumber", "fourth")]
+        public virtual void WhenEveryoneDecinesTheQuestThenTheQuestDoesNotGoAhead_Fourth()
+        {
+            this.WhenEveryoneDecinesTheQuestThenTheQuestDoesNotGoAhead("fourth", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("When everyone decines the quest then the quest does not go ahead")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "fifth")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:RoundNumber", "fifth")]
+        public virtual void WhenEveryoneDecinesTheQuestThenTheQuestDoesNotGoAhead_Fifth()
+        {
+            this.WhenEveryoneDecinesTheQuestThenTheQuestDoesNotGoAhead("fifth", ((string[])(null)));
+        }
+        
+        public virtual void AQuestOnlyGoesAheadIfThereIsAMajorityVoteForIt(string numberOfPlayers, string numberOfPlayersApprovingQuest, string[] exampleTags)
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("A quest only goes ahead if there is a majority vote for it", exampleTags);
+#line 36
+this.ScenarioSetup(scenarioInfo);
+#line 37
+ testRunner.Given(string.Format("there is a standard game of {0} players", numberOfPlayers), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 38
+ testRunner.And("the leader has chosen his crew", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 39
+ testRunner.When(string.Format("{0} players approve the quest", numberOfPlayersApprovingQuest), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 40
  testRunner.Then("the quest goes ahead", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
@@ -235,16 +304,16 @@ this.ScenarioSetup(scenarioInfo);
         public virtual void AQuestDoesNotGoAheadWhenTheMajorityDoNotVoteForIt(string numberOfPlayers, string numberOfPlayersApprovingQuest, string[] exampleTags)
         {
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("A quest does not go ahead when the majority do not vote for it", exampleTags);
-#line 37
+#line 52
 this.ScenarioSetup(scenarioInfo);
-#line 38
+#line 53
  testRunner.Given(string.Format("there is a standard game of {0} players", numberOfPlayers), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
-#line 39
+#line 54
  testRunner.And("the leader has chosen his crew", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
-#line 40
+#line 55
  testRunner.When(string.Format("{0} players approve the quest", numberOfPlayersApprovingQuest), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
-#line 41
- testRunner.Then("the quest does not goes ahead", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 56
+ testRunner.Then("the quest does not go ahead", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             this.ScenarioCleanup();
         }
@@ -324,6 +393,456 @@ this.ScenarioSetup(scenarioInfo);
         public virtual void AQuestDoesNotGoAheadWhenTheMajorityDoNotVoteForIt_Variant6()
         {
             this.AQuestDoesNotGoAheadWhenTheMajorityDoNotVoteForIt("10", "4", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three failed quests out of three results in evil winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        public virtual void ThreeFailedQuestsOutOfThreeResultsInEvilWinning()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Three failed quests out of three results in evil winning", ((string[])(null)));
+#line 68
+this.ScenarioSetup(scenarioInfo);
+#line 69
+ testRunner.Given("there is a standard game of 5 players", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 70
+ testRunner.When("the first quest is sabotaged", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 71
+ testRunner.And("the second quest is sabotaged", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 72
+ testRunner.And("the third quest is sabotaged", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 73
+ testRunner.Then("evil wins the game", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        public virtual void ThreeFailedQuestsOutOfFourResultsInEvilWinning(string firstQuestOutcome, string secondQuestOutcome, string thirdQuestOutcome, string fourthQuestOutcome, string[] exampleTags)
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Three failed quests out of four results in evil winning", exampleTags);
+#line 75
+this.ScenarioSetup(scenarioInfo);
+#line 76
+ testRunner.Given("there is a standard game of 5 players", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 77
+ testRunner.When(string.Format("the first quest is {0}", firstQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 78
+ testRunner.And(string.Format("the second quest is {0}", secondQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 79
+ testRunner.And(string.Format("the third quest is {0}", thirdQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 80
+ testRunner.And(string.Format("the fourth quest is {0}", fourthQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 81
+ testRunner.Then("evil wins the game", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three failed quests out of four results in evil winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 0")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "sabotaged")]
+        public virtual void ThreeFailedQuestsOutOfFourResultsInEvilWinning_Variant0()
+        {
+            this.ThreeFailedQuestsOutOfFourResultsInEvilWinning("successful", "sabotaged", "sabotaged", "sabotaged", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three failed quests out of four results in evil winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 1")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "sabotaged")]
+        public virtual void ThreeFailedQuestsOutOfFourResultsInEvilWinning_Variant1()
+        {
+            this.ThreeFailedQuestsOutOfFourResultsInEvilWinning("sabotaged", "successful", "sabotaged", "sabotaged", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three failed quests out of four results in evil winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 2")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "sabotaged")]
+        public virtual void ThreeFailedQuestsOutOfFourResultsInEvilWinning_Variant2()
+        {
+            this.ThreeFailedQuestsOutOfFourResultsInEvilWinning("sabotaged", "sabotaged", "successful", "sabotaged", ((string[])(null)));
+        }
+        
+        public virtual void ThreeFailedQuestsOutOfFiveResulesInEvilWinning(string firstQuestOutcome, string secondQuestOutcome, string thirdQuestOutcome, string fourthQuestOutcome, string fifthQuestOutcome, string[] exampleTags)
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Three failed quests out of five resules in evil winning", exampleTags);
+#line 89
+this.ScenarioSetup(scenarioInfo);
+#line 90
+ testRunner.Given("there is a standard game of 5 players", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 91
+ testRunner.When(string.Format("the first quest is {0}", firstQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 92
+ testRunner.And(string.Format("the second quest is {0}", secondQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 93
+ testRunner.And(string.Format("the third quest is {0}", thirdQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 94
+ testRunner.And(string.Format("the fourth quest is {0}", fourthQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 95
+ testRunner.And(string.Format("the firth quest is {0}", fifthQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 96
+ testRunner.Then("evil wins the game", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three failed quests out of five resules in evil winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 0")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FifthQuestOutcome", "sabotaged")]
+        public virtual void ThreeFailedQuestsOutOfFiveResulesInEvilWinning_Variant0()
+        {
+            this.ThreeFailedQuestsOutOfFiveResulesInEvilWinning("successful", "successful", "sabotaged", "sabotaged", "sabotaged", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three failed quests out of five resules in evil winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 1")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FifthQuestOutcome", "sabotaged")]
+        public virtual void ThreeFailedQuestsOutOfFiveResulesInEvilWinning_Variant1()
+        {
+            this.ThreeFailedQuestsOutOfFiveResulesInEvilWinning("successful", "sabotaged", "successful", "sabotaged", "sabotaged", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three failed quests out of five resules in evil winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 2")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FifthQuestOutcome", "sabotaged")]
+        public virtual void ThreeFailedQuestsOutOfFiveResulesInEvilWinning_Variant2()
+        {
+            this.ThreeFailedQuestsOutOfFiveResulesInEvilWinning("successful", "sabotaged", "sabotaged", "successful", "sabotaged", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three failed quests out of five resules in evil winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 3")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FifthQuestOutcome", "sabotaged")]
+        public virtual void ThreeFailedQuestsOutOfFiveResulesInEvilWinning_Variant3()
+        {
+            this.ThreeFailedQuestsOutOfFiveResulesInEvilWinning("sabotaged", "successful", "successful", "sabotaged", "sabotaged", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three failed quests out of five resules in evil winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 4")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FifthQuestOutcome", "sabotaged")]
+        public virtual void ThreeFailedQuestsOutOfFiveResulesInEvilWinning_Variant4()
+        {
+            this.ThreeFailedQuestsOutOfFiveResulesInEvilWinning("sabotaged", "successful", "sabotaged", "successful", "sabotaged", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three failed quests out of five resules in evil winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 5")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FifthQuestOutcome", "sabotaged")]
+        public virtual void ThreeFailedQuestsOutOfFiveResulesInEvilWinning_Variant5()
+        {
+            this.ThreeFailedQuestsOutOfFiveResulesInEvilWinning("sabotaged", "sabotaged", "successful", "successful", "sabotaged", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three successful quests out of three results in good winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        public virtual void ThreeSuccessfulQuestsOutOfThreeResultsInGoodWinning()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Three successful quests out of three results in good winning", ((string[])(null)));
+#line 107
+this.ScenarioSetup(scenarioInfo);
+#line 108
+ testRunner.Given("there is a standard game of 5 players", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 109
+ testRunner.And("merlin is not a character", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 110
+ testRunner.When("the first quest is successful", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 111
+ testRunner.And("the second quest is successful", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 112
+ testRunner.And("the third quest is successful", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 113
+ testRunner.Then("good wins the game", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        public virtual void ThreeSuccessfulQuestsOutOfFourResultsInGoodWinning(string firstQuestOutcome, string secondQuestOutcome, string thirdQuestOutcome, string fourthQuestOutcome, string[] exampleTags)
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Three successful quests out of four results in good winning", exampleTags);
+#line 115
+this.ScenarioSetup(scenarioInfo);
+#line 116
+ testRunner.Given("there is a standard game of 5 players", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 117
+ testRunner.And("merlin is not a character", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 118
+ testRunner.When(string.Format("the first quest is {0}", firstQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 119
+ testRunner.And(string.Format("the second quest is {0}", secondQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 120
+ testRunner.And(string.Format("the third quest is {0}", thirdQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 121
+ testRunner.And(string.Format("the fourth quest is {0}", fourthQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 122
+ testRunner.Then("evil wins the game", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three successful quests out of four results in good winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 0")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "successful")]
+        public virtual void ThreeSuccessfulQuestsOutOfFourResultsInGoodWinning_Variant0()
+        {
+            this.ThreeSuccessfulQuestsOutOfFourResultsInGoodWinning("sabotaged", "successful", "successful", "successful", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three successful quests out of four results in good winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 1")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "successful")]
+        public virtual void ThreeSuccessfulQuestsOutOfFourResultsInGoodWinning_Variant1()
+        {
+            this.ThreeSuccessfulQuestsOutOfFourResultsInGoodWinning("successful", "sabotaged", "successful", "successful", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three successful quests out of four results in good winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 2")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "successful")]
+        public virtual void ThreeSuccessfulQuestsOutOfFourResultsInGoodWinning_Variant2()
+        {
+            this.ThreeSuccessfulQuestsOutOfFourResultsInGoodWinning("successful", "successful", "sabotaged", "successful", ((string[])(null)));
+        }
+        
+        public virtual void ThreeSuccessfulQuestsOutOfFiveResulesInGoodWinning(string firstQuestOutcome, string secondQuestOutcome, string thirdQuestOutcome, string fourthQuestOutcome, string fifthQuestOutcome, string[] exampleTags)
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Three successful quests out of five resules in good winning", exampleTags);
+#line 130
+this.ScenarioSetup(scenarioInfo);
+#line 131
+ testRunner.Given("there is a standard game of 5 players", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 132
+ testRunner.And("merlin is not a character", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 133
+ testRunner.When(string.Format("the first quest is {0}", firstQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 134
+ testRunner.And(string.Format("the second quest is {0}", secondQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 135
+ testRunner.And(string.Format("the third quest is {0}", thirdQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 136
+ testRunner.And(string.Format("the fourth quest is {0}", fourthQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 137
+ testRunner.And(string.Format("the firth quest is {0}", fifthQuestOutcome), ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 138
+ testRunner.Then("evil wins the game", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three successful quests out of five resules in good winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 0")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FifthQuestOutcome", "successful")]
+        public virtual void ThreeSuccessfulQuestsOutOfFiveResulesInGoodWinning_Variant0()
+        {
+            this.ThreeSuccessfulQuestsOutOfFiveResulesInGoodWinning("sabotaged", "sabotaged", "successful", "successful", "successful", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three successful quests out of five resules in good winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 1")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FifthQuestOutcome", "successful")]
+        public virtual void ThreeSuccessfulQuestsOutOfFiveResulesInGoodWinning_Variant1()
+        {
+            this.ThreeSuccessfulQuestsOutOfFiveResulesInGoodWinning("sabotaged", "successful", "sabotaged", "successful", "successful", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three successful quests out of five resules in good winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 2")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FifthQuestOutcome", "successful")]
+        public virtual void ThreeSuccessfulQuestsOutOfFiveResulesInGoodWinning_Variant2()
+        {
+            this.ThreeSuccessfulQuestsOutOfFiveResulesInGoodWinning("sabotaged", "successful", "successful", "sabotaged", "successful", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three successful quests out of five resules in good winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 3")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FifthQuestOutcome", "successful")]
+        public virtual void ThreeSuccessfulQuestsOutOfFiveResulesInGoodWinning_Variant3()
+        {
+            this.ThreeSuccessfulQuestsOutOfFiveResulesInGoodWinning("successful", "sabotaged", "sabotaged", "successful", "successful", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three successful quests out of five resules in good winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 4")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FifthQuestOutcome", "successful")]
+        public virtual void ThreeSuccessfulQuestsOutOfFiveResulesInGoodWinning_Variant4()
+        {
+            this.ThreeSuccessfulQuestsOutOfFiveResulesInGoodWinning("successful", "sabotaged", "successful", "sabotaged", "successful", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Three successful quests out of five resules in good winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("VariantName", "Variant 5")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FirstQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:SecondQuestOutcome", "successful")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:ThirdQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FourthQuestOutcome", "sabotaged")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("Parameter:FifthQuestOutcome", "successful")]
+        public virtual void ThreeSuccessfulQuestsOutOfFiveResulesInGoodWinning_Variant5()
+        {
+            this.ThreeSuccessfulQuestsOutOfFiveResulesInGoodWinning("successful", "successful", "sabotaged", "sabotaged", "successful", ((string[])(null)));
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Good succeed to complete quests and merlin is a character results in assasin to p" +
+            "ick merlin")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        public virtual void GoodSucceedToCompleteQuestsAndMerlinIsACharacterResultsInAssasinToPickMerlin()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Good succeed to complete quests and merlin is a character results in assasin to p" +
+                    "ick merlin", ((string[])(null)));
+#line 149
+this.ScenarioSetup(scenarioInfo);
+#line 150
+ testRunner.Given("there is a standard game of 5 players", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 151
+ testRunner.And("merlin is a character", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 152
+ testRunner.When("good have completed three quests", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 153
+ testRunner.Then("assasin is to pick merlin", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Good succeed to complete quests and merlin is not picked results in good winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        public virtual void GoodSucceedToCompleteQuestsAndMerlinIsNotPickedResultsInGoodWinning()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Good succeed to complete quests and merlin is not picked results in good winning", ((string[])(null)));
+#line 155
+this.ScenarioSetup(scenarioInfo);
+#line 156
+ testRunner.Given("there is a standard game of 5 players", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 157
+ testRunner.And("merlin is a character", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 158
+ testRunner.And("good have completed three quests", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 159
+ testRunner.When("the assasin fails to pick merlin", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 160
+ testRunner.Then("good wins the game", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
+        }
+        
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute()]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.DescriptionAttribute("Good succeed to compelete quests and merlin is picked results in evil winning")]
+        [Microsoft.VisualStudio.TestTools.UnitTesting.TestPropertyAttribute("FeatureTitle", "GameRounds")]
+        public virtual void GoodSucceedToCompeleteQuestsAndMerlinIsPickedResultsInEvilWinning()
+        {
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Good succeed to compelete quests and merlin is picked results in evil winning", ((string[])(null)));
+#line 162
+this.ScenarioSetup(scenarioInfo);
+#line 163
+ testRunner.Given("there is a standard game of 5 players", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line 164
+ testRunner.And("merlin is a character", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 165
+ testRunner.And("good have completed three quests", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 166
+ testRunner.When("the assasin successfully picks merlin", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line 167
+ testRunner.Then("evil wins the game", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            this.ScenarioCleanup();
         }
     }
 }

@@ -86,43 +86,60 @@
 @foreach (var round in Model.Rounds)
 {
 	<h3>Round @((Model.Rounds.IndexOf(round)+1).ToWords())</h3>
-    <p>Team size of @round.TeamSize.ToWords() players (@round.FailsRequired.ToWords() fail@(round.FailsRequired == 2 ? "s" : "") required)</p>
+    <p>@("player".ToQuantity(round.TeamSize, ShowQuantityAs.Words).Transform(To.SentenceCase)) (@("fail".ToQuantity(round.FailsRequired, ShowQuantityAs.Words)) required)</p>
 	foreach (var team in round.Teams)
 	{
 		<div class="quest">
-			<div class="setup">
-				<img src="/Images/leadertoken.png" />
-				<span class="leader">@team.Leader</span>
-				@if (team.TeamMembers.Count > 0)
-				{
-				<img src="/Images/teamtoken.png" />
-				<span class="team">@String.Join(",", team.TeamMembers)</span>                    
-				}
-                @if (Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.AddToTeam).Any())
+            <div class="setup">
+                <ul class="cards">
+                    <li>
+                        <img src="/Images/leadertoken.png" title="@team.Leader" />
+                        <div class="playername">@team.Leader</div>
+                    </li>
+
+                    @foreach (var teamMember in team.TeamMembers)
+                    {
+                        <li>
+                            <img src="/Images/teamtoken.png" title="@teamMember" />
+                            <div class="playername">@teamMember</div>
+                        </li>
+                    }
+
+                    @foreach (var vote in team.Vote)
+                    {
+                        <li>
+                            <img class="vote" src="/images/@(vote.Image).png" title="@vote.Player" />
+                            <div class="playername">@vote.Player</div>
+                        </li>
+                    }
+
+                </ul>
+                @if (Model.Rounds.IndexOf(round) + 1 == Model.Rounds.Count && Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.AddToTeam).Any())
                 {
-                    <span class="waiting">Waiting for @String.Join(",", Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.AddToTeam).Select(w => w.Name)) to choose the team</span>
+                        <span class="waiting">Waiting for @Model.CommaQuibbling(Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.AddToTeam).Select(w => w.Name)) to choose the team</span>
                 }
-                
-				@foreach (var vote in team.Vote)
-				{
-					<img class="vote" src="/images/@(vote.Image).png" title="@vote.Player" />
-				}
-                
-                @if (Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.VoteForTeam).Any())
+                @if (Model.Rounds.IndexOf(round) + 1 == Model.Rounds.Count && Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.VoteForTeam).Any())
                 {
-                    <span class="waiting">Waiting for @String.Join(",", Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.VoteForTeam).Select(w=>w.Name)) to vote</span>
-                }
-			</div>
-            <div class="results">
-                @foreach (var card in team.QuestCards)
-                {
-                    <img class="card" src="/images/@(card.Image).png" />
-                }
-                @if (Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.SubmitQuestCard).Any())
-                {
-                    <span class="waiting">Waiting for @String.Join(",", Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.SubmitQuestCard).Select(w => w.Name)) to quest</span>
+                    <span class="waiting">Waiting for @Model.CommaQuibbling(Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.VoteForTeam).Select(w => w.Name)) to vote</span>
                 }
             </div>
+            <div class="clear"></div>
+            <div class="results">
+                <ul class="cards">
+                    @foreach (var card in team.QuestCards)
+                    {
+                        <li>
+                            <img class="card" src="/images/@(card.Image).png" />
+                        </li>
+
+                    }
+                </ul>
+                @if (Model.Rounds.IndexOf(round) + 1 == Model.Rounds.Count && Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.SubmitQuestCard).Any())
+                {
+                    <span class="waiting">Waiting for @Model.CommaQuibbling(Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.SubmitQuestCard).Select(w => w.Name)) to quest</span>
+                }
+            </div>
+            <div class="clear"></div>
 		</div>
 	}
 }

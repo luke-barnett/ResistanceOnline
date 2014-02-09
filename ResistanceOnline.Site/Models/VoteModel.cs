@@ -25,8 +25,7 @@ namespace ResistanceOnline.Site.Models
 
         public VoteModel(Core.Vote vote, bool hidden)
         {
-            if (hidden)
-                Player = vote.Player.Name;
+            Player = vote.Player.Name;
             Approve = vote.Approve;
             Hidden = hidden;            
         }

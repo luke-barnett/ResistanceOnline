@@ -105,5 +105,15 @@ namespace ResistanceOnline.Site.Models
 		}
 
         public object PlayerName { get; set; }
+
+        public string CommaQuibbling(IEnumerable<string> items)
+        {
+            var itemArray = items.ToArray();
+
+            var commaSeparated = String.Join(", ", itemArray, 0, Math.Max(itemArray.Length - 1, 0));
+            if (commaSeparated.Length > 0) commaSeparated += " and ";
+
+            return commaSeparated + itemArray.LastOrDefault();
+        }
     }
 }

@@ -124,7 +124,6 @@ namespace ResistanceOnline.Site.Controllers
             var player = game.Players.First(p => p.Guid == playerGuid);
             game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
             return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
-        }        
-
+        }
 	}
 }

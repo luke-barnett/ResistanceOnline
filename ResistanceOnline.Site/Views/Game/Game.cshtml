@@ -177,6 +177,12 @@
 
 }
 
+@if (Model.GameOver)
+{
+    <h3>Game Over</h3>
+    <p>@Model.GameState.Humanize()</p>
+}
+
 
 
 @if (Model.Actions.Count>0) { 

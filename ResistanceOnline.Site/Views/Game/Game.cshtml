@@ -9,7 +9,7 @@
 }
 <h3>Game setup</h3>
 <p>
-    @Model.GameSize player game with the following characters
+    This is a @Model.GameSize.ToWords() player game with the following characters
     @if (Model.CharactersMissing > 0)
     {
     <span class="important">(@Model.CharactersMissing still to be added)</span>
@@ -44,7 +44,16 @@
 	{
 		<li>
 			<img class="playercard" src="/Images/player.png" data-actual="/images/@(p.Actual).png" title="@(p.Actual == "Player" ? "" : p.Actual.Humanize())" />
-			<div class="playername">@p.Name</div>
+            <div class="playername">
+                @if (Model.ImpersonationList != null && Model.ImpersonationList.Count > 0)
+                {
+                    @Html.ActionLink(p.Name, "Game", new { gameId = Model.GameId, playerGuid = Model.ImpersonationList.First(i => i.Name == p.Name).Guid })
+                }
+                else
+                {
+                    @p.Name
+                }
+            </div>
 		</li>
 	}
 </ul>
@@ -76,7 +85,8 @@
 
 @foreach (var round in Model.Rounds)
 {
-	<h3>Round @(Model.Rounds.IndexOf(round)+1), @round.TeamSize players, @round.FailsRequired fail@(round.FailsRequired==2?"s":"") required</h3>
+	<h3>Round @((Model.Rounds.IndexOf(round)+1).ToWords())</h3>
+    <p>Team size of @round.TeamSize.ToWords() players (@round.FailsRequired.ToWords() fail@(round.FailsRequired == 2 ? "s" : "") required)</p>
 	foreach (var team in round.Teams)
 	{
 		<div class="quest">
@@ -86,22 +96,33 @@
 				@if (team.TeamMembers.Count > 0)
 				{
 				<img src="/Images/teamtoken.png" />
-				<span class="team">@String.Join(",", team.TeamMembers)</span>
+				<span class="team">@String.Join(",", team.TeamMembers)</span>                    
 				}
+                @if (Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.AddToTeam).Any())
+                {
+                    <span class="waiting">Waiting for @String.Join(",", Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.AddToTeam).Select(w => w.Name)) to choose the team</span>
+                }
+                
 				@foreach (var vote in team.Vote)
 				{
 					<img class="vote" src="/images/@(vote.Image).png" title="@vote.Player" />
 				}
+                
+                @if (Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.VoteForTeam).Any())
+                {
+                    <span class="waiting">Waiting for @String.Join(",", Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.VoteForTeam).Select(w=>w.Name)) to vote</span>
+                }
 			</div>
-			@if (team.QuestCards.Count > 0) 
-			{ 
-			<div class="results">
-				@foreach (var card in team.QuestCards)
-				{
-					<img class="card" src="/images/@(card.Image).png" />
-				}
-			</div>
-			}
+            <div class="results">
+                @foreach (var card in team.QuestCards)
+                {
+                    <img class="card" src="/images/@(card.Image).png" />
+                }
+                @if (Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.SubmitQuestCard).Any())
+                {
+                    <span class="waiting">Waiting for @String.Join(",", Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.SubmitQuestCard).Select(w => w.Name)) to quest</span>
+                }
+            </div>
 		</div>
 	}
 }
@@ -175,21 +196,4 @@
             <input class="btn btn-default" type="submit" value="Vote for Team" />
         </form>
     }
-}
-
-@if (Model.Waiting.Count > 0)
-{
-    <h3>Waiting for</h3>
-	<ul>
-		@foreach (var waiting in Model.Waiting)
-		{
-			<li>
-				@(waiting.Name)/@(waiting.Action)
-				@if (Model.ImpersonationList != null && Model.ImpersonationList.Select(i => i.Name).Contains(waiting.Name))
-				{
-					<span>@Html.ActionLink("Impersonate", "Game", new { gameId = Model.GameId, playerGuid = Model.ImpersonationList.First(i => i.Name == waiting.Name).Guid })</span>
-				}
-			</li>
-		}
-	</ul>
 }

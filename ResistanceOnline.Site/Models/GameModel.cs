@@ -93,7 +93,7 @@ namespace ResistanceOnline.Site.Models
 
 				PlayerInfo.Add(playerInfo);
 
-				Waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a.Humanize(LetterCasing.Sentence), Name = p.Name }));
+				Waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a, Name = p.Name }));
 			}
 			
 			//game history

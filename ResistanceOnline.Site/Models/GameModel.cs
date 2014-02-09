@@ -33,7 +33,7 @@ namespace ResistanceOnline.Site.Models
 
 		public List<RoundModel> Rounds { get; set; }
 
-        public List<Tableaus> Tableaus { get; set; } 
+        public List<RoundTable> RoundTables { get; set; } 
 
 		public bool IsSpectator { get; set; }
 
@@ -47,6 +47,7 @@ namespace ResistanceOnline.Site.Models
 			PlayerGuid = playerGuid;
             GameSize = game.GameSize;
 
+            RoundTables = game.RoundTables;
 
 			var player = game.Players.FirstOrDefault(p => p.Guid == playerGuid);
 			IsSpectator = player == null;

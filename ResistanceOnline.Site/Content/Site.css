@@ -54,6 +54,7 @@ ul.cards li {
 
 ul {
     padding-left:0;
+    list-style-type:none;
 }
 
 .quest .setup {

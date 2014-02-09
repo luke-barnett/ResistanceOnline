@@ -26,50 +26,50 @@ namespace ResistanceOnline.Core
             AvailableCharacters = new List<Character>();
             GameSize = players;
 
-            Tableaus = new List<Tableaus>();
+            RoundTables = new List<RoundTable>();
             switch (players)
             {
                 case 5:
-                    Tableaus.Add(new Tableaus(2));
-                    Tableaus.Add(new Tableaus(3));
-                    Tableaus.Add(new Tableaus(2));
-                    Tableaus.Add(new Tableaus(3));
-                    Tableaus.Add(new Tableaus(3));
+                    RoundTables.Add(new RoundTable(2));
+                    RoundTables.Add(new RoundTable(3));
+                    RoundTables.Add(new RoundTable(2));
+                    RoundTables.Add(new RoundTable(3));
+                    RoundTables.Add(new RoundTable(3));
                     break;
                 case 6:
-                    Tableaus.Add(new Tableaus(2));
-                    Tableaus.Add(new Tableaus(3));
-                    Tableaus.Add(new Tableaus(4));
-                    Tableaus.Add(new Tableaus(3));
-                    Tableaus.Add(new Tableaus(4));
+                    RoundTables.Add(new RoundTable(2));
+                    RoundTables.Add(new RoundTable(3));
+                    RoundTables.Add(new RoundTable(4));
+                    RoundTables.Add(new RoundTable(3));
+                    RoundTables.Add(new RoundTable(4));
                     break;
                 case 7:
-                    Tableaus.Add(new Tableaus(2));
-                    Tableaus.Add(new Tableaus(3));
-                    Tableaus.Add(new Tableaus(3));
-                    Tableaus.Add(new Tableaus(4,2));
-                    Tableaus.Add(new Tableaus(4));
+                    RoundTables.Add(new RoundTable(2));
+                    RoundTables.Add(new RoundTable(3));
+                    RoundTables.Add(new RoundTable(3));
+                    RoundTables.Add(new RoundTable(4,2));
+                    RoundTables.Add(new RoundTable(4));
                     break;
                 case 8:
-                    Tableaus.Add(new Tableaus(3));
-                    Tableaus.Add(new Tableaus(4));
-                    Tableaus.Add(new Tableaus(4));
-                    Tableaus.Add(new Tableaus(5,2));
-                    Tableaus.Add(new Tableaus(5));
+                    RoundTables.Add(new RoundTable(3));
+                    RoundTables.Add(new RoundTable(4));
+                    RoundTables.Add(new RoundTable(4));
+                    RoundTables.Add(new RoundTable(5,2));
+                    RoundTables.Add(new RoundTable(5));
                     break;
                 case 9:
-                    Tableaus.Add(new Tableaus(3));
-                    Tableaus.Add(new Tableaus(4));
-                    Tableaus.Add(new Tableaus(4));
-                    Tableaus.Add(new Tableaus(5,2));
-                    Tableaus.Add(new Tableaus(5));
+                    RoundTables.Add(new RoundTable(3));
+                    RoundTables.Add(new RoundTable(4));
+                    RoundTables.Add(new RoundTable(4));
+                    RoundTables.Add(new RoundTable(5,2));
+                    RoundTables.Add(new RoundTable(5));
                     break;
                 case 10:
-                    Tableaus.Add(new Tableaus(3));
-                    Tableaus.Add(new Tableaus(4));
-                    Tableaus.Add(new Tableaus(4));
-                    Tableaus.Add(new Tableaus(5,2));
-                    Tableaus.Add(new Tableaus(5));
+                    RoundTables.Add(new RoundTable(3));
+                    RoundTables.Add(new RoundTable(4));
+                    RoundTables.Add(new RoundTable(4));
+                    RoundTables.Add(new RoundTable(5,2));
+                    RoundTables.Add(new RoundTable(5));
                     break;
                 default:
                     throw new Exception("No tableaus for games with " + players + " players");
@@ -83,7 +83,7 @@ namespace ResistanceOnline.Core
         public List<Round> Rounds { get; set; }
         public int QuestIndicator { get; set; }
         public Player AssassinsGuessAtMerlin { get; set; }
-        public List<Tableaus> Tableaus { get; set; }
+        public List<RoundTable> RoundTables { get; set; }
 
         public void GuessMerlin(Player player, Player guess)
         {
@@ -154,10 +154,10 @@ namespace ResistanceOnline.Core
 
         private void CreateRound(int leader)
         {
-            if (Rounds.Count > Tableaus.Count)
+            if (Rounds.Count > RoundTables.Count)
                 throw new Exception("round overrun");
 
-            var tableaus = Tableaus[Rounds.Count];
+            var tableaus = RoundTables[Rounds.Count];
             Rounds.Add(new Round(Players, leader, tableaus.TeamSize, tableaus.RequiredFails));
 
         }
@@ -374,5 +374,6 @@ namespace ResistanceOnline.Core
         }
 
         public int GameId { get; set; }
+
     }
 }

@@ -8,6 +8,6 @@ namespace ResistanceOnline.Site.Models
     public class WaitingActionsModel
     {
         public string Name { get; set; }
-        public string Action { get; set; }
+        public Core.Action.Type Action { get; set; }
     }
 }

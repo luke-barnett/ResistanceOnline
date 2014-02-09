@@ -22,7 +22,8 @@ namespace ResistanceOnline.Site.Models
 
 		public List<SelectListItem> AllCharactersSelectList { get; set; }
 
-		public SelectList PlayersSelectList { get; set; }
+        public SelectList GuessMerlinPlayersSelectList { get; set; }
+        public SelectList AddToTeamPlayersSelectList { get; set; }
 
 		public List<Core.Action.Type> Actions { get; set; }
 
@@ -50,6 +51,8 @@ namespace ResistanceOnline.Site.Models
 			var player = game.Players.FirstOrDefault(p => p.Guid == playerGuid);
 			IsSpectator = player == null;
 
+            PlayerName = player == null ? "Spectator" : player.Name;
+
 			if (game.ImpersonationEnabled)
 			{
 				ImpersonationList = game.Players.ToList();
@@ -63,7 +66,13 @@ namespace ResistanceOnline.Site.Models
 					.Where(c => c != Character.UnAllocated)
 					.Select(c => new SelectListItem { Text = c.Humanize(LetterCasing.Sentence), Value = c.ToString() })
 					.ToList();
-			PlayersSelectList = new SelectList(game.Players.Select(p => p.Name));
+
+            //can guess anyone but self
+            GuessMerlinPlayersSelectList = new SelectList(game.Players.Where(p=>p!=player).Select(p => p.Name));
+
+            //can put anyone on a team who isn't already on it
+			AddToTeamPlayersSelectList = new SelectList(game.Players.Where(p=> !game.CurrentRound.CurrentTeam.TeamMembers.Select(t=>t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
+
 			Actions = game.AvailableActions(player);
 
 			PlayerInfo = new List<PlayerInfoModel>();
@@ -84,7 +93,7 @@ namespace ResistanceOnline.Site.Models
 
 				PlayerInfo.Add(playerInfo);
 
-				Waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a.Humanize(LetterCasing.Sentence), Name = p.Name }));
+				Waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a, Name = p.Name }));
 			}
 			
 			//game history
@@ -95,7 +104,16 @@ namespace ResistanceOnline.Site.Models
 			}
 		}
 
+        public object PlayerName { get; set; }
 
-		public List<string> Log { get; set; }
-	}
+        public string CommaQuibbling(IEnumerable<string> items)
+        {
+            var itemArray = items.ToArray();
+
+            var commaSeparated = String.Join(", ", itemArray, 0, Math.Max(itemArray.Length - 1, 0));
+            if (commaSeparated.Length > 0) commaSeparated += " and ";
+
+            return commaSeparated + itemArray.LastOrDefault();
+        }
+    }
 }

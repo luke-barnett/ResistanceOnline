@@ -183,11 +183,11 @@ namespace ResistanceOnline.Core
             if (roundState == Round.State.Succeeded || roundState == Round.State.Failed)
             {
                 //3 failed missions, don't bother going any further
-                if (Rounds.Select(r => r.DetermineState() == Round.State.Failed).Count() >= 3)
+                if (Rounds.Where(r => r.DetermineState() == Round.State.Failed).Count() >= 3)
                     return;
 
                 //3 successful missions, don't bother going any further
-                if (Rounds.Select(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
+                if (Rounds.Where(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
                     return;
 
                 //create the next round

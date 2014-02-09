@@ -201,10 +201,10 @@ namespace ResistanceOnline.Core
             if (AvailableCharacters.Count < GameSize || Players.Count < GameSize)
                 return State.GameSetup;
 
-            if (Rounds.Select(r => r.DetermineState() == Round.State.Failed).Count() >= 3)
+            if (Rounds.Where(r => r.DetermineState() == Round.State.Failed).Count() >= 3)
                 return State.EvilTriumphs;
 
-            if (Rounds.Select(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
+            if (Rounds.Where(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
             {
                 if (AssassinsGuessAtMerlin == null)
                     return State.GuessingMerlin;
@@ -247,7 +247,7 @@ namespace ResistanceOnline.Core
                             }
                             return new List<Action.Type>();
                         case Round.State.Questing:
-                            if (quest.TeamMembers.Select(v => v.Name).ToList().Contains(player.Name) &&
+                            if (player != null && quest.TeamMembers.Select(v => v.Name).ToList().Contains(player.Name) &&
                                 !quest.Quests.Select(q => q.Player.Name).ToList().Contains(player.Name))
                             {
                                 return new List<Action.Type>() { Action.Type.SubmitQuestCard };

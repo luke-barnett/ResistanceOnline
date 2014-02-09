@@ -15,6 +15,14 @@ namespace ResistanceOnline.Site.Models
 		public Guid? PlayerGuid { get; set; }
 
 		public Core.Game.State GameState { get; set; }
+
+        public bool GameOver
+        {
+            get
+            {
+                return (GameState == Game.State.GoodPrevails || GameState == Game.State.MerlinDies || GameState == Game.State.EvilTriumphs);
+            }
+        }
 		
 		public List<Core.Player> ImpersonationList { get; set; }
 

@@ -42,12 +42,12 @@
 
 @if (Model.PlayerInfo.Count > 0) { 
 <h3>Oracle</h3>
-<p>Mouse over each player card to see what information you know about them.</p>    
+<p>Mouse over each player card to see information you may know about them.</p>    
 <ul class="cards">
 	@foreach (var p in Model.PlayerInfo)
 	{
 		<li>
-			<img class="playercard" src="/Images/player.png" data-actual="/images/@(p.Actual).png" title="@(p.Actual == "Player" ? "" : p.Actual.Humanize())" />
+			<img class="playercard" src="/Images/@(Model.GameOver?p.Actual:"player").png" data-hoverenabled="@((!Model.GameOver).ToString())" data-actual="/images/@(p.Actual).png" title="@(p.Actual == "Player" ? "" : p.Actual.Humanize())" />
             <div class="playername">
                 @if (Model.ImpersonationList != null && Model.ImpersonationList.Count > 0)
                 {
@@ -69,6 +69,7 @@
 	    $(".playercard").hover(function () {
 	        $(this).attr('src', $(this).attr('data-actual'));
 	    }, function () {
+	        if ($(this).attr('data-hoverenabled')==true)
 	        $(this).attr('src', '/images/player.png');
 	    });
         //show extra info on click for touchscreen devices
@@ -89,7 +90,13 @@
 
 @foreach (var round in Model.Rounds)
 {
-	<h3>Round @((Model.Rounds.IndexOf(round)+1).ToWords())</h3>
+	<h3>
+        Round @((Model.Rounds.IndexOf(round)+1).ToWords())
+        @if (!String.IsNullOrWhiteSpace(round.Outcome))
+        {
+            <img src="/images/@(round.Outcome).png" title="@round.Outcome" />
+        }
+    </h3>
     <p>@("player".ToQuantity(round.TeamSize, ShowQuantityAs.Words).Transform(To.SentenceCase)) (@("fail".ToQuantity(round.FailsRequired, ShowQuantityAs.Words)) required)</p>
 	foreach (var team in round.Teams)
 	{

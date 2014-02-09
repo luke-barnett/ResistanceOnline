@@ -21,6 +21,14 @@ namespace ResistanceOnline.Site.Models
             {
                 Teams.Add(new TeamModel(quest, round.TotalPlayers));
             }
+
+            var state = round.DetermineState();
+            if (state == Core.Round.State.Failed || state == Core.Round.State.FailedAllVotes)
+                Outcome = "evil-wins";
+            if (state == Core.Round.State.Succeeded)
+                Outcome = "good-wins";
         }
+
+        public string Outcome { get; set; }
     }
 }

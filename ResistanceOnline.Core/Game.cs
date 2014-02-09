@@ -270,7 +270,7 @@ namespace ResistanceOnline.Core
                     return actions;
                 
                 case Game.State.GuessingMerlin:
-                    if (player.Character == Character.Assassin)
+                    if (player != null && player.Character == Character.Assassin)
                         return new List<Action.Type>() { Action.Type.GuessMerlin };
                     return new List<Action.Type>();
 

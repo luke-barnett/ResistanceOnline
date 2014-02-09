@@ -66,20 +66,21 @@
 <script>
     $(function () {
         //show extra info on mouse over
-	    $(".playercard").hover(function () {
-	        $(this).attr('src', $(this).attr('data-actual'));
+        $(".playercard").hover(function () {
+            var old = $(this).attr('src');
+            $(this).attr('src', $(this).attr('data-actual'));
+            $(this).attr('data-actual', old);
 	    }, function () {
-	        if ($(this).attr('data-hoverenabled')==true)
-	        $(this).attr('src', '/images/player.png');
+	        var old = $(this).attr('src');
+	        $(this).attr('src', $(this).attr('data-actual'));
+	        $(this).attr('data-actual', old);
 	    });
         //show extra info on click for touchscreen devices
 	    $(".playercard").click(function () {
 	        $(this).unbind("mouseenter mouseleave");
-	        if ($(this).attr('src') == $(this).attr('data-actual')) {
-	            $(this).attr('src', '/images/player.png');
-	        } else {
-	            $(this).attr('src', $(this).attr('data-actual'));
-	        }
+	        var old = $(this).attr('src');
+	        $(this).attr('src', $(this).attr('data-actual'));
+	        $(this).attr('data-actual', old);
 	    });
 	});
 </script>
@@ -152,8 +153,37 @@
             </div>
             <div class="clear"></div>
 		</div>
-	}
+	}            
 }
+
+@if (Model.GameState == ResistanceOnline.Core.Game.State.GuessingMerlin || Model.AssassinsGuessAtMerlin != null)
+{
+    <h3>Assassination Attempt</h3>    
+    if (Model.AssassinsGuessAtMerlin == null)
+    {
+        <span class="waiting">Waiting for @(Model.Waiting.First(w => w.Action == ResistanceOnline.Core.Action.Type.GuessMerlin).Name) to guess Merlin</span>
+    }
+    else
+    {
+        <ul class="cards">
+        <li>
+            <img src="/Images/@(Model.AssassinsGuessAtMerlin.Character).png" title="@(Model.AssassinsGuessAtMerlin.Character.Humanize())" />
+            <div class="playername">@Model.AssassinsGuessAtMerlin.Name</div>
+        </li>
+        </ul>
+        <span class="result">@(Model.AssassinsGuessAtMerlin.Character == ResistanceOnline.Core.Character.Merlin ? "Merlin has been assassinated" : "Casualty of war")</span>
+        <div class="clear"></div>
+    }
+
+}
+
+@if (Model.GameOver)
+{
+    <h3>Game Over</h3>
+    <p>@Model.GameState.Humanize()</p>
+}
+
+
 
 @if (Model.Actions.Count>0) { 
 	if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.GuessMerlin))

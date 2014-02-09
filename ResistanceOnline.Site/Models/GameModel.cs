@@ -67,6 +67,7 @@ namespace ResistanceOnline.Site.Models
 				ImpersonationList = game.Players.ToList();
 			}
 
+            AssassinsGuessAtMerlin = game.AssassinsGuessAtMerlin;
 			GameState = game.DetermineState();
 			CharactersInGame = game.AvailableCharacters.ToList();
 			AllCharactersSelectList =
@@ -124,5 +125,7 @@ namespace ResistanceOnline.Site.Models
 
             return commaSeparated + itemArray.LastOrDefault();
         }
+
+        public Player AssassinsGuessAtMerlin { get; set; }
     }
 }

@@ -67,6 +67,29 @@ namespace ResistanceOnline.Site.Controllers
                 game.SubmitQuest(luke, true);
                 game.SubmitQuest(jayvin, true);
 
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
+                game.VoteForTeam(jordan, true);
+                game.VoteForTeam(luke, true);
+                game.VoteForTeam(jayvin, false);
+                game.VoteForTeam(jeffrey, false);
+                game.VoteForTeam(verne, true);
+
+                game.SubmitQuest(luke, true);
+                game.SubmitQuest(jayvin, true);
+
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jeffrey);
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
+                game.VoteForTeam(jordan, true);
+                game.VoteForTeam(luke, true);
+                game.VoteForTeam(jayvin, false);
+                game.VoteForTeam(jeffrey, false);
+                game.VoteForTeam(verne, true);
+
+                game.SubmitQuest(jeffrey, true);
+                game.SubmitQuest(luke, true);
+                game.SubmitQuest(jayvin, true);
 
                 game.GameId = 0;
                 _games.Add(game);

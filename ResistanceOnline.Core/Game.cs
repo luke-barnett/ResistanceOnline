@@ -247,7 +247,7 @@ namespace ResistanceOnline.Core
                             }
                             return new List<Action.Type>();
                         case Round.State.Questing:
-                            if (quest.TeamMembers.Select(v => v.Name).ToList().Contains(player.Name) &&
+                            if (player != null && quest.TeamMembers.Select(v => v.Name).ToList().Contains(player.Name) &&
                                 !quest.Quests.Select(q => q.Player.Name).ToList().Contains(player.Name))
                             {
                                 return new List<Action.Type>() { Action.Type.SubmitQuestCard };

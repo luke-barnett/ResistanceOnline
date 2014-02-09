@@ -65,7 +65,7 @@ namespace ResistanceOnline.Site.Controllers
 
                 game.SubmitQuest(jeffrey, true);
                 game.SubmitQuest(luke, true);
-                game.SubmitQuest(jayvin, true);
+                //game.SubmitQuest(jayvin, true);
 
 
                 game.GameId = 0;

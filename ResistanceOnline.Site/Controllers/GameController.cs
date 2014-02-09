@@ -18,19 +18,56 @@ namespace ResistanceOnline.Site.Controllers
             //create a default game to make development easier
             if (_games.Count == 0)
             {
-                var game = new Game(6, true);
+                var game = new Game(5, true);
                 game.AddCharacter(Character.LoyalServantOfArthur);
                 game.AddCharacter(Character.Assassin);
-                game.AddCharacter(Character.LoyalServantOfArthur);
                 game.AddCharacter(Character.Percival);
                 game.AddCharacter(Character.Morgana);
                 game.AddCharacter(Character.Merlin);
-                game.JoinGame("Jordan");
-                game.JoinGame("Luke");
-                game.JoinGame("Jeffrey");
-                game.JoinGame("Simon");
-                game.JoinGame("Jayvin");
-                game.JoinGame("Verne");
+                var jordanGuid = game.JoinGame("Jordan");
+                var jordan = game.Players.First(p=>p.Guid == jordanGuid);
+                var lukeGuid = game.JoinGame("Luke");
+                var luke = game.Players.First(p=>p.Guid == lukeGuid);
+                var jeffreyGuid = game.JoinGame("Jeffrey");
+                var jeffrey = game.Players.First(p=>p.Guid == jeffreyGuid);
+                var jayvinGuid = game.JoinGame("Jayvin");
+                var jayvin = game.Players.First(p=>p.Guid == jayvinGuid);
+                var verneGuid = game.JoinGame("Verne");
+                var verne = game.Players.First(p=>p.Guid == verneGuid);                
+
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jordan);
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
+                game.VoteForTeam(jordan, true);
+                game.VoteForTeam(luke, true);
+                game.VoteForTeam(jayvin, false);
+                game.VoteForTeam(jeffrey, true);
+                game.VoteForTeam(verne, false);
+                game.SubmitQuest(jordan, true);
+                game.SubmitQuest(luke, false);
+
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jordan);
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
+                game.VoteForTeam(jordan, false);
+                game.VoteForTeam(luke, true);
+                game.VoteForTeam(jayvin, false);
+                game.VoteForTeam(jeffrey, false);
+                game.VoteForTeam(verne, false);
+
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jeffrey);
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
+                game.VoteForTeam(jordan, true);
+                game.VoteForTeam(luke, true);
+                game.VoteForTeam(jayvin, false);
+                game.VoteForTeam(jeffrey, false);
+                game.VoteForTeam(verne, true);
+
+                game.SubmitQuest(jeffrey, true);
+                game.SubmitQuest(luke, true);
+                game.SubmitQuest(jayvin, true);
+
+
                 game.GameId = 0;
                 _games.Add(game);
             }

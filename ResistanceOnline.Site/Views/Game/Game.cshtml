@@ -89,7 +89,13 @@
 
 @foreach (var round in Model.Rounds)
 {
-	<h3>Round @((Model.Rounds.IndexOf(round)+1).ToWords())</h3>
+	<h3>
+        Round @((Model.Rounds.IndexOf(round)+1).ToWords())
+        @if (!String.IsNullOrWhiteSpace(round.Outcome))
+        {
+            <img src="/images/@(round.Outcome).png" title="@round.Outcome" />
+        }
+    </h3>
     <p>@("player".ToQuantity(round.TeamSize, ShowQuantityAs.Words).Transform(To.SentenceCase)) (@("fail".ToQuantity(round.FailsRequired, ShowQuantityAs.Words)) required)</p>
 	foreach (var team in round.Teams)
 	{

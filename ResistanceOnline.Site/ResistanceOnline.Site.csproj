@@ -113,8 +113,10 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Images\assassin.png" />
     <Content Include="Images\avalon.png" />
+    <Content Include="Images\evil-wins.png" />
     <Content Include="Images\evil.png" />
     <Content Include="Images\evillancelot.png" />
+    <Content Include="Images\good-wins.png" />
     <Content Include="Images\good.png" />
     <Content Include="Images\ladyofthelake.png" />
     <Content Include="Images\lancelot.png" />

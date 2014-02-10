@@ -86,19 +86,19 @@
             var old = $(this).attr('src');
             $(this).attr('src', $(this).attr('data-actual'));
             $(this).attr('data-actual', old);
-	    }, function () {
-	        var old = $(this).attr('src');
-	        $(this).attr('src', $(this).attr('data-actual'));
-	        $(this).attr('data-actual', old);
-	    });
+        }, function () {
+            var old = $(this).attr('src');
+            $(this).attr('src', $(this).attr('data-actual'));
+            $(this).attr('data-actual', old);
+        });
         //show extra info on click for touchscreen devices
-	    $(".playercard").click(function () {
-	        $(this).unbind("mouseenter mouseleave");
-	        var old = $(this).attr('src');
-	        $(this).attr('src', $(this).attr('data-actual'));
-	        $(this).attr('data-actual', old);
-	    });
-	});
+        $(".playercard").click(function () {
+            $(this).unbind("mouseenter mouseleave");
+            var old = $(this).attr('src');
+            $(this).attr('src', $(this).attr('data-actual'));
+            $(this).attr('data-actual', old);
+        });
+    });
 </script>
 }
 }

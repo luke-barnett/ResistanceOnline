@@ -15,6 +15,7 @@ namespace ResistanceOnline.Site.Controllers
 	[Authorize]
 	public class GameController : Controller
 	{
+<<<<<<< HEAD
 		readonly ResistanceOnlineDbContext _dbContext;
 		static List<ComputerPlayer> _computerPlayers = new List<ComputerPlayer>();
 		static List<Game> _games = new List<Game>();
@@ -206,5 +207,11 @@ namespace ResistanceOnline.Site.Controllers
 			OnAfterAction(game);
 			return RedirectToAction("Game", new { gameId = gameId });
 		}
+=======
+        public ActionResult Index()
+        {
+            return View();
+        }
+>>>>>>> add signalr/durandal
 	}
 }

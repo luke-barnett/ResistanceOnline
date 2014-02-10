@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ﻿<div class="jumbotron">
 	<h2>Current Games</h2>
 	<ol>
@@ -6,6 +5,10 @@
 		{
 		<li>
 			<span>@game.GameSize players</span>
+			@if (game.ImpersonationEnabled)
+			{
+				<span>(Impersonation Enabled)</span>
+			}
 			<span>@game.DetermineState().Humanize(Humanizer.LetterCasing.Sentence)</span>
 			<a href="/Game/@ViewBag.Games.IndexOf(game)">Spectate Game</a>
 		</li>
@@ -16,11 +19,17 @@
 		<div class="form-group">
 			<label for="players">Players</label>
 			<input type="number" class="form-control" value="5" id="players" name="players" />
-		</div>	
+		</div>
+		<div class="radio">
+			<label>
+				<input type="radio" name="impersonationEnabled" value="true" />Impersonation Enabled
+			</label>
+		</div>
+		<div class="radio">
+			<label>
+				<input type="radio" name="impersonationEnabled" value="false" checked />Impersonation Disabled
+			</label>
+		</div>
 		<input class="btn btn-default" type="submit" value="Create game">
 </form>
 </div>
-=======
-﻿<div id="applicationHost"></div>
-<script src="/scripts/require.js" data-main="app/main"></script>
->>>>>>> add signalr/durandal

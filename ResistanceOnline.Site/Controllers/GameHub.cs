@@ -1,29 +1,22 @@
-﻿using ResistanceOnline.Core;
-using ResistanceOnline.Site.Models;
+﻿using Microsoft.AspNet.SignalR;
+using ResistanceOnline.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web;
-using System.Web.Mvc;
 
 namespace ResistanceOnline.Site.Controllers
 {
-	public class GameController : Controller
-	{
-<<<<<<< HEAD
+    public class GameHub : Hub
+    {
         static List<Game> _games = new List<Game>();
 
-        public GameController()
+        public GameHub()
         {
             //create a default game to make development easier
             if (_games.Count == 0)
             {
-                var game = new Game(5);
-                game.Rule_PlayersCanImpersonateOtherPlayers = true;
-                game.Rule_LancelotsKnowEachOther = true;
-                game.Rule_GoodMustAlwaysVoteSucess = true;
-                game.Rule_IncludeLadyOfTheLake = true;
+                var game = new Game(5, true);
                 game.AddCharacter(Character.LoyalServantOfArthur);
                 game.AddCharacter(Character.Assassin);
                 game.AddCharacter(Character.Percival);
@@ -72,13 +65,36 @@ namespace ResistanceOnline.Site.Controllers
                 game.SubmitQuest(luke, true);
                 game.SubmitQuest(jayvin, true);
 
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
+                game.VoteForTeam(jordan, true);
+                game.VoteForTeam(luke, true);
+                game.VoteForTeam(jayvin, false);
+                game.VoteForTeam(jeffrey, false);
+                game.VoteForTeam(verne, true);
+
+                game.SubmitQuest(luke, true);
+                game.SubmitQuest(jayvin, true);
+
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jeffrey);
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
+                game.VoteForTeam(jordan, true);
+                game.VoteForTeam(luke, true);
+                game.VoteForTeam(jayvin, false);
+                game.VoteForTeam(jeffrey, false);
+                game.VoteForTeam(verne, true);
+
+                game.SubmitQuest(jeffrey, true);
+                game.SubmitQuest(luke, true);
+                game.SubmitQuest(jayvin, true);
 
                 game.GameId = 0;
                 _games.Add(game);
             }
         }
 
-        Game GetGame(int? gameId)
+        private Game GetGame(int? gameId)
         {            
             //todo - something to do with databases
             if (gameId.HasValue == false || gameId.Value >= _games.Count)
@@ -87,93 +103,74 @@ namespace ResistanceOnline.Site.Controllers
             return _games[gameId.Value];
         }
 
-		public ActionResult Index()
-		{
-            ViewBag.Games = new List<Game> { };
-            ViewBag.Games = _games;
-			return View();
-		}
-
-        [HttpPost]
-        public ActionResult CreateGame(int players)
+        public override System.Threading.Tasks.Task OnConnected()
+        {
+            //todo split into individual updates
+            Clients.Caller.Update(_games);
+            return base.OnConnected();
+        }        	
+        
+        public Game CreateGame(int players, bool impersonationEnabled)
         {
             //todo - something with the database :)
-            var game = new Game(players);
-
+            var game = new Game(players,impersonationEnabled);
 			_games.Add(game);
             game.GameId = _games.IndexOf(game);
 
-            return RedirectToAction("Game", new { gameId = _games.Count  });
-        }
+            return game;
+        }       
 
-        //playerguid can be null for spectators
-        public ActionResult Game(int? gameId, Guid? playerGuid)        
-        {
-            var game = GetGame(gameId);
-            if (game == null)
-            {
-                return RedirectToAction("Index");
-            }
-
-            var viewModel = new GameModel(game, playerGuid);
-
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        public ActionResult AddCharacter(int gameId, Guid playerGuid, string character) 
+        public void AddCharacter(int gameId, Guid playerGuid, string character) 
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
             game.AddCharacter((Character)Enum.Parse(typeof(Character), character));
-            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
-        }        
-        [HttpPost]
-        public ActionResult AddToTeam(int gameId, Guid playerGuid, string person) 
+
+            Clients.All.Update(_games);
+        }
+
+        public void AddToTeam(int gameId, Guid playerGuid, string person) 
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
             game.AddToTeam(player, game.Players.First(p => p.Name == person));
-            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
-        }        
-        [HttpPost]
-        public ActionResult SubmitQuestCard(int gameId, Guid playerGuid, bool success) 
+
+            Clients.All.Update(_games);
+        }
+
+        public void SubmitQuestCard(int gameId, Guid playerGuid, bool success) 
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
             game.SubmitQuest(player, success);
-            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
-        }        
-        [HttpPost]
-        public ActionResult VoteForTeam(int gameId, Guid playerGuid, bool approve) 
+
+            Clients.All.Update(_games);
+        }
+
+        public void VoteForTeam(int gameId, Guid playerGuid, bool approve) 
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
             game.VoteForTeam(player, approve);
-            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
-        }                             
-        [HttpPost]
-        public ActionResult JoinGame(int gameId, string name) 
+
+            Clients.All.Update(_games);
+        }
+
+        public void JoinGame(int gameId, string name) 
         {
             var game = GetGame(gameId);
             var playerGuid = game.JoinGame(name);
-            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
-        }        
-        [HttpPost]
-        public ActionResult GuessMerlin(int gameId, Guid playerGuid, string guess) 
-=======
-        public ActionResult Index()
->>>>>>> add signalr/durandal
-        {
-            return View();
+
+            Clients.All.Update(_games);
         }
-        [HttpPost]
-        public ActionResult LadyOfTheLake(int gameId, Guid playerGuid, string target)
+
+        public void GuessMerlin(int gameId, Guid playerGuid, string guess) 
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
-            game.UseLadyOfTheLake(player, game.Players.First(p => p.Name == target));
-            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
+            game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
+
+            Clients.All.Update(_games);
         }
-	}
+    }
 }

@@ -16,9 +16,13 @@ namespace ResistanceOnline.Site.Controllers
 	public class GameController : Controller
 	{
 <<<<<<< HEAD
+<<<<<<< HEAD
 		readonly ResistanceOnlineDbContext _dbContext;
 		static List<ComputerPlayer> _computerPlayers = new List<ComputerPlayer>();
 		static List<Game> _games = new List<Game>();
+=======
+        static List<Game> _games = new List<Game>();
+>>>>>>> add signalr/durandal
 
 		public GameController(ResistanceOnlineDbContext dbContext) : this()
 		{
@@ -109,6 +113,7 @@ namespace ResistanceOnline.Site.Controllers
 			return View(viewModel);
 		}
 
+<<<<<<< HEAD
 		[HttpPost]
 		public ActionResult AddCharacter(int gameId, string character)
 		{
@@ -209,6 +214,57 @@ namespace ResistanceOnline.Site.Controllers
 		}
 =======
         public ActionResult Index()
+=======
+        [HttpPost]
+        public ActionResult AddCharacter(int gameId, Guid playerGuid, string character) 
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.AddCharacter((Character)Enum.Parse(typeof(Character), character));
+            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
+        }        
+        [HttpPost]
+        public ActionResult AddToTeam(int gameId, Guid playerGuid, string person) 
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.AddToTeam(player, game.Players.First(p => p.Name == person));
+            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
+        }        
+        [HttpPost]
+        public ActionResult SubmitQuestCard(int gameId, Guid playerGuid, bool success) 
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.SubmitQuest(player, success);
+            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
+        }        
+        [HttpPost]
+        public ActionResult VoteForTeam(int gameId, Guid playerGuid, bool approve) 
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.VoteForTeam(player, approve);
+            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
+        }                             
+        [HttpPost]
+        public ActionResult JoinGame(int gameId, string name) 
+        {
+            var game = GetGame(gameId);
+            var playerGuid = game.JoinGame(name);
+            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
+        }        
+        [HttpPost]
+        public ActionResult GuessMerlin(int gameId, Guid playerGuid, string guess) 
+=======
+        public ActionResult Index()
+>>>>>>> add signalr/durandal
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult LadyOfTheLake(int gameId, Guid playerGuid, string target)
+>>>>>>> add signalr/durandal
         {
             return View();
         }

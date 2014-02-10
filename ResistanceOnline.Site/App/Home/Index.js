@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿define(['data', 'knockout', 'knockout.punches'], function (data, ko, kop) {
     ko.punches.enableAll();
 
@@ -14,4 +15,8 @@
     };
 
     return viewModel;
+=======
+﻿define(function (require) {
+    return {};
+>>>>>>> add signalr/durandal
 });

@@ -1,16 +1,23 @@
 ﻿using Microsoft.AspNet.SignalR;
 using ResistanceOnline.Core;
+<<<<<<< HEAD
 using ResistanceOnline.Site.Models;
+=======
+>>>>>>> add signalr/durandal
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+<<<<<<< HEAD
 using System.Web.Security;
+=======
+>>>>>>> add signalr/durandal
 
 namespace ResistanceOnline.Site.Controllers
 {
     public class GameHub : Hub
     {
+<<<<<<< HEAD
         //todo playerGuid
         static Dictionary<string, Guid> _players = new Dictionary<string, Guid>();
         Guid PlayerGuid
@@ -30,6 +37,8 @@ namespace ResistanceOnline.Site.Controllers
 
 
 
+=======
+>>>>>>> add signalr/durandal
         static List<Game> _games = new List<Game>();
 
         public GameHub()
@@ -44,6 +53,7 @@ namespace ResistanceOnline.Site.Controllers
                 game.AddCharacter(Character.Morgana);
                 game.AddCharacter(Character.Merlin);
                 var jordanGuid = game.JoinGame("Jordan");
+<<<<<<< HEAD
                 var jordan = game.Players.First(p => p.Guid == jordanGuid);
                 var lukeGuid = game.JoinGame("Luke");
                 var luke = game.Players.First(p => p.Guid == lukeGuid);
@@ -53,6 +63,17 @@ namespace ResistanceOnline.Site.Controllers
                 var jayvin = game.Players.First(p => p.Guid == jayvinGuid);
                 var verneGuid = game.JoinGame("Verne");
                 var verne = game.Players.First(p => p.Guid == verneGuid);
+=======
+                var jordan = game.Players.First(p=>p.Guid == jordanGuid);
+                var lukeGuid = game.JoinGame("Luke");
+                var luke = game.Players.First(p=>p.Guid == lukeGuid);
+                var jeffreyGuid = game.JoinGame("Jeffrey");
+                var jeffrey = game.Players.First(p=>p.Guid == jeffreyGuid);
+                var jayvinGuid = game.JoinGame("Jayvin");
+                var jayvin = game.Players.First(p=>p.Guid == jayvinGuid);
+                var verneGuid = game.JoinGame("Verne");
+                var verne = game.Players.First(p=>p.Guid == verneGuid);                
+>>>>>>> add signalr/durandal
 
                 game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jordan);
                 game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
@@ -116,7 +137,11 @@ namespace ResistanceOnline.Site.Controllers
         }
 
         private Game GetGame(int? gameId)
+<<<<<<< HEAD
         {
+=======
+        {            
+>>>>>>> add signalr/durandal
             //todo - something to do with databases
             if (gameId.HasValue == false || gameId.Value >= _games.Count)
                 return null;
@@ -124,6 +149,7 @@ namespace ResistanceOnline.Site.Controllers
             return _games[gameId.Value];
         }
 
+<<<<<<< HEAD
         private void Update()        
         {
             //todo playerGuid is the calling players Id not the player you're sending it to
@@ -200,6 +226,76 @@ namespace ResistanceOnline.Site.Controllers
             game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
 
             Update();
+=======
+        public override System.Threading.Tasks.Task OnConnected()
+        {
+            //todo split into individual updates
+            Clients.Caller.Update(_games);
+            return base.OnConnected();
+        }        	
+        
+        public Game CreateGame(int players, bool impersonationEnabled)
+        {
+            //todo - something with the database :)
+            var game = new Game(players,impersonationEnabled);
+			_games.Add(game);
+            game.GameId = _games.IndexOf(game);
+
+            return game;
+        }       
+
+        public void AddCharacter(int gameId, Guid playerGuid, string character) 
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.AddCharacter((Character)Enum.Parse(typeof(Character), character));
+
+            Clients.All.Update(_games);
+        }
+
+        public void AddToTeam(int gameId, Guid playerGuid, string person) 
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.AddToTeam(player, game.Players.First(p => p.Name == person));
+
+            Clients.All.Update(_games);
+        }
+
+        public void SubmitQuestCard(int gameId, Guid playerGuid, bool success) 
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.SubmitQuest(player, success);
+
+            Clients.All.Update(_games);
+        }
+
+        public void VoteForTeam(int gameId, Guid playerGuid, bool approve) 
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.VoteForTeam(player, approve);
+
+            Clients.All.Update(_games);
+        }
+
+        public void JoinGame(int gameId, string name) 
+        {
+            var game = GetGame(gameId);
+            var playerGuid = game.JoinGame(name);
+
+            Clients.All.Update(_games);
+        }
+
+        public void GuessMerlin(int gameId, Guid playerGuid, string guess) 
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
+
+            Clients.All.Update(_games);
+>>>>>>> add signalr/durandal
         }
     }
 }

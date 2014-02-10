@@ -93,12 +93,31 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 
 		internal void CompleteQuest(int roundNumber, bool successful)
 		{
-			ScenarioContext.Current.Pending();
-		}
+            var game = ContextAccess.Game;
+
+            //build team
+            for (int i = 0; i < game.CurrentRound.TeamSize; i++)
+            {
+                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, game.Players[i]);
+            }
+
+            //pass the vote
+            foreach (var player in game.Players)
+            {
+                game.VoteForTeam(player, true);
+            }
+
+            //do the quest
+            foreach (var player in game.CurrentRound.CurrentTeam.TeamMembers)
+            {
+                game.SubmitQuest(player, successful);
+            }
+        }
 
 		internal void AddMerlin()
 		{
-			ScenarioContext.Current.Pending();
+            var game = ContextAccess.Game;
+            game.Players.First(p => p.Character == Character.LoyalServantOfArthur).Character = Character.Merlin;
 		}
 
 		internal void PickMerlin(bool successfullMerlinPick)
@@ -126,9 +145,9 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 
 		void IncrementRound()
 		{
-			ScenarioContext.Current.Pending();
-
-			//Based on round number run CompleteQuest(roundNumber, successful)
+			var game = ContextAccess.Game;
+            var roundNumber = game.Rounds.Count;
+            CompleteQuest(roundNumber, roundNumber % 2 == 0);
 		}
 	}
 }

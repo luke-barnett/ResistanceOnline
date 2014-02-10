@@ -206,10 +206,10 @@ namespace ResistanceOnline.Core
 
             if (Rounds.Where(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
             {
-                if (AssassinsGuessAtMerlin == null)
+                if (AssassinsGuessAtMerlin == null && Players.Any(p=>p.Character == Character.Merlin))
                     return State.GuessingMerlin;
 
-                if (AssassinsGuessAtMerlin.Character == Character.Merlin)
+                if (AssassinsGuessAtMerlin != null && AssassinsGuessAtMerlin.Character == Character.Merlin)
                     return State.MerlinDies;
 
                 return State.GoodPrevails;

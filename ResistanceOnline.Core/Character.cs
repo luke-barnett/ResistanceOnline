@@ -16,6 +16,8 @@ namespace ResistanceOnline.Core
         Mordred,
         Oberon,
         Assassin,
-        Morgana
+        Morgana,
+        Lancelot,
+        EvilLancelot
     }
 }

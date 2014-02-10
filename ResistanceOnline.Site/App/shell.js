@@ -7,6 +7,9 @@
     var gameHub = $.connection.gameHub;
     gameHub.on('update', update);
     $.connection.hub.start();
+
+    //todo map games to be a knockout object
+    //todo pass model to the views (maybe they should all have their own subscriptions?)
         
     return {
         router: router,

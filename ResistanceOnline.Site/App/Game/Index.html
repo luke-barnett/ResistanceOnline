@@ -1,26 +1,27 @@
-﻿@model ResistanceOnline.Site.Models.GameModel
-@{
+﻿@{
 
 	ViewBag.Title = "Game " + Model.GameId;
 }
-@if (Model.PlayerGuid.HasValue)
-{
-    <p class="bookmark-instructions">Hello @Model.PlayerName, don't forget to bookmark this URL!</p>
-}
+
+<p class="bookmark-instructions" data-bind="visible: game.PlayerGuid">Hello {{game.PlayerName}}, don't forget to bookmark this URL!</p>
+
+
 <h3>Game setup</h3>
 <p>
-    This is a @Model.GameSize.ToWords() player game with the following characters
+    This is a {{game.GameSize}}.ToWords() player game with the following characters
     @if (Model.CharactersMissing > 0)
     {
     <span class="important">(@Model.CharactersMissing still to be added)</span>
     }        
 </p>
+
 <ul class="cards">
 	@foreach (var c in Model.CharactersInGame)
 	{
 		<li><img class="card" src="/Images/@(c).png" alt="@c.Humanize()" title="@c.Humanize()" /></li>
 	}
 </ul>
+
 @if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.AddCharacter))
 {
     <form role="form" action="/AddCharacter" method="post">
@@ -32,7 +33,9 @@
         <input class="btn btn-default" type="submit" value="Add Character" />
     </form>
 }
+
 <div class="clear"></div>    
+
 <ul class="round-table">
     @for (int i = 0; i < Model.RoundTables.Count; i++)
     {

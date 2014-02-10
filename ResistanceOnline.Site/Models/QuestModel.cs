@@ -5,20 +5,28 @@ using System.Text;
 
 namespace ResistanceOnline.Site.Models
 {
-	public class QuestModel
-	{
-		public string Leader { get; set; }
-		public List<string> PlayersOnQuest { get; set; }
-		public List<VoteModel> Vote { get; set; }
-		public List<QuestCardModel> QuestCards { get; set; }
+    public class QuestModel
+    {
+        public bool Hidden { get; set; }
+        public bool Success { get; set; }
 
-		public QuestModel(Core.Quest quest, int totalPlayers)
-		{
-			Leader = quest.Leader.Name;
+        public string Image
+        {
+            get
+            {
+                if (Hidden)
+                    return "quest";
+                if (Success)
+                    return "questsuccess";
+                return "questfail";
+            }
+        }
 
-			PlayersOnQuest = quest.ProposedPlayers.Select(p => p.Name).ToList();
-			Vote = quest.Votes.OrderBy(q => Guid.NewGuid()).Select(v => new VoteModel(v, quest.Votes.Count != totalPlayers)).ToList();
-			QuestCards = quest.QuestCards.OrderBy(q => Guid.NewGuid()).Select(q => new QuestCardModel(q.Success, quest.QuestCards.Count != PlayersOnQuest.Count)).ToList();
-		}
-	}
+        public QuestModel(bool success, bool hidden)
+        {
+            Success = success;
+            Hidden = hidden;
+        }
+
+    }
 }

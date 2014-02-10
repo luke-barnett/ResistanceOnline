@@ -7,20 +7,28 @@ namespace ResistanceOnline.Site.Models
 {
     public class RoundModel
     {
-        public int Players { get; set; }
+        public int TeamSize { get; set; }
         public int FailsRequired { get; set; }
-        public List<QuestModel> Quests { get; set; }
+        public List<TeamModel> Teams { get; set; }
 
         public RoundModel(Core.Round round)
         {
-            Players = round.TotalPlayers;
+            TeamSize = round.TeamSize;
             FailsRequired = round.RequiredFails;
 
-            Quests = new List<QuestModel>();
-            foreach (var quest in round.Quests)
+            Teams = new List<TeamModel>();
+            foreach (var quest in round.Teams)
             {
-                Quests.Add(new QuestModel(quest, round.TotalPlayers));
+                Teams.Add(new TeamModel(quest, round.TotalPlayers));
             }
+
+            var state = round.DetermineState();
+            if (state == Core.Round.State.Failed || state == Core.Round.State.FailedAllVotes)
+                Outcome = "evil-wins";
+            if (state == Core.Round.State.Succeeded)
+                Outcome = "good-wins";
         }
+
+        public string Outcome { get; set; }
     }
 }

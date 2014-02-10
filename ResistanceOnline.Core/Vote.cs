@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ResistanceOnline.Core
 {
-    public class QuestVote
+    public class Vote
     {
         public Player Player { get; set; }
         public bool Approve { get; set; }

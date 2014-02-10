@@ -1,19 +1,14 @@
 ﻿<div class="jumbotron">
 	<h2>Current Games</h2>
-	<ol>
-		@foreach (ResistanceOnline.Core.Game game in ViewBag.Games)
-		{
+	<ol data-bind="foreach: games">
 		<li>
-			<span>@game.GameSize players</span>
-			@if (game.ImpersonationEnabled)
-			{
-				<span>(Impersonation Enabled)</span>
-			}
+			<span data-bind="text: GameSize"></span>			
+			<span data-bind="visible: ImpersonationEnabled">(Impersonation Enabled)</span>			
 			<span>@game.DetermineState().Humanize(Humanizer.LetterCasing.Sentence)</span>
-			<a href="/Game/@ViewBag.Games.IndexOf(game)">Spectate Game</a>
+			<a data-bind="attr: { href: '#/game/' + '0' }">Spectate Game</a>
 		</li>
-		}
 	</ol>
+
 	<h2>Create a new game</h2>
 	<form role="form" action="/CreateGame" method="post">
 		<div class="form-group">

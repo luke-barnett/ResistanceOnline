@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
 using Ninject;
 using ResistanceOnline.Database;
 using ResistanceOnline.Site.Infrastructure;
 using ResistanceOnline.Site.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -17,6 +16,12 @@ namespace ResistanceOnline.Site.Controllers
 	public class AccountController : Controller
 	{
 		readonly UserManager<UserAccount> _userManager;
+
+		[Inject]
+		public AccountController(ResistanceOnlineDbContext dbContext)
+			: this(new UserManager<UserAccount>(new UserStore<UserAccount>(dbContext)))
+		{
+		}
 
 		public AccountController(UserManager<UserAccount> userManager)
 		{

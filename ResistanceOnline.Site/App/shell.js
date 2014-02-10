@@ -1,5 +1,6 @@
 ﻿define(['require', 'plugins/router', 'signalr.hubs'], function (require, router, signalr) {
 <<<<<<< HEAD
+<<<<<<< HEAD
   
 =======
     
@@ -15,6 +16,9 @@
     //todo pass model to the views (maybe they should all have their own subscriptions?)
         
 >>>>>>> add signalr/durandal
+=======
+  
+>>>>>>> knockouts
     return {
         router: router,
         activate: function () {

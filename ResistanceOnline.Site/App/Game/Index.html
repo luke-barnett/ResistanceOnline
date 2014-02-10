@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> knockouts
 ﻿@{
 
 	ViewBag.Title = "Game " + Model.GameId;
 }
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 
@@ -33,6 +37,44 @@
 {
     <p>Waiting for @("more player".ToQuantity(Model.PlayersMissing, ShowQuantityAs.Words))</p>
     if (Model.PlayerGuid.HasValue)
+=======
+
+<p class="bookmark-instructions" data-bind="visible: game.PlayerGuid">Hello {{game.PlayerName}}, don't forget to bookmark this URL!</p>
+
+
+<h3>Game setup</h3>
+<p>
+    This is a {{game.GameSize}}.ToWords() player game with the following characters
+    @if (Model.CharactersMissing > 0)
+    {
+    <span class="important">(@Model.CharactersMissing still to be added)</span>
+    }        
+</p>
+
+<ul class="cards">
+	@foreach (var c in Model.CharactersInGame)
+	{
+		<li><img class="card" src="/Images/@(c).png" alt="@c.Humanize()" title="@c.Humanize()" /></li>
+	}
+</ul>
+
+@if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.AddCharacter))
+{
+    <form role="form" action="/AddCharacter" method="post">
+        <input type="hidden" name="gameid" value="@Model.GameId" />
+        <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+        <div class="form-group">
+            @Html.DropDownList("Character", Model.AllCharactersSelectList, new { @class = "form-control" })
+        </div>
+        <input class="btn btn-default" type="submit" value="Add Character" />
+    </form>
+}
+
+<div class="clear"></div>    
+
+<ul class="round-table">
+    @for (int i = 0; i < Model.RoundTables.Count; i++)
+>>>>>>> knockouts
     {
         <form role="form" action="/AddComputerPlayer" method="post">
             <input type="hidden" name="gameid" value="@Model.GameId" />

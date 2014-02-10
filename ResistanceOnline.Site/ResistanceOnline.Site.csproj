@@ -196,12 +196,18 @@
   </ItemGroup>
   <ItemGroup>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <Content Include="App\data.js" />
     <Content Include="App\Game\Index.html" />
     <Content Include="App\Game\Index.js" />
 =======
     <Content Include="App\Game\Index.html" />
 >>>>>>> add signalr/durandal
+=======
+    <Content Include="App\data.js" />
+    <Content Include="App\Game\Index.html" />
+    <Content Include="App\Game\Index.js" />
+>>>>>>> knockouts
     <Content Include="App\Home\Index.html" />
     <Content Include="App\Home\Index.js" />
     <Content Include="App\main.js" />
@@ -284,11 +290,17 @@
     <Content Include="Scripts\knockout-3.0.0.debug.js" />
     <Content Include="Scripts\knockout-3.0.0.js" />
 <<<<<<< HEAD
+<<<<<<< HEAD
     <Content Include="Scripts\knockout.mapping-latest.debug.js" />
     <Content Include="Scripts\knockout.mapping-latest.js" />
     <Content Include="Scripts\knockout.punches.min.js" />
 =======
 >>>>>>> add signalr/durandal
+=======
+    <Content Include="Scripts\knockout.mapping-latest.debug.js" />
+    <Content Include="Scripts\knockout.mapping-latest.js" />
+    <Content Include="Scripts\knockout.punches.min.js" />
+>>>>>>> knockouts
     <Content Include="weyland-config.js" />
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />

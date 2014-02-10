@@ -2,8 +2,12 @@
     var games = ko.observableArray();
 
     var update = function (g) {
+<<<<<<< HEAD
         map.fromJS(g, {}, games);
         console.log(g);
+=======
+        map.fromJS(g, {},  games)
+>>>>>>> knockouts
     };
 
     var gameHub = $.connection.gameHub;

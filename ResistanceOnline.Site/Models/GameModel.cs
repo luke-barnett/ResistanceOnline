@@ -35,7 +35,7 @@ namespace ResistanceOnline.Site.Models
         public SelectList GuessMerlinPlayersSelectList { get; set; }
         public SelectList AddToTeamPlayersSelectList { get; set; }
 
-		public List<Core.Action.Type> Actions { get; set; }
+		public List<string> Actions { get; set; }
 
 		public List<WaitingActionsModel> Waiting { get; set; }
 
@@ -87,7 +87,7 @@ namespace ResistanceOnline.Site.Models
             //can put anyone on a team who isn't already on it
 			AddToTeamPlayersSelectList = new SelectList(game.Players.Where(p=> !game.CurrentRound.CurrentTeam.TeamMembers.Select(t=>t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
 
-			Actions = game.AvailableActions(player);
+			Actions = game.AvailableActions(player).Select(i => i.ToString()).ToList();
 
 			PlayerInfo = new List<PlayerInfoModel>();
 			Waiting = new List<WaitingActionsModel>();

@@ -222,7 +222,7 @@ namespace ResistanceOnline.Core
             Rounds.Add(new Round(Players, leader, tableaus.TeamSize, tableaus.RequiredFails));
         }
 
-        public Round CurrentRound { get { return Rounds.Last(); } }
+        public Round CurrentRound { get { return Rounds.LastOrDefault(); } }
 
         public void AddToTeam(Player player, Player proposedPlayer)
         {

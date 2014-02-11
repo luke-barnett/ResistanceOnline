@@ -124,6 +124,8 @@ namespace ResistanceOnline.Site.Controllers
 			_games.Add(game);
             game.GameId = _games.IndexOf(game);
 
+            Update();
+
             return game;
         }       
 

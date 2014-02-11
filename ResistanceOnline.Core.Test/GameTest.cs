@@ -63,7 +63,7 @@ namespace ResistanceOnline.Core.Test
         [TestMethod]
         public void JoinAndAllocate()
         {
-            var game = new Game(5, false);
+            var game = new Game(5);
 
             Assert.AreEqual(Game.State.GameSetup, game.DetermineState());
             game.AddCharacter(Character.Assassin);

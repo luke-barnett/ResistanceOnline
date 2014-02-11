@@ -18,9 +18,8 @@ namespace ResistanceOnline.Core
             MerlinDies
         }
 
-        public Game(int players, bool impersonationEnabled)
+        public Game(int players)
         {
-            ImpersonationEnabled = impersonationEnabled;
             Players = new List<Player>();
             Rounds = new List<Round>();
             AvailableCharacters = new List<Character>();
@@ -80,7 +79,6 @@ namespace ResistanceOnline.Core
         public int GameId { get; set; }
         public List<Character> AvailableCharacters { get; set; }
         public int GameSize { get; set; }
-        public bool ImpersonationEnabled { get; set; }
         public List<Player> Players { get; set; }
         public List<Round> Rounds { get; set; }
         public int QuestIndicator { get; set; }
@@ -89,6 +87,8 @@ namespace ResistanceOnline.Core
         public List<LadyOfTheLakeUse> LadyOfTheLakeUses { get; set; }
         public Player HolderOfLadyOfTheLake { get; set; }
 
+        public bool Rule_PlayersCanImpersonateOtherPlayers { get; set; }
+        public bool Rule_IncludeLadyOfTheLake { get; set; }
         public bool Rule_LancelotsKnowEachOther { get; set; }
         public bool Rule_GoodMustAlwaysVoteSucess { get; set; }
 
@@ -183,7 +183,10 @@ namespace ResistanceOnline.Core
         {
             //create first round
             var leader = new Random().Next(GameSize);
-            //HolderOfLadyOfTheLake = Players[(leader + GameSize - 1) % GameSize];
+            if (Rule_IncludeLadyOfTheLake)
+            {
+                HolderOfLadyOfTheLake = Players[(leader + GameSize - 1) % GameSize];
+            }
             CreateRound(leader);
         }
 
@@ -238,7 +241,7 @@ namespace ResistanceOnline.Core
             if (Rounds.Where(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
                 return;
 
-            if (roundNumber > 2 && HolderOfLadyOfTheLake != null)
+            if (roundNumber >= 2 && Rule_IncludeLadyOfTheLake)
             {
                 //wait for lady of the lake to be used
                 return;
@@ -249,6 +252,7 @@ namespace ResistanceOnline.Core
 
         private void OnLadyOfTheLakeUsed()
         {
+            HolderOfLadyOfTheLake = LadyOfTheLakeUses.Last().UsedOn;
             OnStartNextRound();
         }
 
@@ -269,6 +273,9 @@ namespace ResistanceOnline.Core
 
             if (Rounds.Where(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
             {
+                if (Rule_IncludeLadyOfTheLake && LadyOfTheLakeUses.Count < Rounds.Count - 2)
+                    return State.Playing;
+
                 if (AssassinsGuessAtMerlin == null && Players.Any(p=>p.Character == Character.Merlin))
                     return State.GuessingMerlin;
 
@@ -319,9 +326,9 @@ namespace ResistanceOnline.Core
                     }
 
                     //round over but still current
-                    if (HolderOfLadyOfTheLake != null && Rounds.Count > 2 && HolderOfLadyOfTheLake == player)
+                    if (Rule_IncludeLadyOfTheLake && Rounds.Count >= 2 && HolderOfLadyOfTheLake == player)
                     {
-                        return new List<Action.Type>() { Action.Type.LadyOfTheLake };
+                        return new List<Action.Type>() { Action.Type.UseTheLadyOfTheLake };
                     }
 
                     return new List<Action.Type>();

@@ -7,7 +7,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 	{
 		internal void CreateStandardGame(int numberOfPlayers)
 		{
-			var game = new Game(numberOfPlayers, false);
+			var game = new Game(numberOfPlayers);
 
 			//TODO: map to standard game types for good/evil numbers
 			for (var i = 0; i < numberOfPlayers; i++)

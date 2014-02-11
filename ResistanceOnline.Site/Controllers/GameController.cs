@@ -18,7 +18,11 @@ namespace ResistanceOnline.Site.Controllers
             //create a default game to make development easier
             if (_games.Count == 0)
             {
-                var game = new Game(5, true);
+                var game = new Game(5);
+                game.Rule_PlayersCanImpersonateOtherPlayers = true;
+                game.Rule_LancelotsKnowEachOther = true;
+                game.Rule_GoodMustAlwaysVoteSucess = true;
+                game.Rule_IncludeLadyOfTheLake = true;
                 game.AddCharacter(Character.LoyalServantOfArthur);
                 game.AddCharacter(Character.Assassin);
                 game.AddCharacter(Character.Percival);
@@ -67,29 +71,6 @@ namespace ResistanceOnline.Site.Controllers
                 game.SubmitQuest(luke, true);
                 game.SubmitQuest(jayvin, true);
 
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
-                game.VoteForTeam(jordan, true);
-                game.VoteForTeam(luke, true);
-                game.VoteForTeam(jayvin, false);
-                game.VoteForTeam(jeffrey, false);
-                game.VoteForTeam(verne, true);
-
-                game.SubmitQuest(luke, true);
-                game.SubmitQuest(jayvin, true);
-
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jeffrey);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
-                game.VoteForTeam(jordan, true);
-                game.VoteForTeam(luke, true);
-                game.VoteForTeam(jayvin, false);
-                game.VoteForTeam(jeffrey, false);
-                game.VoteForTeam(verne, true);
-
-                game.SubmitQuest(jeffrey, true);
-                game.SubmitQuest(luke, true);
-                game.SubmitQuest(jayvin, true);
 
                 game.GameId = 0;
                 _games.Add(game);
@@ -113,10 +94,10 @@ namespace ResistanceOnline.Site.Controllers
 		}
 
         [HttpPost]
-        public ActionResult CreateGame(int players, bool impersonationEnabled)
+        public ActionResult CreateGame(int players)
         {
             //todo - something with the database :)
-            var game = new Game(players,impersonationEnabled);
+            var game = new Game(players);
 
 			_games.Add(game);
             game.GameId = _games.IndexOf(game);
@@ -183,6 +164,14 @@ namespace ResistanceOnline.Site.Controllers
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
             game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
+            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
+        }
+        [HttpPost]
+        public ActionResult LadyOfTheLake(int gameId, Guid playerGuid, string target)
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.UseLadyOfTheLake(player, game.Players.First(p => p.Name == target));
             return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }
 	}

@@ -105,7 +105,12 @@ namespace ResistanceOnline.Site.Controllers
         }
 
         private void Update()
-        {            
+        {
+            //foreach (var client in Connections)
+            //{
+            //    client.
+            //}
+
             Clients.All.Update(_games.Select(g => new GameModel(g, Guid.NewGuid()))); //playerGuid
         }
 
@@ -169,7 +174,8 @@ namespace ResistanceOnline.Site.Controllers
         {
             var game = GetGame(gameId);
             var playerGuid = game.JoinGame(name);
-
+            //todo playerGuid
+            
             Update();
         }
 

@@ -169,7 +169,8 @@
 
 <ul data-bind="foreach: game().Actions">
     <li >
-        <div data-bind="compose: { model: '/app/JoinGame.js', view: '/app/joingame.html' }"></div>
+        <!--todo find nicer syntax for this-->
+        <div data-bind="compose: { model: '/app/widgets/' + $data + '.js', view: '/app/widgets/' + $data + '.html', activationData: $root.game }"></div>
     </li>
 </ul>
 

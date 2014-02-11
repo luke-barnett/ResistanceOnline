@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ﻿define(['data', 'knockout', 'knockout.punches'], function (data, ko, kop) {
     ko.punches.enableAll();
 
@@ -22,6 +23,11 @@
 >>>>>>> add signalr/durandal
 =======
 ﻿define(['data', 'knockout'], function (data, ko) {
+=======
+﻿define(['data', 'knockout', 'knockout.punches'], function (data, ko, kop) {
+    ko.punches.enableAll();
+
+>>>>>>> more knockout
     return { games: data };
 >>>>>>> knockouts
 });

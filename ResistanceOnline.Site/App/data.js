@@ -3,11 +3,17 @@
 
     var update = function (g) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         map.fromJS(g, {}, games);
         console.log(g);
 =======
         map.fromJS(g, {},  games)
 >>>>>>> knockouts
+=======
+        map.fromJS(g, {}, games);
+        console.log(games());
+        console.log(g);
+>>>>>>> more knockout
     };
 
     var gameHub = $.connection.gameHub;

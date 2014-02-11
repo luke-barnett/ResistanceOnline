@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> knockouts
 ﻿@{
@@ -41,37 +42,24 @@
 
 <p class="bookmark-instructions" data-bind="visible: game.PlayerGuid">Hello {{game.PlayerName}}, don't forget to bookmark this URL!</p>
 
+=======
+﻿<p class="bookmark-instructions" data-bind="visible: game().PlayerGuid">Hello {{game().PlayerName}}, don't forget to bookmark this URL!</p>
+>>>>>>> more knockout
 
 <h3>Game setup</h3>
 <p>
-    This is a {{game.GameSize}}.ToWords() player game with the following characters
-    @if (Model.CharactersMissing > 0)
-    {
-    <span class="important">(@Model.CharactersMissing still to be added)</span>
-    }        
+    This is a {{game().GameSize}} player game with the following characters    
+    <span class="important" data-bind="visible: game().CharactersMissing">({{game().CharactersMissing}} still to be added)</span>    
 </p>
 
-<ul class="cards">
-	@foreach (var c in Model.CharactersInGame)
-	{
-		<li><img class="card" src="/Images/@(c).png" alt="@c.Humanize()" title="@c.Humanize()" /></li>
-	}
-</ul>
 
-@if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.AddCharacter))
-{
-    <form role="form" action="/AddCharacter" method="post">
-        <input type="hidden" name="gameid" value="@Model.GameId" />
-        <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
-        <div class="form-group">
-            @Html.DropDownList("Character", Model.AllCharactersSelectList, new { @class = "form-control" })
-        </div>
-        <input class="btn btn-default" type="submit" value="Add Character" />
-    </form>
-}
+<ul class="cards" data-bind="foreach: game().CharactersInGame">
+    <li><img class="card" data-bind="attr: { src: '/Images/' + $data + '.png' }" alt="{{$data}" title="{{$data}}" /></li>	
+</ul>
 
 <div class="clear"></div>    
 
+<<<<<<< HEAD
 <ul class="round-table">
     @for (int i = 0; i < Model.RoundTables.Count; i++)
 >>>>>>> knockouts
@@ -93,13 +81,29 @@
 }
 
 <div data-bind="visible: game().PlayerInfo.length">
+=======
+<ul class="round-table" data-bind="foreach: game().RoundTables">
+    <li>Round {{$index() + 1}} needs {{TeamSize}} players and {{RequiredFails}} fail(s)</li>    
+</ul>
+
+<div data-bind="visible: game().PlayerInfo">
+>>>>>>> more knockout
     <h3>Oracle</h3>
     <p>Mouse over each player card to see information you may know about them.</p>    
     <ul class="cards" data-bind="foreach: game().PlayerInfo">
 		<li>
+<<<<<<< HEAD
 			<img class="playercard" src="/Images/player.png" data-actual="/images/@(p.Actual).png" />
             <div class="playername">{{Name}}
                <!-- @if (Model.ImpersonationList != null && Model.ImpersonationList.Count > 0)
+=======
+			<img class="playercard" src="/Images/@(Model.GameOver?p.Actual:"player").png"
+                 data-hoverenabled="@((!Model.GameOver).ToString())" 
+                data-actual="/images/@(p.Actual).png"
+                 title="@(p.Actual == "Player" ? "" : p.Actual.Humanize())" />
+            <div class="playername">
+                @if (Model.ImpersonationList != null && Model.ImpersonationList.Count > 0)
+>>>>>>> more knockout
                 {
                     @Html.ActionLink(p.Name, "Game", new { gameId = Model.GameId, playerGuid = Model.ImpersonationList.First(i => i.Name == p.Name).Guid })
                 }
@@ -110,7 +114,10 @@
             </div>
 		</li>
     </ul>
+<<<<<<< HEAD
     SHOW ALL TODO
+=======
+>>>>>>> more knockout
 </div>
 
 <!--@section scripts {
@@ -144,9 +151,15 @@
 <div data-bind="foreach: game().Rounds">
 	<h3>
         Round {{ $index() + 1 }}        
+<<<<<<< HEAD
         <img  title="{{Outcome}}" data-bind="visible: Outcome, attr: {src: '/images/' + Outcome() + '.png' }" />
     </h3>
     <p>{{TeamSize}} player(s) ({{FailsRequired}} fail(s) required)</p>
+=======
+        <!--<img  title="{{Outcome}}" data-bind="visible: Outcome, attr: {src: '/images/' + Outcome() + '}}.png' }" />-->
+    </h3>
+    <p>{{TeamSize}} player(s) ({{RequiredFails}} fail(s) required)</p>
+>>>>>>> more knockout
 	
     <div data-bind="foreach: Teams">
 	
@@ -185,8 +198,13 @@
             <div class="clear"></div>
             <div class="results">
                 <ul class="cards" data-bind="foreach: QuestCards">                    
+<<<<<<< HEAD
                     <li> 
                         <img class="card" data-bind="attr: { src: '/images/' + Image() + '.png' }" />
+=======
+                    <li>
+                        <img class="card" src="/images/@(card.Image).png" />
+>>>>>>> more knockout
                     </li>                    
                 </ul>
                <!-- @if (Model.Rounds.IndexOf(round) + 1 == Model.Rounds.Count && Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.SubmitQuestCard).Any())
@@ -203,7 +221,11 @@
 	</div>          
 </div>
 
+<<<<<<< HEAD
 <!--@if (Model.GameState == ResistanceOnline.Core.game().State.GuessingMerlin || Model.AssassinsGuessAtMerlin != null)
+=======
+@if (Model.GameState == ResistanceOnline.Core.game().State.GuessingMerlin || Model.AssassinsGuessAtMerlin != null)
+>>>>>>> more knockout
 {
     <h3>Assassination Attempt</h3>    
     if (Model.AssassinsGuessAtMerlin == null && Model.AssassinIsInTheGame)
@@ -225,6 +247,7 @@
 
 <div data-bind="visible: game().GameOver">
     <h3>Game Over</h3>
+<<<<<<< HEAD
     <p>{{game().GameState}}</p>
 </div>
 
@@ -235,6 +258,24 @@
         <div data-bind="compose: { model: '/app/widgets/' + $data + '.js', view: '/app/widgets/' + $data + '.html', activationData: $root.game }"></div>
     </li>
 <<<<<<< HEAD
+=======
+    <p>{{GameState}}</p>
+</div>
+
+<h1>Actions</h1>
+<!--
+<form role="form" action="/AddCharacter" method="post" data-bind="visible: game().Actions">.Contains(1)@ResistanceOnline.Core.Action.Type.AddCharacter
+    <input type="hidden" name="gameid" value="@Model.GameId" />
+    <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+    <div class="form-group">
+        @Html.DropDownList("Character", Model.AllCharactersSelectList, new { @class = "form-control" })
+    </div>
+    <input class="btn btn-default" type="submit" value="Add Character" />
+</form>-->
+
+<ul data-bind="foreach: Actions">
+    <li>{{$data}}</li>
+>>>>>>> more knockout
 </ul>
 
 <!--@if (Model.Actions.Count>0) { 
@@ -328,6 +369,9 @@
         </form>
     }
 }-->
+<<<<<<< HEAD
 =======
 </ul>
 >>>>>>> convert actions to widgets
+=======
+>>>>>>> more knockout

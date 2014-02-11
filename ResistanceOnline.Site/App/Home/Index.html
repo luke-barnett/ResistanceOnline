@@ -4,6 +4,7 @@
 <<<<<<< HEAD
 	<ol data-bind="foreach: games">
 		<li>              
+<<<<<<< HEAD
 			<span data-bind="text: GameSize() + ' player(s)'"></span>			
 			<span data-bind="visible: ImpersonationList ">(Impersonation Enabled)</span>			
 			<span>{{GameState}}</span>
@@ -28,9 +29,11 @@
 	<ol data-bind="foreach: games">
 >>>>>>> knockouts
 		<li>
+=======
+>>>>>>> more knockout
 			<span data-bind="text: GameSize"></span>			
-			<span data-bind="visible: ImpersonationEnabled">(Impersonation Enabled)</span>			
-			<span>@game.DetermineState().Humanize(Humanizer.LetterCasing.Sentence)</span>
+			<span data-bind="visible: ImpersonationList.length > 0">(Impersonation Enabled)</span>			
+			<span>{{GameState}}</span>
 			<a data-bind="attr: { href: '#/game/' + '0' }">Spectate Game</a>
 		</li>
 	</ol>

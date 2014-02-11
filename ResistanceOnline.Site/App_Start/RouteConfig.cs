@@ -16,6 +16,12 @@ namespace ResistanceOnline.Site
 				);
 
 			routes.MapRoute(
+					name: "logout",
+					url: "logout",
+					defaults: new { controller = "Account", action = "Logout" }
+				);
+
+			routes.MapRoute(
 				name: "account",
 				url: "account/{action}",
 				defaults: new { controller = "Account" }

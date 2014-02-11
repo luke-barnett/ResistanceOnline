@@ -51,6 +51,13 @@ namespace ResistanceOnline.Site.Controllers
 			return new ChallengeResult(provider, Url.Action("LoginCallback", "Account"));
 		}
 
+		public ActionResult Logout()
+		{
+			AuthenticationManager.SignOut();
+			
+			return Redirect();
+		}
+
 		[AllowAnonymous]
 		public async Task<ActionResult> LoginCallback()
 		{

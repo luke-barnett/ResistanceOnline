@@ -199,7 +199,7 @@
 	}
 	if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.JoinGame))
 	{
-		if(User != null)
+		if(!User.Identity.IsAuthenticated)
 		{
 			<form role="form" action="/JoinGame" method="post">
 				<input type="hidden" name="gameid" value="@Model.GameId" />

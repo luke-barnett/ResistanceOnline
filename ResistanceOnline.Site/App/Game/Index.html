@@ -18,7 +18,7 @@
     <li>Round {{$index() + 1}} needs {{TeamSize}} players and {{RequiredFails}} fail(s)</li>
 </ul>
 
-<div data-bind="visible: game().PlayerInfo">
+<div data-bind="visible: game().PlayerInfo.length">
     <h3>Oracle</h3>
     <p>Mouse over each player card to see information you may know about them.</p>
     <ul class="cards" data-bind="foreach: game().PlayerInfo">
@@ -152,3 +152,5 @@
         <div data-bind="compose: { model: '/app/widgets/' + $data + '.js', view: '/app/widgets/' + $data + '.html', activationData: $root.game }"></div>
     </li>
 </ul>
+
+

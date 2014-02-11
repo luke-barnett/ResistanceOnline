@@ -18,7 +18,8 @@ namespace ResistanceOnline.Core
             AddToTeam,
             VoteForTeam,
             SubmitQuestCard,
-            GuessMerlin
+            GuessMerlin,
+            LadyOfTheLake
         };
 
         public Type ActionType { get; set; }

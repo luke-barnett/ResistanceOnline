@@ -92,8 +92,7 @@ namespace ResistanceOnline.Site.Models
 				var playerInfo = new PlayerInfoModel 
 				{ 
 					Name = p.Name, 
-					CouldBeMerlin = Game.DetectMerlin(player, p), 
-					IsEvil = Game.DetectEvil(player, p) 
+					Knowledge = game.PlayerKnowledge(player, p)
 				};
 
 				//always know own character, or all characters if game is over

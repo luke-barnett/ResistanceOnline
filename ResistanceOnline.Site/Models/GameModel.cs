@@ -71,7 +71,7 @@ namespace ResistanceOnline.Site.Models
 
             AssassinsGuessAtMerlin = game.AssassinsGuessAtMerlin;
 			GameState = game.DetermineState().Humanize();
-			CharactersInGame = game.AvailableCharacters.Select(i => i.Humanize()).ToList();
+			CharactersInGame = game.AvailableCharacters.Select(i => i.ToString()).ToList();
 			AllCharactersSelectList =
 				Enum.GetValues(typeof(Character))
 					.Cast<Character>()

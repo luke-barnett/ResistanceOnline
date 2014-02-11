@@ -17,7 +17,7 @@
     <li>Round {{$index() + 1}} needs {{TeamSize}} players and {{RequiredFails}} fail(s)</li>    
 </ul>
 
-<div data-bind="visible: game().PlayerInfo">
+<div data-bind="visible: game().PlayerInfo.length">
     <h3>Oracle</h3>
     <p>Mouse over each player card to see information you may know about them.</p>    
     <ul class="cards" data-bind="foreach: game().PlayerInfo">
@@ -150,7 +150,7 @@
 
 <div data-bind="visible: game().GameOver">
     <h3>Game Over</h3>
-    <p>{{GameState}}</p>
+    <p>{{game().GameState}}</p>
 </div>
 
 <h1>Actions</h1>
@@ -164,8 +164,13 @@
     <input class="btn btn-default" type="submit" value="Add Character" />
 </form>-->
 
-<ul data-bind="foreach: Actions">
-    <li>{{$data}}</li>
+
+<!--<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>-->
+
+<ul data-bind="foreach: game().Actions">
+    <li >
+        <div data-bind="compose: { model: '/app/JoinGame.js', view: '/app/joingame.html' }"></div>
+    </li>
 </ul>
 
 <!--@if (Model.Actions.Count>0) { 
@@ -179,6 +184,7 @@
 			</div>
 			<input class="btn btn-default" type="submit" value="Guess Merlin" />
 		</form>
+<<<<<<< HEAD
     }
     if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.UseTheLadyOfTheLake))
     {
@@ -201,6 +207,10 @@
 			<input class="btn btn-default" type="submit" value="Join Game" />
 		</form>
     }
+=======
+	}
+
+>>>>>>> attempt at binding widgets
     if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.AddToTeam))
     {
         <form role="form" action="/AddToTeam" method="post">

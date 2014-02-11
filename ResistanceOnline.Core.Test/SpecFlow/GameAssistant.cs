@@ -120,6 +120,12 @@ namespace ResistanceOnline.Core.Test.SpecFlow
             game.Players.First(p => p.Character == Character.LoyalServantOfArthur).Character = Character.Merlin;
 		}
 
+        internal void AddAssassin()
+        {
+            var game = ContextAccess.Game;
+            game.Players.First(p => p.Character == Character.LoyalServantOfArthur).Character = Character.Assassin;
+        }
+
 		internal void PickMerlin(bool successfullMerlinPick)
 		{
 			var game = ContextAccess.Game;

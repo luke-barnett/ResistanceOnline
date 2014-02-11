@@ -11,10 +11,10 @@ namespace ResistanceOnline.Core.Test
         [TestMethod]
         public void DetectEvil()
         {
-            EvilTest(Character.Assassin, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred });
-            EvilTest(Character.MinionOfMordred, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred });
-            EvilTest(Character.Morgana, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred });
-            EvilTest(Character.Mordred, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred });
+            EvilTest(Character.Assassin, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred, Character.EvilLancelot });
+            EvilTest(Character.MinionOfMordred, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred, Character.EvilLancelot });
+            EvilTest(Character.Morgana, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred, Character.EvilLancelot });
+            EvilTest(Character.Mordred, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred, Character.EvilLancelot });
             EvilTest(Character.Oberon, new List<Character> { });
             EvilTest(Character.LoyalServantOfArthur, new List<Character> { });
             EvilTest(Character.Percival, new List<Character> { });

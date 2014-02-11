@@ -92,7 +92,7 @@ Scenario Outline: Three failed quests out of five resules in evil winning
 	And the second quest is <SecondQuestOutcome>
 	And the third quest is <ThirdQuestOutcome>
 	And the fourth quest is <FourthQuestOutcome>
-	And the firth quest is <FifthQuestOutcome>
+	And the fifth quest is <FifthQuestOutcome>
 	Then evil wins the game
 
 	Examples:
@@ -119,7 +119,7 @@ Scenario Outline: Three successful quests out of four results in good winning
 	And the second quest is <SecondQuestOutcome>
 	And the third quest is <ThirdQuestOutcome>
 	And the fourth quest is <FourthQuestOutcome>
-	Then evil wins the game
+	Then good wins the game
 
 	Examples: 
 	| FirstQuestOutcome | SecondQuestOutcome | ThirdQuestOutcome | FourthQuestOutcome |
@@ -134,8 +134,8 @@ Scenario Outline: Three successful quests out of five resules in good winning
 	And the second quest is <SecondQuestOutcome>
 	And the third quest is <ThirdQuestOutcome>
 	And the fourth quest is <FourthQuestOutcome>
-	And the firth quest is <FifthQuestOutcome>
-	Then evil wins the game
+	And the fifth quest is <FifthQuestOutcome>
+	Then good wins the game
 
 	Examples:
 	| FirstQuestOutcome | SecondQuestOutcome | ThirdQuestOutcome | FourthQuestOutcome | FifthQuestOutcome |
@@ -149,12 +149,14 @@ Scenario Outline: Three successful quests out of five resules in good winning
 Scenario: Good succeed to complete quests and merlin is a character results in assasin to pick merlin
 	Given there is a standard game of 5 players
 	And merlin is a character
+	And assasin is a character
 	When good have completed three quests
 	Then assasin is to pick merlin
 	
 Scenario: Good succeed to complete quests and merlin is not picked results in good winning
 	Given there is a standard game of 5 players
 	And merlin is a character
+	And assasin is a character
 	And good have completed three quests
 	When the assasin fails to pick merlin
 	Then good wins the game
@@ -162,6 +164,7 @@ Scenario: Good succeed to complete quests and merlin is not picked results in go
 Scenario: Good succeed to compelete quests and merlin is picked results in evil winning
 	Given there is a standard game of 5 players
 	And merlin is a character
+	And assasin is a character
 	And good have completed three quests
 	When the assasin successfully picks merlin
-	Then evil wins the game
+	Then merlin dies

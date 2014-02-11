@@ -27,11 +27,9 @@ namespace ResistanceOnline.Site.Models
 		
 		public List<Core.Player> ImpersonationList { get; set; }
 
-<<<<<<< HEAD
         public List<string> AvailableCharacters { get { return Enum.GetNames(typeof(Character)).ToList(); } }
-=======
->>>>>>> more knockout
-		public List<string> CharactersInGame { get; set; }
+		
+        public List<string> CharactersInGame { get; set; }
 
 		public List<SelectListItem> AllCharactersSelectList { get; set; }
 
@@ -74,12 +72,9 @@ namespace ResistanceOnline.Site.Models
 
             AssassinsGuessAtMerlin = game.AssassinsGuessAtMerlin;
 			GameState = game.DetermineState().Humanize();
-<<<<<<< HEAD
 			CharactersInGame = game.AvailableCharacters.Select(i => i.ToString()).ToList();
-=======
-			CharactersInGame = game.AvailableCharacters.Select(i => i.Humanize()).ToList();
->>>>>>> more knockout
-			AllCharactersSelectList =
+		
+            AllCharactersSelectList =
 				Enum.GetValues(typeof(Character))
 					.Cast<Character>()
 					.Where(c => c != Character.UnAllocated)
@@ -111,18 +106,10 @@ namespace ResistanceOnline.Site.Models
 				};
 
 				//always know own character, or all characters if game is over
-<<<<<<< HEAD
                 if ((p == player || GameState == Game.State.EvilTriumphs.ToString() || GameState == Game.State.GoodPrevails.ToString() || GameState == Game.State.MerlinDies.ToString()) && p.Character != Character.UnAllocated)
                 {
                     playerInfo.CharacterCard = p.Character;
                 }
-=======
-
-                //todo
-                //if ((p==player || GameState == Game.State.EvilTriumphs || GameState == Game.State.GoodPrevails || GameState == Game.State.MerlinDies) && p.Character != Character.UnAllocated) {
-                //    playerInfo.CharacterCard = p.Character; 
-                //}
->>>>>>> more knockout
 
 				PlayerInfo.Add(playerInfo);
 

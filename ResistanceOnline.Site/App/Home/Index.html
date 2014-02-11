@@ -1,10 +1,7 @@
 ﻿<div class="jumbotron">
 	<h2>Current Games</h2>
-<<<<<<< HEAD
-<<<<<<< HEAD
 	<ol data-bind="foreach: games">
 		<li>              
-<<<<<<< HEAD
 			<span data-bind="text: GameSize() + ' player(s)'"></span>			
 			<span data-bind="visible: ImpersonationList ">(Impersonation Enabled)</span>			
 			<span>{{GameState}}</span>
@@ -18,47 +15,6 @@
 			<label for="players">Players</label>
 			<input type="number" class="form-control" data-bind="value: players" />
 		</div>
-		<div class="radio">
-			<label>
-				<input type="radio" name="impersonationEnabled" value="true" data-bind="checked: impersonation" />Impersonation Enabled
-=======
-	<ol>
-		@foreach (ResistanceOnline.Core.Game game in ViewBag.Games)
-		{
-=======
-	<ol data-bind="foreach: games">
->>>>>>> knockouts
-		<li>
-=======
->>>>>>> more knockout
-			<span data-bind="text: GameSize"></span>			
-			<span data-bind="visible: ImpersonationList.length > 0">(Impersonation Enabled)</span>			
-			<span>{{GameState}}</span>
-			<a data-bind="attr: { href: '#/game/' + '0' }">Spectate Game</a>
-		</li>
-	</ol>
-
-	<h2>Create a new game</h2>
-	<form role="form" action="/CreateGame" method="post">
-		<div class="form-group">
-			<label for="players">Players</label>
-			<input type="number" class="form-control" value="5" id="players" name="players" />
-		</div>
-		<div class="radio">
-			<label>
-				<input type="radio" name="impersonationEnabled" value="true" />Impersonation Enabled
->>>>>>> add signalr/durandal
-			</label>
-		</div>
-		<div class="radio">
-			<label>
-<<<<<<< HEAD
-				<input type="radio" name="impersonationEnabled" value="false" data-bind="checked: impersonation" />Impersonation Disabled
-=======
-				<input type="radio" name="impersonationEnabled" value="false" checked />Impersonation Disabled
->>>>>>> add signalr/durandal
-			</label>
-		</div>
 		<input class="btn btn-default" type="submit" value="Create game">
-</form>
+    </form>
 </div>

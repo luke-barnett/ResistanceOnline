@@ -1,7 +1,14 @@
 ﻿define(['data', 'knockout', 'knockout.punches'], function (data, ko, kop) {
+    ko.punches.enableAll();
+
     var viewModel = { game: ko.observable() };
 
-    viewModel.activate = function (index) { viewModel.game(data[index]); };
+    var deferred = new $.Deferred();
+
+    //todo index
+    data.subscribe(function () { viewModel.game(data()[0]); deferred.resolve(); });
+
+    viewModel.activate = function (index) { return deferred; };
 
     return viewModel;
 });

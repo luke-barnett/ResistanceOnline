@@ -162,7 +162,7 @@ namespace ResistanceOnline.Core
 
         }
 
-        public Round CurrentRound { get { return Rounds.Last(); } }
+        public Round CurrentRound { get { return Rounds.LastOrDefault(); } }
 
         public void AddToTeam(Player player, Player proposedPlayer)
         {

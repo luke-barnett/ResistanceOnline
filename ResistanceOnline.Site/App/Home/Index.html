@@ -2,27 +2,27 @@
 	<h2>Current Games</h2>
 	<ol data-bind="foreach: games">
 		<li>              
-			<span data-bind="text: GameSize"></span>			
-			<span data-bind="visible: ImpersonationList.length > 0">(Impersonation Enabled)</span>			
+			<span data-bind="text: GameSize() + ' player(s)'"></span>			
+			<span data-bind="visible: ImpersonationList ">(Impersonation Enabled)</span>			
 			<span>{{GameState}}</span>
-			<a data-bind="attr: { href: '#/game/' + '0' }">Spectate Game</a>
+			<a data-bind="attr: { href: '#/game/' + $index() }">Spectate Game</a>
 		</li>
 	</ol>
 
 	<h2>Create a new game</h2>
-	<form role="form" action="/CreateGame" method="post">
+	<form role="form" data-bind="submit: createGame">
 		<div class="form-group">
 			<label for="players">Players</label>
-			<input type="number" class="form-control" value="5" id="players" name="players" />
+			<input type="number" class="form-control" data-bind="value: players" />
 		</div>
 		<div class="radio">
 			<label>
-				<input type="radio" name="impersonationEnabled" value="true" />Impersonation Enabled
+				<input type="radio" name="impersonationEnabled" value="true" data-bind="checked: impersonation" />Impersonation Enabled
 			</label>
 		</div>
 		<div class="radio">
 			<label>
-				<input type="radio" name="impersonationEnabled" value="false" checked />Impersonation Disabled
+				<input type="radio" name="impersonationEnabled" value="false" data-bind="checked: impersonation" />Impersonation Disabled
 			</label>
 		</div>
 		<input class="btn btn-default" type="submit" value="Create game">

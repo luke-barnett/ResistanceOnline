@@ -1,5 +1,17 @@
 ﻿define(['data', 'knockout', 'knockout.punches'], function (data, ko, kop) {
     ko.punches.enableAll();
 
-    return { games: data };
+    var viewModel =  {
+        games: data,
+
+        //create game
+        impersonation: ko.observable('false'),
+        players: ko.observable(5),
+        createGame: function () {
+            $.connection.gameHub.server.createGame(viewModel.players(), viewModel.impersonation());
+            //todo redirect?
+        }
+    };
+
+    return viewModel;
 });

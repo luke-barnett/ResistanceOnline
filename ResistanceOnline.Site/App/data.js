@@ -2,7 +2,6 @@
     var games = ko.observableArray();
 
     var update = function (g) {
-        console.log(g);
         map.fromJS(g, {}, games);
     };
 

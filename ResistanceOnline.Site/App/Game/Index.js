@@ -6,13 +6,13 @@
     var deferred = new $.Deferred();
 
     //todo index
-    viewModel.game(data()[0]);
+    viewModel.game(data()[2]);
 
     if (data().length)
         deferred.resolve();
 
     //todo index
-    data.subscribe(function () { viewModel.game(data()[0]); deferred.resolve(); });
+    data.subscribe(function () { viewModel.game(data()[2]); deferred.resolve(); });
 
     viewModel.activate = function (index) { return deferred; };
 

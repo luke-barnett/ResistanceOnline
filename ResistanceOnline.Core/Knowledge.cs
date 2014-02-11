@@ -6,17 +6,12 @@ using System.Threading.Tasks;
 
 namespace ResistanceOnline.Core
 {
-    public enum Character
+    public enum Knowledge
     {
-        UnAllocated,
-        MinionOfMordred,
-        LoyalServantOfArthur,
+        Player,
+        Good,
+        Evil,
         Merlin,
-        Percival,
-        Mordred,
-        Oberon,
-        Assassin,
-        Morgana,
         Lancelot,
         EvilLancelot
     }

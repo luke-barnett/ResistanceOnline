@@ -30,6 +30,7 @@ namespace ResistanceOnline.Site.Models
 
 		public List<SelectListItem> AllCharactersSelectList { get; set; }
 
+        public SelectList LadyOfTheLakePlayerSelectList { get; set; }
         public SelectList GuessMerlinPlayersSelectList { get; set; }
         public SelectList AddToTeamPlayersSelectList { get; set; }
 
@@ -62,7 +63,7 @@ namespace ResistanceOnline.Site.Models
 
             PlayerName = player == null ? "Spectator" : player.Name;
 
-			if (game.ImpersonationEnabled)
+			if (game.Rule_PlayersCanImpersonateOtherPlayers)
 			{
 				ImpersonationList = game.Players.ToList();
 			}
@@ -80,6 +81,9 @@ namespace ResistanceOnline.Site.Models
             //can guess anyone but self
             GuessMerlinPlayersSelectList = new SelectList(game.Players.Where(p=>p!=player).Select(p => p.Name));
 
+            //can use on anyone who hasn't had it
+            LadyOfTheLakePlayerSelectList = new SelectList(game.Players.Where(p => p != player).Except(game.LadyOfTheLakeUses.Select(u => u.UsedBy)).Select(p => p.Name));
+
             //can put anyone on a team who isn't already on it
 			AddToTeamPlayersSelectList = new SelectList(game.Players.Where(p=> !game.CurrentRound.CurrentTeam.TeamMembers.Select(t=>t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
 
@@ -92,8 +96,7 @@ namespace ResistanceOnline.Site.Models
 				var playerInfo = new PlayerInfoModel 
 				{ 
 					Name = p.Name, 
-					CouldBeMerlin = Game.DetectMerlin(player, p), 
-					IsEvil = Game.DetectEvil(player, p) 
+					Knowledge = game.PlayerKnowledge(player, p)
 				};
 
 				//always know own character, or all characters if game is over
@@ -127,5 +130,6 @@ namespace ResistanceOnline.Site.Models
         }
 
         public Player AssassinsGuessAtMerlin { get; set; }
+
     }
 }

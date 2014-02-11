@@ -7,7 +7,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 	{
 		internal void CreateStandardGame(int numberOfPlayers)
 		{
-			var game = new Game(numberOfPlayers, false);
+			var game = new Game(numberOfPlayers);
 
 			//TODO: map to standard game types for good/evil numbers
 			for (var i = 0; i < numberOfPlayers; i++)
@@ -119,6 +119,12 @@ namespace ResistanceOnline.Core.Test.SpecFlow
             var game = ContextAccess.Game;
             game.Players.First(p => p.Character == Character.LoyalServantOfArthur).Character = Character.Merlin;
 		}
+
+        internal void AddAssassin()
+        {
+            var game = ContextAccess.Game;
+            game.Players.First(p => p.Character == Character.LoyalServantOfArthur).Character = Character.Assassin;
+        }
 
 		internal void PickMerlin(bool successfullMerlinPick)
 		{

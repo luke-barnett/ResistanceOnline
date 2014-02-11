@@ -18,13 +18,13 @@ namespace ResistanceOnline.Core
             MerlinDies
         }
 
-        public Game(int players, bool impersonationEnabled)
+        public Game(int players)
         {
-            ImpersonationEnabled = impersonationEnabled;
             Players = new List<Player>();
             Rounds = new List<Round>();
             AvailableCharacters = new List<Character>();
             GameSize = players;
+            LadyOfTheLakeUses = new List<LadyOfTheLakeUse>();
 
             RoundTables = new List<RoundTable>();
             switch (players)
@@ -74,16 +74,33 @@ namespace ResistanceOnline.Core
                 default:
                     throw new Exception("No tableaus for games with " + players + " players");
             }
-        }                  
+        }
 
+        public int GameId { get; set; }
         public List<Character> AvailableCharacters { get; set; }
         public int GameSize { get; set; }
-        public bool ImpersonationEnabled { get; set; }
         public List<Player> Players { get; set; }
         public List<Round> Rounds { get; set; }
         public int QuestIndicator { get; set; }
         public Player AssassinsGuessAtMerlin { get; set; }
         public List<RoundTable> RoundTables { get; set; }
+        public List<LadyOfTheLakeUse> LadyOfTheLakeUses { get; set; }
+        public Player HolderOfLadyOfTheLake { get; set; }
+
+        public bool Rule_PlayersCanImpersonateOtherPlayers { get; set; }
+        public bool Rule_IncludeLadyOfTheLake { get; set; }
+        public bool Rule_LancelotsKnowEachOther { get; set; }
+        public bool Rule_GoodMustAlwaysVoteSucess { get; set; }
+
+        public void UseLadyOfTheLake(Player player, Player target)
+        {
+            if (HolderOfLadyOfTheLake != player)
+                throw new Exception("Hax. Player does not have lady of the lake.");
+
+            LadyOfTheLakeUses.Add(new LadyOfTheLakeUse { UsedBy = player, UsedOn = target });
+            
+            OnLadyOfTheLakeUsed();
+        }
 
         public void GuessMerlin(Player player, Player guess)
         {
@@ -94,6 +111,12 @@ namespace ResistanceOnline.Core
                 throw new Exception("Hax. Assassin has already guessed.");
 
             AssassinsGuessAtMerlin = guess;
+
+            OnMerlinGuessedAt();
+        }
+
+        private void OnMerlinGuessedAt()
+        {
         }
 
         public void AddCharacter(Character character)
@@ -102,11 +125,21 @@ namespace ResistanceOnline.Core
                 throw new Exception("All roles added");
             AvailableCharacters.Add(character);
 
-            //on last character, allocate characters 
+            OnCharacterAddedOrPlayerJoined();
+        }
+
+        private void OnCharacterAddedOrPlayerJoined()
+        {
+            //check if game ready to start
             if (AvailableCharacters.Count == GameSize && Players.Count == GameSize)
             {
-                Allocate();
+                OnAllCharactersAndPlayersAdded();
             }
+        }
+
+        private void OnAllCharactersAndPlayersAdded()
+        {
+            AllocateCharactersToPlayers();
         }
 
         public Guid JoinGame(string playerName)
@@ -120,15 +153,12 @@ namespace ResistanceOnline.Core
             var guid = Guid.NewGuid();
             Players.Add(new Player() { Name = playerName, Guid = guid });
 
-            //on last player, allocate characters if 
-            if (AvailableCharacters.Count == GameSize)
-            {
-                Allocate();
-            }
+            OnCharacterAddedOrPlayerJoined();
+
             return guid;
         }
 
-        private void Allocate()
+        private void AllocateCharactersToPlayers()
         {
             //on last player, allocate characters
             if (Players.Count == GameSize)
@@ -145,11 +175,19 @@ namespace ResistanceOnline.Core
                     characterCards.RemoveAt(index);
                 }
 
-                //create first round
-                CreateRound(random.Next(GameSize));
+                OnGameStart();
             }
+        }
 
-
+        private void OnGameStart()
+        {
+            //create first round
+            var leader = new Random().Next(GameSize);
+            if (Rule_IncludeLadyOfTheLake)
+            {
+                HolderOfLadyOfTheLake = Players[(leader + GameSize - 1) % GameSize];
+            }
+            CreateRound(leader);
         }
 
         private void CreateRound(int leader)
@@ -159,7 +197,6 @@ namespace ResistanceOnline.Core
 
             var tableaus = RoundTables[Rounds.Count];
             Rounds.Add(new Round(Players, leader, tableaus.TeamSize, tableaus.RequiredFails));
-
         }
 
         public Round CurrentRound { get { return Rounds.Last(); } }
@@ -178,23 +215,53 @@ namespace ResistanceOnline.Core
         {
             CurrentRound.SubmitQuest(player, success);
 
+            if (CurrentRound.CurrentTeam.Quests.Count == CurrentRound.TeamSize)
+            {
+                OnLastQuestCard();
+            }
+        }
+
+        private void OnLastQuestCard()
+        {
             //on last quest submit, create the next round
             var roundState = CurrentRound.DetermineState();
             if (roundState == Round.State.Succeeded || roundState == Round.State.Failed)
             {
-                //3 failed missions, don't bother going any further
-                if (Rounds.Where(r => r.DetermineState() == Round.State.Failed).Count() >= 3)
-                    return;
+                OnEndOfRound(Rounds.Count);
+            }
+        }
 
-                //3 successful missions, don't bother going any further
-                if (Rounds.Where(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
-                    return;
+        private void OnEndOfRound(int roundNumber)
+        {
+            //3 failed missions, don't bother going any further
+            if (Rounds.Where(r => r.DetermineState() == Round.State.Failed).Count() >= 3)
+                return;
 
-                //create the next round
-                CreateRound(CurrentRound.NextPlayer);
+            //3 successful missions, don't bother going any further
+            if (Rounds.Where(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
+                return;
+
+            if (roundNumber >= 2 && Rule_IncludeLadyOfTheLake)
+            {
+                //wait for lady of the lake to be used
+                return;
             }
 
+            OnStartNextRound();
         }
+
+        private void OnLadyOfTheLakeUsed()
+        {
+            HolderOfLadyOfTheLake = LadyOfTheLakeUses.Last().UsedOn;
+            OnStartNextRound();
+        }
+
+        private void OnStartNextRound()
+        {
+            //create the next round
+            CreateRound(CurrentRound.NextPlayer);            
+        }
+
 
         public State DetermineState()
         {
@@ -206,6 +273,9 @@ namespace ResistanceOnline.Core
 
             if (Rounds.Where(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
             {
+                if (Rule_IncludeLadyOfTheLake && LadyOfTheLakeUses.Count < Rounds.Count - 2)
+                    return State.Playing;
+
                 if (AssassinsGuessAtMerlin == null && Players.Any(p=>p.Character == Character.Merlin))
                     return State.GuessingMerlin;
 
@@ -253,6 +323,12 @@ namespace ResistanceOnline.Core
                                 return new List<Action.Type>() { Action.Type.SubmitQuestCard };
                             }
                             return new List<Action.Type>();
+                    }
+
+                    //round over but still current
+                    if (Rule_IncludeLadyOfTheLake && Rounds.Count >= 2 && HolderOfLadyOfTheLake == player)
+                    {
+                        return new List<Action.Type>() { Action.Type.UseTheLadyOfTheLake };
                     }
 
                     return new List<Action.Type>();
@@ -319,6 +395,38 @@ namespace ResistanceOnline.Core
         }
 
 
+        public Knowledge PlayerKnowledge(Player myself, Player someoneelse)
+        {
+            var ladyofthelake = LadyOfTheLakeUses.FirstOrDefault(u => u.UsedBy == myself && u.UsedOn == someoneelse);
+            if (ladyofthelake != null)
+            {
+                switch (ladyofthelake.UsedOn.Character)
+                {
+                    case Character.EvilLancelot:
+                        //todo lancelot could have changed allegiance
+                    case Character.Assassin:
+                    case Character.MinionOfMordred:
+                    case Character.Mordred:
+                    case Character.Morgana:
+                    case Character.Oberon:
+                        return Knowledge.Evil;
+                }
+                return Knowledge.Good;
+            }
+
+            if (DetectEvil(myself, someoneelse)) {
+                return Knowledge.Evil;
+            }
+
+            if (DetectMerlin(myself, someoneelse))
+            {
+                return Knowledge.Merlin;
+            }
+
+            return Knowledge.Player;
+        }
+
+
         /// <summary>
         /// does myself know someoneelse is evil. e.g. they are both minions, or myself is merlin
         /// </summary>
@@ -333,7 +441,7 @@ namespace ResistanceOnline.Core
             //minions know each other (except oberon)
             if (myself.Character == Character.Assassin || myself.Character == Character.Morgana || myself.Character == Character.MinionOfMordred || myself.Character == Character.Mordred)
             {
-                if (someoneelse.Character == Character.Assassin || someoneelse.Character == Character.Morgana || someoneelse.Character == Character.MinionOfMordred || someoneelse.Character == Character.Mordred)
+                if (someoneelse.Character == Character.Assassin || someoneelse.Character == Character.Morgana || someoneelse.Character == Character.MinionOfMordred || someoneelse.Character == Character.Mordred || someoneelse.Character == Character.EvilLancelot)
                 {
                     return true;
                 }
@@ -373,7 +481,6 @@ namespace ResistanceOnline.Core
             return false;
         }
 
-        public int GameId { get; set; }
 
     }
 }

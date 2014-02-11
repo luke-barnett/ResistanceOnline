@@ -9,8 +9,6 @@ namespace ResistanceOnline.Site.Models
     public class PlayerInfoModel
     {
         public string Name { get; set; }
-        public bool IsEvil { get; set; }
-        public bool CouldBeMerlin { get; set; }
         public Character? CharacterCard { get; set; }
 
         public string Actual
@@ -19,12 +17,10 @@ namespace ResistanceOnline.Site.Models
             {
                 if (CharacterCard.HasValue)
                     return CharacterCard.ToString();
-                if (IsEvil)
-                    return "Evil";
-                if (CouldBeMerlin)
-                    return "Merlin";
-                return "Player";
+                return Knowledge.ToString();
             }
         }
+
+        public Knowledge Knowledge { get; set; }
     }
 }

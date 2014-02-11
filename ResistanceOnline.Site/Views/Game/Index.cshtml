@@ -5,7 +5,7 @@
 		{
 		<li>
 			<span>@game.GameSize players</span>
-			@if (game.ImpersonationEnabled)
+			@if (game.Rule_PlayersCanImpersonateOtherPlayers)
 			{
 				<span>(Impersonation Enabled)</span>
 			}
@@ -22,14 +22,9 @@
 		</div>
 		<div class="radio">
 			<label>
-				<input type="radio" name="impersonationEnabled" value="true" />Impersonation Enabled
+				<input type="checkbox" name="impersonationEnabled" />Allow Impersonation
 			</label>
-		</div>
-		<div class="radio">
-			<label>
-				<input type="radio" name="impersonationEnabled" value="false" checked />Impersonation Disabled
-			</label>
-		</div>
+		</div>		
 		<input class="btn btn-default" type="submit" value="Create game">
 </form>
 </div>

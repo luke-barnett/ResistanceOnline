@@ -14,19 +14,20 @@ namespace ResistanceOnline.Site.Models
 
 		public Guid? PlayerGuid { get; set; }
 
-		public Core.Game.State GameState { get; set; }
+		public string GameState { get; set; }
 
         public bool GameOver
         {
             get
             {
-                return (GameState == Game.State.GoodPrevails || GameState == Game.State.MerlinDies || GameState == Game.State.EvilTriumphs);
+
+                return false; // TODO string compare? (GameState == Game.State.GoodPrevails || GameState == Game.State.MerlinDies || GameState == Game.State.EvilTriumphs);
             }
         }
 		
 		public List<Core.Player> ImpersonationList { get; set; }
 
-		public List<Core.Character> CharactersInGame { get; set; }
+		public List<string> CharactersInGame { get; set; }
 
 		public List<SelectListItem> AllCharactersSelectList { get; set; }
 
@@ -68,8 +69,8 @@ namespace ResistanceOnline.Site.Models
 			}
 
             AssassinsGuessAtMerlin = game.AssassinsGuessAtMerlin;
-			GameState = game.DetermineState();
-			CharactersInGame = game.AvailableCharacters.ToList();
+			GameState = game.DetermineState().Humanize();
+			CharactersInGame = game.AvailableCharacters.Select(i => i.Humanize()).ToList();
 			AllCharactersSelectList =
 				Enum.GetValues(typeof(Character))
 					.Cast<Character>()
@@ -97,9 +98,11 @@ namespace ResistanceOnline.Site.Models
 				};
 
 				//always know own character, or all characters if game is over
-				if ((p==player || GameState == Game.State.EvilTriumphs || GameState == Game.State.GoodPrevails || GameState == Game.State.MerlinDies) && p.Character != Character.UnAllocated) {
-					playerInfo.CharacterCard = p.Character; 
-				}
+
+                //todo
+                //if ((p==player || GameState == Game.State.EvilTriumphs || GameState == Game.State.GoodPrevails || GameState == Game.State.MerlinDies) && p.Character != Character.UnAllocated) {
+                //    playerInfo.CharacterCard = p.Character; 
+                //}
 
 				PlayerInfo.Add(playerInfo);
 

@@ -2,7 +2,9 @@
     var games = ko.observableArray();
 
     var update = function (g) {
-        map.fromJS(g, {},  games)
+        map.fromJS(g, {}, games);
+        console.log(games());
+        console.log(g);
     };
 
     var gameHub = $.connection.gameHub;

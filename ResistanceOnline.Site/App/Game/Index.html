@@ -1,56 +1,31 @@
-﻿@{
-
-	ViewBag.Title = "Game " + Model.GameId;
-}
-
-<p class="bookmark-instructions" data-bind="visible: game.PlayerGuid">Hello {{game.PlayerName}}, don't forget to bookmark this URL!</p>
-
+﻿<p class="bookmark-instructions" data-bind="visible: game().PlayerGuid">Hello {{game().PlayerName}}, don't forget to bookmark this URL!</p>
 
 <h3>Game setup</h3>
 <p>
-    This is a {{game.GameSize}}.ToWords() player game with the following characters
-    @if (Model.CharactersMissing > 0)
-    {
-    <span class="important">(@Model.CharactersMissing still to be added)</span>
-    }        
+    This is a {{game().GameSize}} player game with the following characters    
+    <span class="important" data-bind="visible: game().CharactersMissing">({{game().CharactersMissing}} still to be added)</span>    
 </p>
 
-<ul class="cards">
-	@foreach (var c in Model.CharactersInGame)
-	{
-		<li><img class="card" src="/Images/@(c).png" alt="@c.Humanize()" title="@c.Humanize()" /></li>
-	}
-</ul>
 
-@if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.AddCharacter))
-{
-    <form role="form" action="/AddCharacter" method="post">
-        <input type="hidden" name="gameid" value="@Model.GameId" />
-        <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
-        <div class="form-group">
-            @Html.DropDownList("Character", Model.AllCharactersSelectList, new { @class = "form-control" })
-        </div>
-        <input class="btn btn-default" type="submit" value="Add Character" />
-    </form>
-}
+<ul class="cards" data-bind="foreach: game().CharactersInGame">
+    <li><img class="card" data-bind="attr: { src: '/Images/' + $data + '.png' }" alt="{{$data}" title="{{$data}}" /></li>	
+</ul>
 
 <div class="clear"></div>    
 
-<ul class="round-table">
-    @for (int i = 0; i < Model.RoundTables.Count; i++)
-    {
-        <li>Round @((i + 1).ToWords()) needs @Model.RoundTables[i].TeamSize.ToWords() players and @("fail".ToQuantity(Model.RoundTables[i].RequiredFails, ShowQuantityAs.Words))</li>
-    }
+<ul class="round-table" data-bind="foreach: game().RoundTables">
+    <li>Round {{$index() + 1}} needs {{TeamSize}} players and {{RequiredFails}} fail(s)</li>    
 </ul>
 
-@if (Model.PlayerInfo.Count > 0) { 
-<h3>Oracle</h3>
-<p>Mouse over each player card to see information you may know about them.</p>    
-<ul class="cards">
-	@foreach (var p in Model.PlayerInfo)
-	{
+<div data-bind="visible: game().PlayerInfo">
+    <h3>Oracle</h3>
+    <p>Mouse over each player card to see information you may know about them.</p>    
+    <ul class="cards" data-bind="foreach: game().PlayerInfo">
 		<li>
-			<img class="playercard" src="/Images/@(Model.GameOver?p.Actual:"player").png" data-hoverenabled="@((!Model.GameOver).ToString())" data-actual="/images/@(p.Actual).png" title="@(p.Actual == "Player" ? "" : p.Actual.Humanize())" />
+			<img class="playercard" src="/Images/@(Model.GameOver?p.Actual:"player").png"
+                 data-hoverenabled="@((!Model.GameOver).ToString())" 
+                data-actual="/images/@(p.Actual).png"
+                 title="@(p.Actual == "Player" ? "" : p.Actual.Humanize())" />
             <div class="playername">
                 @if (Model.ImpersonationList != null && Model.ImpersonationList.Count > 0)
                 {
@@ -62,10 +37,10 @@
                 }
             </div>
 		</li>
-	}
-</ul>
+    </ul>
+</div>
 
-@section scripts {
+<!--@section scripts {
 <script>
     $(function () {
         //show extra info on mouse over
@@ -88,22 +63,20 @@
     });
 </script>
 }
-}
+}-->
 
 <div class="clear"></div>
 
-@foreach (var round in Model.Rounds)
-{
+
+<div data-bind="foreach: game().Rounds">
 	<h3>
-        Round @((Model.Rounds.IndexOf(round)+1).ToWords())
-        @if (!String.IsNullOrWhiteSpace(round.Outcome))
-        {
-            <img src="/images/@(round.Outcome).png" title="@round.Outcome" />
-        }
+        Round {{ $index() + 1 }}        
+        <!--<img  title="{{Outcome}}" data-bind="visible: Outcome, attr: {src: '/images/' + Outcome() + '}}.png' }" />-->
     </h3>
-    <p>@("player".ToQuantity(round.TeamSize, ShowQuantityAs.Words).Transform(To.SentenceCase)) (@("fail".ToQuantity(round.FailsRequired, ShowQuantityAs.Words)) required)</p>
-	foreach (var team in round.Teams)
-	{
+    <p>{{TeamSize}} player(s) ({{RequiredFails}} fail(s) required)</p>
+	
+    <div data-bind="foreach: Teams">
+	
 		<div class="quest">
             <div class="setup">
                 <ul class="cards">
@@ -112,21 +85,19 @@
                         <div class="playername">@team.Leader</div>
                     </li>
 
-                    @foreach (var teamMember in team.TeamMembers)
-                    {
+                    <!-- ko foreach: TeamMembers -->
                         <li>
                             <img src="/Images/teamtoken.png" title="@teamMember" />
                             <div class="playername">@teamMember</div>
                         </li>
-                    }
-
-                    @foreach (var vote in team.Vote)
-                    {
+                    
+                    <!-- /ko -->
+                     <!-- ko foreach: Vote -->
                         <li>
                             <img class="vote" src="/images/@(vote.Image).png" title="@vote.Player" />
                             <div class="playername">@vote.Player</div>
                         </li>
-                    }
+                    <!-- /ko -->
 
                 </ul>
                 @if (Model.Rounds.IndexOf(round) + 1 == Model.Rounds.Count && Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.AddToTeam).Any())
@@ -140,14 +111,10 @@
             </div>
             <div class="clear"></div>
             <div class="results">
-                <ul class="cards">
-                    @foreach (var card in team.QuestCards)
-                    {
-                        <li>
-                            <img class="card" src="/images/@(card.Image).png" />
-                        </li>
-
-                    }
+                <ul class="cards" data-bind="foreach: QuestCards">                    
+                    <li>
+                        <img class="card" src="/images/@(card.Image).png" />
+                    </li>                    
                 </ul>
                 @if (Model.Rounds.IndexOf(round) + 1 == Model.Rounds.Count && Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.SubmitQuestCard).Any())
                 {
@@ -156,10 +123,10 @@
             </div>
             <div class="clear"></div>
 		</div>
-	}            
-}
+	</div>          
+</div>
 
-@if (Model.GameState == ResistanceOnline.Core.Game.State.GuessingMerlin || Model.AssassinsGuessAtMerlin != null)
+@if (Model.GameState == ResistanceOnline.Core.game().State.GuessingMerlin || Model.AssassinsGuessAtMerlin != null)
 {
     <h3>Assassination Attempt</h3>    
     if (Model.AssassinsGuessAtMerlin == null)
@@ -177,18 +144,29 @@
         <span class="result">@(Model.AssassinsGuessAtMerlin.Character == ResistanceOnline.Core.Character.Merlin ? "Merlin has been assassinated" : "Casualty of war")</span>
         <div class="clear"></div>
     }
-
 }
 
-@if (Model.GameOver)
-{
+<div data-bind="visible: game().GameOver">
     <h3>Game Over</h3>
-    <p>@Model.GameState.Humanize()</p>
-}
+    <p>{{GameState}}</p>
+</div>
 
+<h1>Actions</h1>
+<!--
+<form role="form" action="/AddCharacter" method="post" data-bind="visible: game().Actions">.Contains(1)@ResistanceOnline.Core.Action.Type.AddCharacter
+    <input type="hidden" name="gameid" value="@Model.GameId" />
+    <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+    <div class="form-group">
+        @Html.DropDownList("Character", Model.AllCharactersSelectList, new { @class = "form-control" })
+    </div>
+    <input class="btn btn-default" type="submit" value="Add Character" />
+</form>-->
 
+<ul data-bind="foreach: Actions">
+    <li>{{$data}}</li>
+</ul>
 
-@if (Model.Actions.Count>0) { 
+<!--@if (Model.Actions.Count>0) { 
 	if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.GuessMerlin))
 	{
 		<form role="form" action="/GuessMerlin" method="post">
@@ -257,4 +235,4 @@
             <input class="btn btn-default" type="submit" value="Vote for Team" />
         </form>
     }
-}
+}-->

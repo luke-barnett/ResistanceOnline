@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.SignalR;
 using ResistanceOnline.Core;
+using ResistanceOnline.Site.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -103,10 +104,16 @@ namespace ResistanceOnline.Site.Controllers
             return _games[gameId.Value];
         }
 
+        private void Update()
+        {            
+            Clients.All.Update(_games.Select(g => new GameModel(g, Guid.NewGuid()))); //playerGuid
+        }
+
+
         public override System.Threading.Tasks.Task OnConnected()
         {
             //todo split into individual updates
-            Clients.Caller.Update(_games);
+            Update();
             return base.OnConnected();
         }        	
         
@@ -126,7 +133,7 @@ namespace ResistanceOnline.Site.Controllers
             var player = game.Players.First(p => p.Guid == playerGuid);
             game.AddCharacter((Character)Enum.Parse(typeof(Character), character));
 
-            Clients.All.Update(_games);
+            Update();
         }
 
         public void AddToTeam(int gameId, Guid playerGuid, string person) 
@@ -135,7 +142,7 @@ namespace ResistanceOnline.Site.Controllers
             var player = game.Players.First(p => p.Guid == playerGuid);
             game.AddToTeam(player, game.Players.First(p => p.Name == person));
 
-            Clients.All.Update(_games);
+            Update();
         }
 
         public void SubmitQuestCard(int gameId, Guid playerGuid, bool success) 
@@ -144,7 +151,7 @@ namespace ResistanceOnline.Site.Controllers
             var player = game.Players.First(p => p.Guid == playerGuid);
             game.SubmitQuest(player, success);
 
-            Clients.All.Update(_games);
+            Update();
         }
 
         public void VoteForTeam(int gameId, Guid playerGuid, bool approve) 
@@ -153,7 +160,7 @@ namespace ResistanceOnline.Site.Controllers
             var player = game.Players.First(p => p.Guid == playerGuid);
             game.VoteForTeam(player, approve);
 
-            Clients.All.Update(_games);
+            Update();
         }
 
         public void JoinGame(int gameId, string name) 
@@ -161,7 +168,7 @@ namespace ResistanceOnline.Site.Controllers
             var game = GetGame(gameId);
             var playerGuid = game.JoinGame(name);
 
-            Clients.All.Update(_games);
+            Update();
         }
 
         public void GuessMerlin(int gameId, Guid playerGuid, string guess) 
@@ -170,7 +177,7 @@ namespace ResistanceOnline.Site.Controllers
             var player = game.Players.First(p => p.Guid == playerGuid);
             game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
 
-            Clients.All.Update(_games);
+            Update();
         }
     }
 }

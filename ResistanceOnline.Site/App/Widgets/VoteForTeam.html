@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿<form role="form" databind="submit: voteForTeam">
     <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
     <input type="hidden" name="gameid" value="@Model.GameId" />
@@ -13,3 +14,20 @@
     </div>
     <input class="btn btn-default" type="submit" value="Vote for Team" />
 </form>
+=======
+﻿ <form role="form" action="/VoteForTeam" method="post">
+            <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+            <input type="hidden" name="gameid" value="@Model.GameId" />
+            <div class="radio">
+                <label>
+                    <input type="radio" name="approve" value="true" />Accept
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                    <input type="radio" name="approve" value="false" />Reject
+                </label>
+            </div>
+            <input class="btn btn-default" type="submit" value="Vote for Team" />
+        </form>
+>>>>>>> convert actions to widgets

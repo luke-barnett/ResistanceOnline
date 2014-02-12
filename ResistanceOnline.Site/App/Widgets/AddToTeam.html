@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿<form role="form" data-bind="submit: addToTeam">
     <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
     <input type="hidden" name="gameId" value="@Model.GameId" />
@@ -6,3 +7,13 @@
     </div>
     <input class="btn btn-default" type="submit" value="Add to Team" />
 </form>
+=======
+﻿ <form role="form" action="/AddToTeam" method="post">
+            <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+            <input type="hidden" name="gameId" value="@Model.GameId" />
+            <div class="form-group">
+                @Html.DropDownList("Person", Model.AddToTeamPlayersSelectList, new { @class = "form-control" })
+            </div>
+            <input class="btn btn-default" type="submit" value="Add to Team" />
+        </form>
+>>>>>>> convert actions to widgets

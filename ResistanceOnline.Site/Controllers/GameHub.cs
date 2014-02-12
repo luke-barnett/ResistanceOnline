@@ -14,6 +14,7 @@ namespace ResistanceOnline.Site.Controllers
     {
         //todo playerGuid
         static Dictionary<string, Guid> _players = new Dictionary<string, Guid>();
+
         Guid PlayerGuid
         {
             get
@@ -43,7 +44,7 @@ namespace ResistanceOnline.Site.Controllers
        
         private void Update()
         {
-            Clients.All.Update(_games.Select(g => new GameModel(g, Guid.NewGuid()))); //todo playerGuid
+            Clients.All.Update(_games.Select(g => new GameModel(g, PlayerGuid))); 
         }
 
 
@@ -103,9 +104,7 @@ namespace ResistanceOnline.Site.Controllers
         public void JoinGame(int gameId, string name) 
         {
             var game = GetGame(gameId);
-            var playerGuid = game.JoinGame(name);
-            //todo playerGuid            
-            
+            PlayerGuid = game.JoinGame(name);                       
             Update();
         }
 

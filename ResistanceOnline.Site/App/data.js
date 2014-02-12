@@ -3,6 +3,7 @@
 
     var update = function (g) {
         map.fromJS(g, {}, games);
+        console.log(g);
     };
 
     var gameHub = $.connection.gameHub;

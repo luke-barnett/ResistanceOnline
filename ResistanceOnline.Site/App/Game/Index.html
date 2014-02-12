@@ -26,27 +26,6 @@
             <img class="playercard" src="/Images/player.png" data-actual="/images/@(p.Actual).png" />
             <div class="playername">
                 {{Name}}
-               <!-- @if (Model.ImpersonationList != null && Model.ImpersonationList.Count > 0)
-=======
-			<img class="playercard" src="/Images/@(Model.GameOver?p.Actual:"player").png"
-                 data-hoverenabled="@((!Model.GameOver).ToString())" 
-                data-actual="/images/@(p.Actual).png"
-                 title="@(p.Actual == "Player" ? "" : p.Actual.Humanize())" />
-            <div class="playername">
-                @if (Model.ImpersonationList != null && Model.ImpersonationList.Count > 0)
->>>>>>> more knockout
-=======
-			<img class="playercard" src="/Images/player.png" data-actual="/images/@(p.Actual).png" />
-            <div class="playername">{{Name}}
-               <!-- @if (Model.ImpersonationList != null && Model.ImpersonationList.Count > 0)
->>>>>>> home page working
-                {
-                    @Html.ActionLink(p.Name, "Game", new { gameId = Model.GameId, playerGuid = Model.ImpersonationList.First(i => i.Name == p.Name).Guid })
-                }
-                else
-                {
-                    @p.Name
-                }-->
             </div>
         </li>
     </ul>
@@ -152,5 +131,4 @@
         <div data-bind="compose: { model: '/app/widgets/' + $data + '.js', view: '/app/widgets/' + $data + '.html', activationData: $root.game }"></div>
     </li>
 </ul>
-
 

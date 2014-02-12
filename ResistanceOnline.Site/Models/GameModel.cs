@@ -86,7 +86,10 @@ namespace ResistanceOnline.Site.Models
             LadyOfTheLakePlayerSelectList = new SelectList(game.Players.Where(p => p != player).Except(game.LadyOfTheLakeUses.Select(u => u.UsedBy)).Select(p => p.Name));
 
             //can put anyone on a team who isn't already on it
-			AddToTeamPlayersSelectList = new SelectList(game.Players.Where(p=> !game.CurrentRound.CurrentTeam.TeamMembers.Select(t=>t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
+            if (game.CurrentRound != null)
+            {
+                AddToTeamPlayersSelectList = new SelectList(game.Players.Where(p => !game.CurrentRound.CurrentTeam.TeamMembers.Select(t => t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
+            }
 
 			Actions = game.AvailableActions(player).Select(i => i.ToString()).ToList();
 
@@ -101,11 +104,10 @@ namespace ResistanceOnline.Site.Models
 				};
 
 				//always know own character, or all characters if game is over
-
-                //todo
-                //if ((p==player || GameState == Game.State.EvilTriumphs || GameState == Game.State.GoodPrevails || GameState == Game.State.MerlinDies) && p.Character != Character.UnAllocated) {
-                //    playerInfo.CharacterCard = p.Character; 
-                //}
+                if ((p == player || GameState == Game.State.EvilTriumphs.ToString() || GameState == Game.State.GoodPrevails.ToString() || GameState == Game.State.MerlinDies.ToString()) && p.Character != Character.UnAllocated)
+                {
+                    playerInfo.CharacterCard = p.Character;
+                }
 
 				PlayerInfo.Add(playerInfo);
 

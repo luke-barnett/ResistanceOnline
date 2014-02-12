@@ -86,6 +86,7 @@ namespace ResistanceOnline.Core
         public List<RoundTable> RoundTables { get; set; }
         public List<LadyOfTheLakeUse> LadyOfTheLakeUses { get; set; }
         public Player HolderOfLadyOfTheLake { get; set; }
+        public bool LancelotAllegianceSwitched { get; set; }
 
         public bool Rule_PlayersCanImpersonateOtherPlayers { get; set; }
         public bool Rule_IncludeLadyOfTheLake { get; set; }
@@ -397,19 +398,38 @@ namespace ResistanceOnline.Core
 
         public Knowledge PlayerKnowledge(Player myself, Player someoneelse)
         {
+            if (Rule_LancelotsKnowEachOther)
+            {
+                if ((myself.Character == Character.Lancelot || myself.Character == Character.EvilLancelot) && (someoneelse.Character == Character.Lancelot))
+                {
+                    return Knowledge.Lancelot;    
+                }
+                if ((myself.Character == Character.Lancelot || myself.Character == Character.EvilLancelot) && (someoneelse.Character == Character.EvilLancelot))
+                {
+                    return Knowledge.EvilLancelot;
+                }
+            }
+
             var ladyofthelake = LadyOfTheLakeUses.FirstOrDefault(u => u.UsedBy == myself && u.UsedOn == someoneelse);
             if (ladyofthelake != null)
             {
                 switch (ladyofthelake.UsedOn.Character)
                 {
                     case Character.EvilLancelot:
-                        //todo lancelot could have changed allegiance
+                        if (!LancelotAllegianceSwitched)
+                            return Knowledge.Evil;
+                        break;
+                    case Character.Lancelot:
+                        if (LancelotAllegianceSwitched)
+                            return Knowledge.Evil;
+                        break;
+                    case Character.Morgana:
                     case Character.Assassin:
                     case Character.MinionOfMordred:
                     case Character.Mordred:
-                    case Character.Morgana:
                     case Character.Oberon:
                         return Knowledge.Evil;
+
                 }
                 return Knowledge.Good;
             }

@@ -15,8 +15,8 @@ namespace ResistanceOnline.Core
         Percival,
         Mordred,
         Oberon,
-        Assassin,
         Morgana,
+        Assassin,
         Lancelot,
         EvilLancelot
     }

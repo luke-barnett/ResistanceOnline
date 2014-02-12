@@ -120,6 +120,15 @@ namespace ResistanceOnline.Core
         {
         }
 
+        private void OnAfterAction()
+        {
+            foreach (Bots.IBot bot in Players.Where(p => p is Bots.IBot))
+            {
+                bot.DoSomething(this);
+            }
+                
+        }
+
         public void AddCharacter(Character character)
         {
             if (AvailableCharacters.Count == GameSize)
@@ -128,6 +137,7 @@ namespace ResistanceOnline.Core
 
             OnCharacterAddedOrPlayerJoined();
         }
+
 
         private void OnCharacterAddedOrPlayerJoined()
         {
@@ -156,8 +166,27 @@ namespace ResistanceOnline.Core
 
             OnCharacterAddedOrPlayerJoined();
 
+            OnAfterAction();
+
             return guid;
         }
+
+        public Guid AddSimpleBot(string name)
+        {
+            if (Players.Count == GameSize)
+                throw new Exception("Game already full");
+
+            if (Players.Select(p => p.Name).Contains(name))
+                throw new Exception("Player name already taken");
+
+            var guid = Guid.NewGuid();
+            Players.Add(new Bots.SimpleBot() { Name = name, Guid = guid });
+
+            OnCharacterAddedOrPlayerJoined();
+
+            return guid;
+        }
+
 
         private void AllocateCharactersToPlayers()
         {
@@ -390,14 +419,49 @@ namespace ResistanceOnline.Core
                 case Action.Type.VoteForTeam:
                     VoteForTeam(player, action.Accept);
                     break;
+                case Action.Type.UseTheLadyOfTheLake:
+                    UseLadyOfTheLake(player, action.Player);
+                    break;
                 default:
                     throw new NotImplementedException();
             }
+
+            OnAfterAction();
         }
 
 
+        public bool IsCharacterEvil(Character character)
+        {
+            switch (character)
+            {
+                case Core.Character.Assassin:
+                case Core.Character.MinionOfMordred:
+                case Core.Character.Mordred:
+                case Core.Character.Morgana:
+                case Core.Character.Oberon:
+                    return true;
+                    break;
+                case Core.Character.Lancelot:
+                    if (LancelotAllegianceSwitched)
+                    {
+                        return true;
+                    }
+                    break;
+                case Core.Character.EvilLancelot:
+                    if (!LancelotAllegianceSwitched)
+                    {
+                        return true;
+                    }
+                    break;
+            }
+            return false;
+        }
+
         public Knowledge PlayerKnowledge(Player myself, Player someoneelse)
         {
+            if (myself == null)
+                return Knowledge.Player;
+
             if (Rule_LancelotsKnowEachOther)
             {
                 if ((myself.Character == Character.Lancelot || myself.Character == Character.EvilLancelot) && (someoneelse.Character == Character.Lancelot))
@@ -413,25 +477,7 @@ namespace ResistanceOnline.Core
             var ladyofthelake = LadyOfTheLakeUses.FirstOrDefault(u => u.UsedBy == myself && u.UsedOn == someoneelse);
             if (ladyofthelake != null)
             {
-                switch (ladyofthelake.UsedOn.Character)
-                {
-                    case Character.EvilLancelot:
-                        if (!LancelotAllegianceSwitched)
-                            return Knowledge.Evil;
-                        break;
-                    case Character.Lancelot:
-                        if (LancelotAllegianceSwitched)
-                            return Knowledge.Evil;
-                        break;
-                    case Character.Morgana:
-                    case Character.Assassin:
-                    case Character.MinionOfMordred:
-                    case Character.Mordred:
-                    case Character.Oberon:
-                        return Knowledge.Evil;
-
-                }
-                return Knowledge.Good;
+                return IsCharacterEvil(ladyofthelake.UsedOn.Character) ? Knowledge.Evil : Knowledge.Good;
             }
 
             if (DetectEvil(myself, someoneelse)) {

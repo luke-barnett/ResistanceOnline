@@ -28,49 +28,10 @@ namespace ResistanceOnline.Site.Controllers
                 game.AddCharacter(Character.Percival);
                 game.AddCharacter(Character.Morgana);
                 game.AddCharacter(Character.Merlin);
-                var jordanGuid = game.JoinGame("Jordan");
-                var jordan = game.Players.First(p=>p.Guid == jordanGuid);
-                var lukeGuid = game.JoinGame("Luke");
-                var luke = game.Players.First(p=>p.Guid == lukeGuid);
-                var jeffreyGuid = game.JoinGame("Jeffrey");
-                var jeffrey = game.Players.First(p=>p.Guid == jeffreyGuid);
-                var jayvinGuid = game.JoinGame("Jayvin");
-                var jayvin = game.Players.First(p=>p.Guid == jayvinGuid);
-                var verneGuid = game.JoinGame("Verne");
-                var verne = game.Players.First(p=>p.Guid == verneGuid);                
-
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jordan);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
-                game.VoteForTeam(jordan, true);
-                game.VoteForTeam(luke, true);
-                game.VoteForTeam(jayvin, false);
-                game.VoteForTeam(jeffrey, true);
-                game.VoteForTeam(verne, false);
-                game.SubmitQuest(jordan, true);
-                game.SubmitQuest(luke, false);
-
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jordan);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
-                game.VoteForTeam(jordan, false);
-                game.VoteForTeam(luke, true);
-                game.VoteForTeam(jayvin, false);
-                game.VoteForTeam(jeffrey, false);
-                game.VoteForTeam(verne, false);
-
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jeffrey);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
-                game.VoteForTeam(jordan, true);
-                game.VoteForTeam(luke, true);
-                game.VoteForTeam(jayvin, false);
-                game.VoteForTeam(jeffrey, false);
-                game.VoteForTeam(verne, true);
-
-                game.SubmitQuest(jeffrey, true);
-                game.SubmitQuest(luke, true);
-                game.SubmitQuest(jayvin, true);
-
+                game.AddSimpleBot("Jordan");
+                game.AddSimpleBot("Luke");
+                game.AddSimpleBot("Jeffrey");
+                game.AddSimpleBot("Jayvin");
 
                 game.GameId = 0;
                 _games.Add(game);
@@ -124,7 +85,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
-            game.AddCharacter((Character)Enum.Parse(typeof(Character), character));
+            game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.AddCharacter, Character = (Character)Enum.Parse(typeof(Character), character) });
             return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }        
         [HttpPost]
@@ -132,7 +93,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
-            game.AddToTeam(player, game.Players.First(p => p.Name == person));
+            game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.AddToTeam, Player = game.Players.First(p => p.Name == person)});
             return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }        
         [HttpPost]
@@ -140,7 +101,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
-            game.SubmitQuest(player, success);
+            game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.SubmitQuestCard, Success = success });
             return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }        
         [HttpPost]
@@ -148,7 +109,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
-            game.VoteForTeam(player, approve);
+            game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.VoteForTeam, Accept = approve });
             return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }                             
         [HttpPost]
@@ -163,7 +124,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
-            game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
+            game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.GuessMerlin, Player = game.Players.First(p => p.Name == guess) });
             return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }
         [HttpPost]
@@ -171,7 +132,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
-            game.UseLadyOfTheLake(player, game.Players.First(p => p.Name == target));
+            game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.UseTheLadyOfTheLake, Player = game.Players.First(p => p.Name == target) });
             return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }
 	}

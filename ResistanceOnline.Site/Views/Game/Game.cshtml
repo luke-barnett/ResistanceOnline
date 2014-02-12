@@ -154,7 +154,7 @@
             <div class="clear"></div>
             @if (Model.Rounds.IndexOf(round) + 1 == Model.Rounds.Count && Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.UseTheLadyOfTheLake).Any())
             {
-                <span class="waiting">Waiting for @Model.CommaQuibbling(Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.UseTheLadyOfTheLake).Select(w => w.Name)) to use the lady of the lake</span>
+                <span class="waiting">Waiting for @Model.CommaQuibbling(Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.VoteForTeam).Select(w => w.Name)) to use the lady of the lake</span>
             }
 		</div>
 	}            

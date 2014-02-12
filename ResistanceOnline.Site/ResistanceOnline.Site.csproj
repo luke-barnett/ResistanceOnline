@@ -132,6 +132,16 @@
     <Content Include="App\main.js" />
     <Content Include="App\shell.html" />
     <Content Include="App\shell.js" />
+    <Content Include="App\Widgets\AddToTeam.html" />
+    <Content Include="App\Widgets\AddToTeam.js" />
+    <Content Include="App\Widgets\AddCharacter.html" />
+    <Content Include="App\Widgets\AddCharacter.js" />
+    <Content Include="App\Widgets\GuessMerlin.html" />
+    <Content Include="App\Widgets\GuessMerlin.js" />
+    <Content Include="App\Widgets\SubmitQuestCard.html" />
+    <Content Include="App\Widgets\SubmitQuestCard.js" />
+    <Content Include="App\Widgets\VoteForTeam.html" />
+    <Content Include="App\Widgets\VoteForTeam.js" />
     <Content Include="App\Widgets\JoinGame.html" />
     <Content Include="App\Widgets\JoinGame.js" />
     <Content Include="Content\bootstrap-theme.css" />

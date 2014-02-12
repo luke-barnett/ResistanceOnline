@@ -10,7 +10,8 @@ using System.Web.Security;
 namespace ResistanceOnline.Site.Controllers
 {
     public class GameHub : Hub
-    {      
+    {
+        static Guid PlayerGuid { get; set; } //todo playerGuid
         static List<Game> _games = new List<Game>();
 
         public GameHub()
@@ -107,7 +108,7 @@ namespace ResistanceOnline.Site.Controllers
 
         private void Update()
         {
-            Clients.All.Update(_games.Select(g => new GameModel(g, Guid.NewGuid()))); //todo playerGuid
+            Clients.All.Update(_games.Select(g => new GameModel(g, PlayerGuid))); 
         }
 
 
@@ -169,9 +170,7 @@ namespace ResistanceOnline.Site.Controllers
         public void JoinGame(int gameId, string name) 
         {
             var game = GetGame(gameId);
-            var playerGuid = game.JoinGame(name);
-            //todo playerGuid            
-            
+            PlayerGuid = game.JoinGame(name);                       
             Update();
         }
 

@@ -5,11 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Security;
 
 namespace ResistanceOnline.Site.Controllers
 {
     public class GameHub : Hub
-    {
+    {      
         static List<Game> _games = new List<Game>();
 
         public GameHub()
@@ -106,12 +107,7 @@ namespace ResistanceOnline.Site.Controllers
 
         private void Update()
         {
-            //foreach (var client in Connections)
-            //{
-            //    client.
-            //}
-
-            Clients.All.Update(_games.Select(g => new GameModel(g, Guid.NewGuid()))); //playerGuid
+            Clients.All.Update(_games.Select(g => new GameModel(g, Guid.NewGuid()))); //todo playerGuid
         }
 
 
@@ -174,7 +170,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             var game = GetGame(gameId);
             var playerGuid = game.JoinGame(name);
-            //todo playerGuid
+            //todo playerGuid            
             
             Update();
         }

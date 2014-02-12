@@ -40,6 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action.cs" />
+    <Compile Include="Bots\IBot.cs" />
+    <Compile Include="Bots\SimpleBot.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Knowledge.cs" />

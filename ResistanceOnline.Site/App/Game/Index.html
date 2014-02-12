@@ -187,24 +187,12 @@
 </div>
 
 <h1>Actions</h1>
-<!--
-<form role="form" action="/AddCharacter" method="post" data-bind="visible: game().Actions">.Contains(1)@ResistanceOnline.Core.Action.Type.AddCharacter
-    <input type="hidden" name="gameid" value="@Model.GameId" />
-    <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
-    <div class="form-group">
-        @Html.DropDownList("Character", Model.AllCharactersSelectList, new { @class = "form-control" })
-    </div>
-    <input class="btn btn-default" type="submit" value="Add Character" />
-</form>-->
-
-
-<!--<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>-->
-
 <ul data-bind="foreach: game().Actions">
     <li >
         <!--todo find nicer syntax for this-->
         <div data-bind="compose: { model: '/app/widgets/' + $data + '.js', view: '/app/widgets/' + $data + '.html', activationData: $root.game }"></div>
     </li>
+<<<<<<< HEAD
 </ul>
 
 <!--@if (Model.Actions.Count>0) { 
@@ -298,3 +286,6 @@
         </form>
     }
 }-->
+=======
+</ul>
+>>>>>>> convert actions to widgets

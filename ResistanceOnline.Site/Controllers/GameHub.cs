@@ -14,7 +14,6 @@ namespace ResistanceOnline.Site.Controllers
     {
         //todo playerGuid
         static Dictionary<string, Guid> _players = new Dictionary<string, Guid>();
-
         Guid PlayerGuid
         {
             get
@@ -30,6 +29,12 @@ namespace ResistanceOnline.Site.Controllers
             }
         }
 
+
+
+        static List<Game> _games = new List<Game>();
+
+       
+
         static List<Game> _games = new List<Game>();
 
         private Game GetGame(int? gameId)
@@ -41,10 +46,10 @@ namespace ResistanceOnline.Site.Controllers
             return _games[gameId.Value];
         }
 
-       
-        private void Update()
+        private void Update()        
         {
-            Clients.All.Update(_games.Select(g => new GameModel(g, PlayerGuid))); 
+            //todo playerGuid is the calling players Id not the player you're sending it to
+            Clients.All.Update(_games.Select(g => new GameModel(g, PlayerGuid)));
         }
 
 
@@ -52,8 +57,8 @@ namespace ResistanceOnline.Site.Controllers
         {
             Update();
             return base.OnConnected();
-        }        	
-        
+        }
+
         public Game CreateGame(int players, bool impersonationEnabled)
         {
             var game = new Game(players,impersonationEnabled);
@@ -63,55 +68,55 @@ namespace ResistanceOnline.Site.Controllers
             Update();
 
             return game;
-        }       
+        }
 
-        public void AddCharacter(int gameId, Guid playerGuid, string character) 
+        public void AddCharacter(int gameId, string character)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == playerGuid);
+            var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.AddCharacter((Character)Enum.Parse(typeof(Character), character));
 
             Update();
         }
 
-        public void AddToTeam(int gameId, Guid playerGuid, string person) 
+        public void AddToTeam(int gameId, string person)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == playerGuid);
+            var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.AddToTeam(player, game.Players.First(p => p.Name == person));
 
             Update();
         }
 
-        public void SubmitQuestCard(int gameId, Guid playerGuid, bool success) 
+        public void SubmitQuestCard(int gameId, bool success)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == playerGuid);
+            var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.SubmitQuest(player, success);
 
             Update();
         }
 
-        public void VoteForTeam(int gameId, Guid playerGuid, bool approve) 
+        public void VoteForTeam(int gameId, bool approve)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == playerGuid);
+            var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.VoteForTeam(player, approve);
 
             Update();
         }
 
-        public void JoinGame(int gameId, string name) 
+        public void JoinGame(int gameId, string name)
         {
             var game = GetGame(gameId);
-            PlayerGuid = game.JoinGame(name);                       
+            PlayerGuid = game.JoinGame(name);
             Update();
         }
 
-        public void GuessMerlin(int gameId, Guid playerGuid, string guess) 
+        public void GuessMerlin(int gameId, string guess)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == playerGuid);
+            var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
             Update();
         }

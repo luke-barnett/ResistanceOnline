@@ -198,8 +198,6 @@
     <Content Include="App\Widgets\VoteForTeam.js" />
     <Content Include="App\Widgets\JoinGame.html" />
     <Content Include="App\Widgets\JoinGame.js" />
-    <Content Include="App\JoinGame.html" />
-    <Content Include="App\JoinGame.js" />
     <Content Include="App\Widgets\JoinGame.html" />
     <Content Include="App\Widgets\JoinGame.js" />
     <Content Include="Content\bootstrap-theme.css" />

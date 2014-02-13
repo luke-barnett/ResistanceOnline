@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ﻿<form role="form" data-bind="submit: submitQuestCard">
     <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
     <input type="hidden" name="gameid" value="@Model.GameId" />
@@ -14,20 +14,3 @@
     </div>
     <input class="btn btn-default" type="submit" value="Submit Quest Card" />
 </form>
-=======
-﻿<form role="form" action="/SubmitQuestCard" method="post">
-			<input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
-			<input type="hidden" name="gameid" value="@Model.GameId" />
-			<div class="radio">
-				<label>
-					<input type="radio" name="success" value="true" />Success
-				</label>
-			</div>
-			<div class="radio">
-				<label>
-					<input type="radio" name="success" value="false" />Fail
-				</label>
-			</div>
-			<input class="btn btn-default" type="submit" value="Submit Quest Card" />
-		</form>
->>>>>>> convert actions to widgets

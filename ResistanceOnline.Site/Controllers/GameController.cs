@@ -118,7 +118,22 @@ namespace ResistanceOnline.Site.Controllers
             var game = GetGame(gameId);
             var playerGuid = game.JoinGame(name);
             return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
+        }
+
+        [HttpPost]
+        public ActionResult AddComputerPlayer(int gameId, Guid playerGuid, string bot, string name)
+        {
+            var game = GetGame(gameId);
+            switch (bot)
+            {
+                case "simplebot":
+                default:
+                    game.AddSimpleBot(name);
+                    break;
+            }
+            return RedirectToAction("Game", new { gameId = gameId, playerGuid = playerGuid });
         }        
+
         [HttpPost]
         public ActionResult GuessMerlin(int gameId, Guid playerGuid, string guess) 
         {

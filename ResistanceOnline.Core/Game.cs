@@ -440,7 +440,6 @@ namespace ResistanceOnline.Core
                 case Core.Character.Morgana:
                 case Core.Character.Oberon:
                     return true;
-                    break;
                 case Core.Character.Lancelot:
                     if (LancelotAllegianceSwitched)
                     {

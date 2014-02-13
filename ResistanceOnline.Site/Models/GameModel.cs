@@ -50,11 +50,14 @@ namespace ResistanceOnline.Site.Models
 
         public int CharactersMissing { get { return GameSize - CharactersInGame.Count; } }
 
+        public int PlayersMissing { get; private set; }
+
 		public GameModel(Game game, Guid? playerGuid)
 		{
 			GameId = game.GameId;
 			PlayerGuid = playerGuid;
             GameSize = game.GameSize;
+            PlayersMissing = game.GameSize - game.Players.Count;
 
             RoundTables = game.RoundTables;
 

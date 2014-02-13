@@ -39,6 +39,25 @@
         <li>Round @((i + 1).ToWords()) needs @Model.RoundTables[i].TeamSize.ToWords() players and @("fail".ToQuantity(Model.RoundTables[i].RequiredFails, ShowQuantityAs.Words))</li>
     }
 </ul>
+@if (Model.PlayersMissing>0)
+{
+    <p>Waiting for @("more player".ToQuantity(Model.PlayersMissing, ShowQuantityAs.Words))</p>
+    if (Model.PlayerGuid.HasValue)
+    {
+        <form role="form" action="/AddComputerPlayer" method="post">
+            <input type="hidden" name="gameid" value="@Model.GameId" />
+            <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+            <div class="form-group">
+                <input class="form-control" type="text" name="name" placeholder="Enter a computer player name" />
+                <select name="bot">
+                    <option value="simplebot">Simple Bot</option>
+                    <option value="trustbot">Trust Bot</option>
+                </select>
+            </div>
+            <input class="btn btn-default" type="submit" value="Add Computer Player" />
+        </form>
+    }
+}
 
 @if (Model.PlayerInfo.Count > 0) { 
 <h3>Oracle</h3>

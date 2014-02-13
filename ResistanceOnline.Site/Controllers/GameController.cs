@@ -94,12 +94,16 @@ namespace ResistanceOnline.Site.Controllers
 
         private void OnAfterAction(Game game)
         {
-            var computersPlayersInGame = _computerPlayers.Where(c => game.Players.Select(p => p.Guid).Contains(c.PlayerGuid));
-            while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.PlayerGuid)).Any()))
+            var state = game.DetermineState();
+            if (state == Core.Game.State.Playing || state == Core.Game.State.GuessingMerlin)
             {
-                foreach (var computerPlayer in computersPlayersInGame)
+                var computersPlayersInGame = _computerPlayers.Where(c => game.Players.Select(p => p.Guid).Contains(c.PlayerGuid));
+                while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.PlayerGuid)).Any()))
                 {
-                    computerPlayer.DoSomething();
+                    foreach (var computerPlayer in computersPlayersInGame)
+                    {
+                        computerPlayer.DoSomething();
+                    }
                 }
             }
         }

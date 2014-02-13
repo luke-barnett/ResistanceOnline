@@ -11,7 +11,25 @@ namespace ResistanceOnline.Site.Controllers
 {
     public class GameHub : Hub
     {
-        static Guid PlayerGuid { get; set; } //todo playerGuid
+        //todo playerGuid
+        static Dictionary<string, Guid> _players = new Dictionary<string, Guid>();
+        Guid PlayerGuid
+        {
+            get
+            {
+                if (_players.ContainsKey(Context.ConnectionId))
+                    return _players[Context.ConnectionId];
+
+                return Guid.Empty;
+            }
+            set
+            {
+                _players[Context.ConnectionId] = value;
+            }
+        }
+
+
+
         static List<Game> _games = new List<Game>();
 
         public GameHub()
@@ -26,15 +44,15 @@ namespace ResistanceOnline.Site.Controllers
                 game.AddCharacter(Character.Morgana);
                 game.AddCharacter(Character.Merlin);
                 var jordanGuid = game.JoinGame("Jordan");
-                var jordan = game.Players.First(p=>p.Guid == jordanGuid);
+                var jordan = game.Players.First(p => p.Guid == jordanGuid);
                 var lukeGuid = game.JoinGame("Luke");
-                var luke = game.Players.First(p=>p.Guid == lukeGuid);
+                var luke = game.Players.First(p => p.Guid == lukeGuid);
                 var jeffreyGuid = game.JoinGame("Jeffrey");
-                var jeffrey = game.Players.First(p=>p.Guid == jeffreyGuid);
+                var jeffrey = game.Players.First(p => p.Guid == jeffreyGuid);
                 var jayvinGuid = game.JoinGame("Jayvin");
-                var jayvin = game.Players.First(p=>p.Guid == jayvinGuid);
+                var jayvin = game.Players.First(p => p.Guid == jayvinGuid);
                 var verneGuid = game.JoinGame("Verne");
-                var verne = game.Players.First(p=>p.Guid == verneGuid);                
+                var verne = game.Players.First(p => p.Guid == verneGuid);
 
                 game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jordan);
                 game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
@@ -98,7 +116,7 @@ namespace ResistanceOnline.Site.Controllers
         }
 
         private Game GetGame(int? gameId)
-        {            
+        {
             //todo - something to do with databases
             if (gameId.HasValue == false || gameId.Value >= _games.Count)
                 return null;
@@ -106,9 +124,10 @@ namespace ResistanceOnline.Site.Controllers
             return _games[gameId.Value];
         }
 
-        private void Update()
+        private void Update()        
         {
-            Clients.All.Update(_games.Select(g => new GameModel(g, PlayerGuid))); 
+            //todo playerGuid is the calling players Id not the player you're sending it to
+            Clients.All.Update(_games.Select(g => new GameModel(g, PlayerGuid)));
         }
 
 
@@ -117,67 +136,67 @@ namespace ResistanceOnline.Site.Controllers
             //todo split into individual updates
             Update();
             return base.OnConnected();
-        }        	
-        
+        }
+
         public Game CreateGame(int players, bool impersonationEnabled)
         {
             //todo - something with the database :)
-            var game = new Game(players,impersonationEnabled);
-			_games.Add(game);
+            var game = new Game(players, impersonationEnabled);
+            _games.Add(game);
             game.GameId = _games.IndexOf(game);
 
             Update();
 
             return game;
-        }       
+        }
 
-        public void AddCharacter(int gameId, Guid playerGuid, string character) 
+        public void AddCharacter(int gameId, string character)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == playerGuid);
+            var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.AddCharacter((Character)Enum.Parse(typeof(Character), character));
 
             Update();
         }
 
-        public void AddToTeam(int gameId, Guid playerGuid, string person) 
+        public void AddToTeam(int gameId, string person)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == playerGuid);
+            var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.AddToTeam(player, game.Players.First(p => p.Name == person));
 
             Update();
         }
 
-        public void SubmitQuestCard(int gameId, Guid playerGuid, bool success) 
+        public void SubmitQuestCard(int gameId, bool success)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == playerGuid);
+            var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.SubmitQuest(player, success);
 
             Update();
         }
 
-        public void VoteForTeam(int gameId, Guid playerGuid, bool approve) 
+        public void VoteForTeam(int gameId, bool approve)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == playerGuid);
+            var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.VoteForTeam(player, approve);
 
             Update();
         }
 
-        public void JoinGame(int gameId, string name) 
+        public void JoinGame(int gameId, string name)
         {
             var game = GetGame(gameId);
-            PlayerGuid = game.JoinGame(name);                       
+            PlayerGuid = game.JoinGame(name);
             Update();
         }
 
-        public void GuessMerlin(int gameId, Guid playerGuid, string guess) 
+        public void GuessMerlin(int gameId, string guess)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == playerGuid);
+            var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
 
             Update();

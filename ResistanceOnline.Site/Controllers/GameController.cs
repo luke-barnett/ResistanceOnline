@@ -30,10 +30,10 @@ namespace ResistanceOnline.Site.Controllers
                 game.AddCharacter(Character.Percival);
                 game.AddCharacter(Character.Morgana);
                 game.AddCharacter(Character.Merlin);
-                _computerPlayers.Add(new SimpleBot(game, game.JoinGame("Jordan")));
-                _computerPlayers.Add(new SimpleBot(game, game.JoinGame("Luke")));
-                _computerPlayers.Add(new SimpleBot(game, game.JoinGame("Jeffrey")));
-                _computerPlayers.Add(new SimpleBot(game, game.JoinGame("Jayvin")));
+                _computerPlayers.Add(new TrustBot(game, game.JoinGame("Jordan")));
+                _computerPlayers.Add(new TrustBot(game, game.JoinGame("Luke")));
+                _computerPlayers.Add(new TrustBot(game, game.JoinGame("Jeffrey")));
+                _computerPlayers.Add(new TrustBot(game, game.JoinGame("Jayvin")));
 
                 game.GameId = 0;
                 _games.Add(game);
@@ -146,6 +146,9 @@ namespace ResistanceOnline.Site.Controllers
             var game = GetGame(gameId);
             switch (bot)
             {
+                case "trustbot":
+                    _computerPlayers.Add(new ComputerPlayers.TrustBot(game, game.JoinGame(name)));
+                    break;
                 case "simplebot":
                 default:
                     _computerPlayers.Add(new ComputerPlayers.SimpleBot(game, game.JoinGame(name)));

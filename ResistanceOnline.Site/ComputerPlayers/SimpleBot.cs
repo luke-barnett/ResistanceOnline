@@ -85,13 +85,13 @@ namespace ResistanceOnline.Site.ComputerPlayers
             var evilCount = CountEvil(_game.CurrentRound.CurrentTeam.TeamMembers, _game);
             if (_IAmEvil)
             {
-                if (evilCount > 0)
+                if (evilCount >= _game.CurrentRound.RequiredFails)
                     return true;
                 return false;
             }
             else
             {
-                if (evilCount > 0)
+                if (evilCount >= _game.CurrentRound.RequiredFails)
                     return false;
                 return true;
             }

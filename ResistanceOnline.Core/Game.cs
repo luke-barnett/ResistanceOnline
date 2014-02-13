@@ -122,10 +122,6 @@ namespace ResistanceOnline.Core
 
         private void OnAfterAction()
         {
-            foreach (Bots.IBot bot in Players.Where(p => p is Bots.IBot))
-            {
-                bot.DoSomething(this);
-            }
                 
         }
 
@@ -170,23 +166,6 @@ namespace ResistanceOnline.Core
 
             return guid;
         }
-
-        public Guid AddSimpleBot(string name)
-        {
-            if (Players.Count == GameSize)
-                throw new Exception("Game already full");
-
-            if (Players.Select(p => p.Name).Contains(name))
-                throw new Exception("Player name already taken");
-
-            var guid = Guid.NewGuid();
-            Players.Add(new Bots.SimpleBot() { Name = name, Guid = guid });
-
-            OnCharacterAddedOrPlayerJoined();
-
-            return guid;
-        }
-
 
         private void AllocateCharactersToPlayers()
         {

@@ -66,11 +66,6 @@ namespace ResistanceOnline.Site.Models
 
             PlayerName = player == null ? "Spectator" : player.Name;
 
-			if (game.Rule_PlayersCanImpersonateOtherPlayers)
-			{
-				ImpersonationList = game.Players.ToList();
-			}
-
             AssassinsGuessAtMerlin = game.AssassinsGuessAtMerlin;
 			GameState = game.DetermineState();
 			CharactersInGame = game.AvailableCharacters.ToList();

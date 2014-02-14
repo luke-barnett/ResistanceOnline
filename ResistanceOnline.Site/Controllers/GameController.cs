@@ -21,7 +21,6 @@ namespace ResistanceOnline.Site.Controllers
             if (_games.Count == 0)
             {
                 var game = new Game(5);
-                game.Rule_PlayersCanImpersonateOtherPlayers = true;
                 game.Rule_LancelotsKnowEachOther = true;
                 game.Rule_GoodMustAlwaysVoteSucess = true;
                 game.Rule_IncludeLadyOfTheLake = true;

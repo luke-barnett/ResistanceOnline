@@ -25,6 +25,17 @@ namespace ResistanceOnline.Core
             AvailableCharacters = new List<Character>();
             GameSize = players;
             LadyOfTheLakeUses = new List<LadyOfTheLakeUse>();
+            LoyaltyDeck = new List<LoyaltyCard> { LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.SwitchAlegiance, LoyaltyCard.SwitchAlegiance };
+
+            Random random = new Random();
+            LoyaltyDeck.OrderBy(l => random.Next());
+
+            //standard rules
+            Rule_GoodMustAlwaysVoteSucess = false;
+            Rule_IncludeLadyOfTheLake = true;
+            Rule_LancelotsKnowEachOther = false;
+            Rule_LancelotsMustVoteFanatically = false;
+            Rule_LoyaltyCardsDeltInAdvance = false;
 
             RoundTables = new List<RoundTable>();
             switch (players)
@@ -72,7 +83,7 @@ namespace ResistanceOnline.Core
                     RoundTables.Add(new RoundTable(5));
                     break;
                 default:
-                    throw new Exception("No tableaus for games with " + players + " players");
+                    throw new Exception("No round tables for games with " + players + " players");
             }
         }
 
@@ -87,10 +98,14 @@ namespace ResistanceOnline.Core
         public List<LadyOfTheLakeUse> LadyOfTheLakeUses { get; set; }
         public Player HolderOfLadyOfTheLake { get; set; }
         public bool LancelotAllegianceSwitched { get; set; }
+        public List<LoyaltyCard> LoyaltyDeck { get; set; }
 
-        public bool Rule_PlayersCanImpersonateOtherPlayers { get; set; }
         public bool Rule_IncludeLadyOfTheLake { get; set; }
-        public bool Rule_LancelotsKnowEachOther { get; set; }
+
+        public bool Rule_LancelotsKnowEachOther { get; set; } //variation #3
+        public bool Rule_LancelotsMustVoteFanatically { get; set; } //variation #2
+        public bool Rule_LoyaltyCardsDeltInAdvance { get; set; } //variation #2
+
         public bool Rule_GoodMustAlwaysVoteSucess { get; set; }
 
         public void UseLadyOfTheLake(Player player, Player target)
@@ -154,8 +169,8 @@ namespace ResistanceOnline.Core
             if (Players.Count == GameSize)
                 throw new Exception("Game already full");
 
-            if (Players.Select(p=>p.Name).Contains(playerName))
-                throw new Exception("Player name already taken");
+            while (Players.Select(p=>p.Name).Contains(playerName))
+                playerName = playerName + "2";
 
             var guid = Guid.NewGuid();
             Players.Add(new Player() { Name = playerName, Guid = guid });
@@ -256,19 +271,38 @@ namespace ResistanceOnline.Core
                 return;
             }
 
-            OnStartNextRound();
+            OnStartNextRound(roundNumber+1);
         }
 
         private void OnLadyOfTheLakeUsed()
         {
             HolderOfLadyOfTheLake = LadyOfTheLakeUses.Last().UsedOn;
-            OnStartNextRound();
+            OnStartNextRound(Rounds.Count + 1);
         }
 
-        private void OnStartNextRound()
+        private void OnStartNextRound(int roundNumber)
         {
             //create the next round
-            CreateRound(CurrentRound.NextPlayer);            
+            CreateRound(CurrentRound.NextPlayer);
+
+            if (Rule_LoyaltyCardsDeltInAdvance)
+            {
+                if (LoyaltyDeck[roundNumber-1] == LoyaltyCard.SwitchAlegiance)
+                {
+                    LancelotAllegianceSwitched = !LancelotAllegianceSwitched;
+                }
+            }
+            else
+            {
+                //loyalty cards start at round 3
+                if (roundNumber >= 3)
+                {
+                    if (LoyaltyDeck[roundNumber - 3] == LoyaltyCard.SwitchAlegiance)
+                    {
+                        LancelotAllegianceSwitched = !LancelotAllegianceSwitched;
+                    }
+                }
+            }
         }
 
 
@@ -462,9 +496,9 @@ namespace ResistanceOnline.Core
                 return Knowledge.Evil;
             }
 
-            if (DetectMerlin(myself, someoneelse))
+            if (DetectMagic(myself, someoneelse))
             {
-                return Knowledge.Merlin;
+                return Knowledge.Magical;
             }
 
             return Knowledge.Player;
@@ -509,7 +543,7 @@ namespace ResistanceOnline.Core
         /// <param name="playerSelf"></param>
         /// <param name="playerTarget"></param>
         /// <returns></returns>
-        public static bool DetectMerlin(Player myself, Player someoneelse)
+        public static bool DetectMagic(Player myself, Player someoneelse)
         {
             if (myself == null)
                 return false;
@@ -524,7 +558,5 @@ namespace ResistanceOnline.Core
 
             return false;
         }
-
-
     }
 }

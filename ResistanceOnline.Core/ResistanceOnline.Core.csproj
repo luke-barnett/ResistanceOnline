@@ -44,6 +44,7 @@
     <Compile Include="Game.cs" />
     <Compile Include="Knowledge.cs" />
     <Compile Include="LadyOfTheLakeUse.cs" />
+    <Compile Include="LoyaltyCard.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Round.cs" />
     <Compile Include="Quest.cs" />

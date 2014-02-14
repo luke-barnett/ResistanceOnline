@@ -11,7 +11,7 @@ namespace ResistanceOnline.Core
         Player,
         Good,
         Evil,
-        Merlin,
+        Magical,
         Lancelot,
         EvilLancelot
     }

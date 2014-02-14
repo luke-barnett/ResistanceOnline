@@ -52,6 +52,7 @@
                 <select name="bot">
                     <option value="simplebot">Simple Bot</option>
                     <option value="trustbot">Trust Bot</option>
+                    <option value="trustbot">Cheat Bot</option>
                 </select>
             </div>
             <input class="btn btn-default" type="submit" value="Add Computer Player" />
@@ -182,7 +183,7 @@
 @if (Model.GameState == ResistanceOnline.Core.Game.State.GuessingMerlin || Model.AssassinsGuessAtMerlin != null)
 {
     <h3>Assassination Attempt</h3>    
-    if (Model.AssassinsGuessAtMerlin == null)
+    if (Model.AssassinsGuessAtMerlin == null && Model.AssassinIsInTheGame)
     {
         <span class="waiting">Waiting for @(Model.Waiting.First(w => w.Action == ResistanceOnline.Core.Action.Type.GuessMerlin).Name) to guess Merlin</span>
     }

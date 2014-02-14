@@ -54,7 +54,7 @@ namespace ResistanceOnline.Core.Test
             foreach (var c in Enum.GetValues(typeof(Character)))
             {
                 someoneElse.Character = (Character)c;
-                var result = Game.DetectMerlin(player, someoneElse);
+                var result = Game.DetectMagic(player, someoneElse);
 
                 Assert.AreEqual(expected.Contains((Character)c), result, String.Format("{0} thinks {1} is {2}", character, c, result ? "Not Merlin" : "Merlin"));
             }

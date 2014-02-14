@@ -122,6 +122,7 @@
     <Content Include="Images\lancelot.png" />
     <Content Include="Images\leadertoken.png" />
     <Content Include="Images\loyalservantofarthur.png" />
+    <Content Include="Images\magical.png" />
     <Content Include="Images\merlin.png" />
     <Content Include="Images\minionofmordred.png" />
     <Content Include="Images\mordred.png" />
@@ -177,6 +178,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="ComputerPlayers\ComputerPlayer.cs" />
+    <Compile Include="ComputerPlayers\CheatBot.cs" />
     <Compile Include="ComputerPlayers\TrustBot.cs" />
     <Compile Include="ComputerPlayers\SimpleBot.cs" />
     <Compile Include="Controllers\GameController.cs" />

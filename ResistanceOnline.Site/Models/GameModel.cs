@@ -58,6 +58,7 @@ namespace ResistanceOnline.Site.Models
 			PlayerGuid = playerGuid;
             GameSize = game.GameSize;
             PlayersMissing = game.GameSize - game.Players.Count;
+            AssassinIsInTheGame = game.Players.Select(p => p.Character).Contains(Character.Assassin);
 
             RoundTables = game.RoundTables;
 
@@ -129,5 +130,7 @@ namespace ResistanceOnline.Site.Models
 
         public Player AssassinsGuessAtMerlin { get; set; }
 
+
+        public bool AssassinIsInTheGame { get; set; }
     }
 }

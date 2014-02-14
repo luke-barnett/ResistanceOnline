@@ -30,9 +30,9 @@ namespace ResistanceOnline.Site.Controllers
                 game.AddCharacter(Character.Morgana);
                 game.AddCharacter(Character.Merlin);
                 _computerPlayers.Add(new TrustBot(game, game.JoinGame("Jordan")));
-                _computerPlayers.Add(new TrustBot(game, game.JoinGame("Luke")));
-                _computerPlayers.Add(new TrustBot(game, game.JoinGame("Jeffrey")));
-                _computerPlayers.Add(new TrustBot(game, game.JoinGame("Jayvin")));
+                _computerPlayers.Add(new CheatBot(game, game.JoinGame("Luke")));
+                _computerPlayers.Add(new CheatBot(game, game.JoinGame("Jeffrey")));
+                _computerPlayers.Add(new SimpleBot(game, game.JoinGame("Jayvin")));
 
                 game.GameId = 0;
                 _games.Add(game);

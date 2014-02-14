@@ -169,8 +169,8 @@ namespace ResistanceOnline.Core
             if (Players.Count == GameSize)
                 throw new Exception("Game already full");
 
-            if (Players.Select(p=>p.Name).Contains(playerName))
-                throw new Exception("Player name already taken");
+            while (Players.Select(p=>p.Name).Contains(playerName))
+                playerName = playerName + "2";
 
             var guid = Guid.NewGuid();
             Players.Add(new Player() { Name = playerName, Guid = guid });

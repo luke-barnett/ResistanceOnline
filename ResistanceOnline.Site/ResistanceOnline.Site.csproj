@@ -122,6 +122,7 @@
     <Content Include="Images\lancelot.png" />
     <Content Include="Images\leadertoken.png" />
     <Content Include="Images\loyalservantofarthur.png" />
+    <Content Include="Images\magical.png" />
     <Content Include="Images\merlin.png" />
     <Content Include="Images\minionofmordred.png" />
     <Content Include="Images\mordred.png" />

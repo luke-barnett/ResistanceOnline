@@ -496,9 +496,9 @@ namespace ResistanceOnline.Core
                 return Knowledge.Evil;
             }
 
-            if (DetectMerlin(myself, someoneelse))
+            if (DetectMagic(myself, someoneelse))
             {
-                return Knowledge.Merlin;
+                return Knowledge.Magical;
             }
 
             return Knowledge.Player;
@@ -543,7 +543,7 @@ namespace ResistanceOnline.Core
         /// <param name="playerSelf"></param>
         /// <param name="playerTarget"></param>
         /// <returns></returns>
-        public static bool DetectMerlin(Player myself, Player someoneelse)
+        public static bool DetectMagic(Player myself, Player someoneelse)
         {
             if (myself == null)
                 return false;

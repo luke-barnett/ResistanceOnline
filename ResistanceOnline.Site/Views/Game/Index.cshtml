@@ -5,10 +5,6 @@
 		{
 		<li>
 			<span>@game.GameSize players</span>
-			@if (game.Rule_PlayersCanImpersonateOtherPlayers)
-			{
-				<span>(Impersonation Enabled)</span>
-			}
 			<span>@game.DetermineState().Humanize(Humanizer.LetterCasing.Sentence)</span>
 			<a href="/Game/@ViewBag.Games.IndexOf(game)">Spectate Game</a>
 		</li>

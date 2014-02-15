@@ -11,7 +11,7 @@
 	}
 	else
 	{
-		using (Html.BeginForm())
+		using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
 		{
 			@Html.AntiForgeryToken()
 			<div>

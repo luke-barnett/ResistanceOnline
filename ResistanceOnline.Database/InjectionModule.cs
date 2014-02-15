@@ -10,9 +10,9 @@ namespace ResistanceOnline.Database
 		public override void Load()
 		{
 			Bind<ResistanceOnlineDbContext>().ToSelf().InTransientScope();
-
-			//Bind<UserManager<UserAccount>>().ToSelf();
-			//Bind<IUserStore<UserAccount>>().To<UserStore<UserAccount>>();//.ToConstructor<UserStore<UserAccount>>(args => new UserStore<UserAccount>(args.Inject<ResistanceOnlineDbContext>()));
+			Bind<System.Data.Entity.DbContext>().To<ResistanceOnlineDbContext>().InTransientScope();
+			Bind<UserManager<UserAccount>>().ToSelf();
+			Bind<IUserStore<UserAccount>>().To<UserStore<UserAccount>>();
 		}
 	}
 }

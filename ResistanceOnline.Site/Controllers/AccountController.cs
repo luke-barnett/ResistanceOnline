@@ -17,12 +17,6 @@ namespace ResistanceOnline.Site.Controllers
 	{
 		readonly UserManager<UserAccount> _userManager;
 
-		[Inject]
-		public AccountController(ResistanceOnlineDbContext dbContext)
-			: this(new UserManager<UserAccount>(new UserStore<UserAccount>(dbContext)))
-		{
-		}
-
 		public AccountController(UserManager<UserAccount> userManager)
 		{
 			_userManager = userManager;
@@ -37,34 +31,35 @@ namespace ResistanceOnline.Site.Controllers
 		}
 
 		[AllowAnonymous]
-		public ActionResult Login()
+		public ActionResult Login(string returnUrl)
 		{
+			ViewBag.ReturnUrl = returnUrl;
 			return View();
 		}
 
 		[HttpPost]
 		[AllowAnonymous]
 		[ValidateAntiForgeryToken]
-		public ActionResult Login(string provider)
+		public ActionResult Login(string provider, string returnUrl)
 		{
 			// Request a redirect to the external login provider
-			return new ChallengeResult(provider, Url.Action("LoginCallback", "Account"));
+			return new ChallengeResult(provider, Url.Action("LoginCallback", "Account", new { ReturnUrl = returnUrl }));
 		}
 
-		public ActionResult Logout()
+		public ActionResult Logout(string returnUrl)
 		{
 			AuthenticationManager.SignOut();
-			
-			return Redirect();
+
+			return Redirect(returnUrl);
 		}
 
 		[AllowAnonymous]
-		public async Task<ActionResult> LoginCallback()
+		public async Task<ActionResult> LoginCallback(string returnUrl)
 		{
 			var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync();
 			if (loginInfo == null)
 			{
-				return RedirectToAction("Login");
+				return RedirectToAction("Login", returnUrl);
 			}
 
 			// Sign in the user with this external login provider if the user already has a login
@@ -72,12 +67,13 @@ namespace ResistanceOnline.Site.Controllers
 			if (user != null)
 			{
 				await SignInAsync(user);
-				return Redirect();
+				return Redirect(returnUrl);
 			}
 			else
 			{
 				// If the user does not have an account, then prompt the user to create an account
 				ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
+				ViewBag.ReturnUrl = returnUrl;
 				return View("LoginConfirmation", new LoginConfirmationViewModel { UserName = loginInfo.DefaultUserName });
 			}
 		}
@@ -89,8 +85,7 @@ namespace ResistanceOnline.Site.Controllers
 		{
 			if (User.Identity.IsAuthenticated)
 			{
-				return Redirect();
-				//return RedirectToAction("Manage");
+				return Redirect(returnUrl);
 			}
 
 			if (ModelState.IsValid)
@@ -109,7 +104,7 @@ namespace ResistanceOnline.Site.Controllers
 					if (result.Succeeded)
 					{
 						await SignInAsync(user);
-						return Redirect();
+						return Redirect(returnUrl);
 					}
 				}
 				AddErrors(result);
@@ -130,11 +125,6 @@ namespace ResistanceOnline.Site.Controllers
 			AuthenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
 			var identity = await _userManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
 			AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = true }, identity);
-		}
-
-		private ActionResult Redirect()
-		{
-			return RedirectToAction("index", "game");
 		}
 
 		private void AddErrors(IdentityResult result)

@@ -60,7 +60,7 @@
     <Compile Include="InjectionModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResistanceOnlineDbContext.cs" />
-    <Compile Include="UserAccount.cs" />
+    <Compile Include="Entities\UserAccount.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

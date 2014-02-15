@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Ninject.Modules;
-using Ninject;
+using ResistanceOnline.Database.Entities;
 
 namespace ResistanceOnline.Database
 {

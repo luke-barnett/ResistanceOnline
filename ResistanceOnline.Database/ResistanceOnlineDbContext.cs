@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 using Ninject;
-using System.Data.Entity;
+using ResistanceOnline.Database.Entities;
 
 namespace ResistanceOnline.Database
 {

@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
-using Ninject;
-using ResistanceOnline.Database;
+using ResistanceOnline.Database.Entities;
 using ResistanceOnline.Site.Infrastructure;
 using ResistanceOnline.Site.Models;
 using System;
@@ -50,7 +48,7 @@ namespace ResistanceOnline.Site.Controllers
 		{
 			AuthenticationManager.SignOut();
 
-			return Redirect(returnUrl ?? "/");
+			return Redirect(returnUrl);
 		}
 
 		[AllowAnonymous]
@@ -67,7 +65,7 @@ namespace ResistanceOnline.Site.Controllers
 			if (user != null)
 			{
 				await SignInAsync(user);
-                return Redirect(returnUrl ?? "/");
+				return Redirect(returnUrl);
 			}
 			else
 			{
@@ -120,7 +118,7 @@ namespace ResistanceOnline.Site.Controllers
 			return View();
 		}
 
-		private ActionResult Redirect(string returnUrl)
+		private new ActionResult Redirect(string returnUrl)
 		{
 			if (string.IsNullOrWhiteSpace(returnUrl))
 				return RedirectToAction("Index", "Game");

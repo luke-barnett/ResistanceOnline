@@ -50,7 +50,7 @@ namespace ResistanceOnline.Site.Controllers
 		{
 			AuthenticationManager.SignOut();
 
-			return Redirect(returnUrl);
+			return Redirect(returnUrl ?? "/");
 		}
 
 		[AllowAnonymous]
@@ -67,7 +67,7 @@ namespace ResistanceOnline.Site.Controllers
 			if (user != null)
 			{
 				await SignInAsync(user);
-				return Redirect(returnUrl);
+                return Redirect(returnUrl ?? "/");
 			}
 			else
 			{

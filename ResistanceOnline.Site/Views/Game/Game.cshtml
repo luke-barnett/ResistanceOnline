@@ -3,10 +3,6 @@
 
 	ViewBag.Title = "Game " + Model.GameId;
 }
-@if (Model.PlayerGuid.HasValue)
-{
-    <p class="bookmark-instructions">Hello @Model.PlayerName, don't forget to bookmark this URL!</p>
-}
 <h3>Game setup</h3>
 <p>
     This is a @Model.GameSize.ToWords() player game with the following characters

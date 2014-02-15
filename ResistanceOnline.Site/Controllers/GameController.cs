@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNet.Identity;
-using Microsoft.Owin.Security;
 using ResistanceOnline.Core;
 using ResistanceOnline.Database;
+using ResistanceOnline.Database.Entities;
 using ResistanceOnline.Site.ComputerPlayers;
 using ResistanceOnline.Site.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace ResistanceOnline.Site.Controllers
@@ -19,7 +18,8 @@ namespace ResistanceOnline.Site.Controllers
 		static List<ComputerPlayer> _computerPlayers = new List<ComputerPlayer>();
 		static List<Game> _games = new List<Game>();
 
-		public GameController(ResistanceOnlineDbContext dbContext) : this()
+		public GameController(ResistanceOnlineDbContext dbContext)
+			: this()
 		{
 			_dbContext = dbContext;
 		}
@@ -135,34 +135,37 @@ namespace ResistanceOnline.Site.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult AddToTeam(int gameId, Guid playerGuid, string person) 
+		public ActionResult AddToTeam(int gameId, Guid playerGuid, string person)
 		{
 			var game = GetGame(gameId);
 			var player = game.Players.First(p => p.Guid == playerGuid);
-			game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.AddToTeam, Player = game.Players.First(p => p.Name == person)});
+			game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.AddToTeam, Player = game.Players.First(p => p.Name == person) });
 			OnAfterAction(game);
 			return RedirectToAction("Game", new { gameId = gameId });
-		}        
+		}
+
 		[HttpPost]
-		public ActionResult SubmitQuestCard(int gameId, Guid playerGuid, bool success) 
+		public ActionResult SubmitQuestCard(int gameId, Guid playerGuid, bool success)
 		{
 			var game = GetGame(gameId);
 			var player = game.Players.First(p => p.Guid == playerGuid);
 			game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.SubmitQuestCard, Success = success });
 			OnAfterAction(game);
 			return RedirectToAction("Game", new { gameId = gameId });
-		}        
+		}
+
 		[HttpPost]
-		public ActionResult VoteForTeam(int gameId, Guid playerGuid, bool approve) 
+		public ActionResult VoteForTeam(int gameId, Guid playerGuid, bool approve)
 		{
 			var game = GetGame(gameId);
 			var player = game.Players.First(p => p.Guid == playerGuid);
 			game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.VoteForTeam, Accept = approve });
 			OnAfterAction(game);
 			return RedirectToAction("Game", new { gameId = gameId });
-		}                             
+		}
+
 		[HttpPost]
-		public ActionResult JoinGame(int gameId) 
+		public ActionResult JoinGame(int gameId)
 		{
 			var game = GetGame(gameId);
 			var playerGuid = game.JoinGame(CurrentUser.UserName, PlayerGuid.Value);
@@ -179,6 +182,7 @@ namespace ResistanceOnline.Site.Controllers
 				case "trustbot":
 					_computerPlayers.Add(new ComputerPlayers.TrustBot(game, game.JoinGame(name, Guid.NewGuid())));
 					break;
+
 				case "simplebot":
 				default:
 					_computerPlayers.Add(new ComputerPlayers.SimpleBot(game, game.JoinGame(name, Guid.NewGuid())));
@@ -186,10 +190,10 @@ namespace ResistanceOnline.Site.Controllers
 			}
 			OnAfterAction(game);
 			return RedirectToAction("Game", new { gameId = gameId });
-		}        
+		}
 
 		[HttpPost]
-		public ActionResult GuessMerlin(int gameId, Guid playerGuid, string guess) 
+		public ActionResult GuessMerlin(int gameId, Guid playerGuid, string guess)
 		{
 			var game = GetGame(gameId);
 			var player = game.Players.First(p => p.Guid == playerGuid);
@@ -197,6 +201,7 @@ namespace ResistanceOnline.Site.Controllers
 			OnAfterAction(game);
 			return RedirectToAction("Game", new { gameId = gameId });
 		}
+
 		[HttpPost]
 		public ActionResult LadyOfTheLake(int gameId, Guid playerGuid, string target)
 		{

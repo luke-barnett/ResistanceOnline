@@ -3,10 +3,6 @@
 
 	ViewBag.Title = "Game " + Model.GameId;
 }
-@if (Model.PlayerGuid.HasValue)
-{
-    <p class="bookmark-instructions">Hello @Model.PlayerName, don't forget to bookmark this URL!</p>
-}
 <h3>Game setup</h3>
 <p>
     This is a @Model.GameSize.ToWords() player game with the following characters
@@ -233,13 +229,18 @@
     }
     if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.JoinGame))
     {
-		<form role="form" action="/JoinGame" method="post">
-			<input type="hidden" name="gameid" value="@Model.GameId" />
-			<div class="form-group">
-                <input class="form-control" type="text" name="name" placeholder="Enter your name" />
-			</div>
-			<input class="btn btn-default" type="submit" value="Join Game" />
-		</form>
+		if(User.Identity.IsAuthenticated)
+		{
+			<form role="form" action="/JoinGame" method="post">
+				<input type="hidden" name="gameid" value="@Model.GameId" />
+				<input class="btn btn-default" type="submit" value="Join Game" />
+			</form>	
+		}
+		else
+		{
+			<p>Log in to join the game</p>
+		}
+		
     }
     if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.AddToTeam))
     {

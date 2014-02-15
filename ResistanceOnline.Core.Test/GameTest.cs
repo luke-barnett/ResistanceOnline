@@ -11,10 +11,10 @@ namespace ResistanceOnline.Core.Test
         [TestMethod]
         public void DetectEvil()
         {
-            EvilTest(Character.Assassin, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred });
-            EvilTest(Character.MinionOfMordred, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred });
-            EvilTest(Character.Morgana, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred });
-            EvilTest(Character.Mordred, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred });
+            EvilTest(Character.Assassin, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred, Character.EvilLancelot });
+            EvilTest(Character.MinionOfMordred, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred, Character.EvilLancelot });
+            EvilTest(Character.Morgana, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred, Character.EvilLancelot });
+            EvilTest(Character.Mordred, new List<Character> { Character.Assassin, Character.MinionOfMordred, Character.Morgana, Character.Mordred, Character.EvilLancelot });
             EvilTest(Character.Oberon, new List<Character> { });
             EvilTest(Character.LoyalServantOfArthur, new List<Character> { });
             EvilTest(Character.Percival, new List<Character> { });
@@ -54,7 +54,7 @@ namespace ResistanceOnline.Core.Test
             foreach (var c in Enum.GetValues(typeof(Character)))
             {
                 someoneElse.Character = (Character)c;
-                var result = Game.DetectMerlin(player, someoneElse);
+                var result = Game.DetectMagic(player, someoneElse);
 
                 Assert.AreEqual(expected.Contains((Character)c), result, String.Format("{0} thinks {1} is {2}", character, c, result ? "Not Merlin" : "Merlin"));
             }
@@ -63,7 +63,7 @@ namespace ResistanceOnline.Core.Test
         [TestMethod]
         public void JoinAndAllocate()
         {
-            var game = new Game(5, false);
+            var game = new Game(5);
 
             Assert.AreEqual(Game.State.GameSetup, game.DetermineState());
             game.AddCharacter(Character.Assassin);

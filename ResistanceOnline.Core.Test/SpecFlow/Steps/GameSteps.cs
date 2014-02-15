@@ -65,6 +65,12 @@ namespace ResistanceOnline.Core.Test.SpecFlow.Steps
 			_gameAssistant.AddMerlin();
 		}
 
+        [Given(@"assasin is a character")]
+        public void GivenAssassinIsACharacter()
+        {
+            _gameAssistant.AddAssassin();
+        }
+
 		[When(@"everyone approves the quest")]
 		public void WhenEveryoneApprovesTheQuest()
 		{
@@ -110,7 +116,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow.Steps
 			}
 		}
 
-		[Given(@"good have completed three quests")]
+        [Given(@"good have completed three quests")]
 		[When(@"good have completed three quests")]
 		public void GoodHaveCompletedThreeQuests()
 		{
@@ -165,5 +171,8 @@ namespace ResistanceOnline.Core.Test.SpecFlow.Steps
 		{
 			Assert.AreEqual(ResistanceOnline.Core.Game.State.GuessingMerlin, ContextAccess.Game.DetermineState());
 		}
+
+      
+
 	}
 }

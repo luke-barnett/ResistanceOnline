@@ -175,6 +175,7 @@
     <Content Include="Images\lancelot.png" />
     <Content Include="Images\leadertoken.png" />
     <Content Include="Images\loyalservantofarthur.png" />
+    <Content Include="Images\magical.png" />
     <Content Include="Images\merlin.png" />
     <Content Include="Images\minionofmordred.png" />
     <Content Include="Images\mordred.png" />
@@ -236,6 +237,10 @@
     <Compile Include="Infrastructure\ChallengeResult.cs" />
     <Compile Include="Models\LoginConfirmationViewModel.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ComputerPlayers\ComputerPlayer.cs" />
+    <Compile Include="ComputerPlayers\CheatBot.cs" />
+    <Compile Include="ComputerPlayers\TrustBot.cs" />
+    <Compile Include="ComputerPlayers\SimpleBot.cs" />
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

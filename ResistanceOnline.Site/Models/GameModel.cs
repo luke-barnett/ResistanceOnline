@@ -30,6 +30,7 @@ namespace ResistanceOnline.Site.Models
 
 		public List<SelectListItem> AllCharactersSelectList { get; set; }
 
+        public SelectList LadyOfTheLakePlayerSelectList { get; set; }
         public SelectList GuessMerlinPlayersSelectList { get; set; }
         public SelectList AddToTeamPlayersSelectList { get; set; }
 
@@ -49,11 +50,15 @@ namespace ResistanceOnline.Site.Models
 
         public int CharactersMissing { get { return GameSize - CharactersInGame.Count; } }
 
+        public int PlayersMissing { get; private set; }
+
 		public GameModel(Game game, Guid? playerGuid)
 		{
 			GameId = game.GameId;
 			PlayerGuid = playerGuid;
             GameSize = game.GameSize;
+            PlayersMissing = game.GameSize - game.Players.Count;
+            AssassinIsInTheGame = game.Players.Select(p => p.Character).Contains(Character.Assassin);
 
             RoundTables = game.RoundTables;
 
@@ -61,11 +66,6 @@ namespace ResistanceOnline.Site.Models
 			IsSpectator = player == null;
 
             PlayerName = player == null ? "Spectator" : player.Name;
-
-			if (game.ImpersonationEnabled)
-			{
-				ImpersonationList = game.Players.ToList();
-			}
 
             AssassinsGuessAtMerlin = game.AssassinsGuessAtMerlin;
 			GameState = game.DetermineState();
@@ -80,6 +80,9 @@ namespace ResistanceOnline.Site.Models
             //can guess anyone but self
             GuessMerlinPlayersSelectList = new SelectList(game.Players.Where(p=>p!=player).Select(p => p.Name));
 
+            //can use on anyone who hasn't had it
+            LadyOfTheLakePlayerSelectList = new SelectList(game.Players.Where(p => p != player).Except(game.LadyOfTheLakeUses.Select(u => u.UsedBy)).Select(p => p.Name));
+
             //can put anyone on a team who isn't already on it
 			AddToTeamPlayersSelectList = new SelectList(game.Players.Where(p=> !game.CurrentRound.CurrentTeam.TeamMembers.Select(t=>t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
 
@@ -92,8 +95,7 @@ namespace ResistanceOnline.Site.Models
 				var playerInfo = new PlayerInfoModel 
 				{ 
 					Name = p.Name, 
-					CouldBeMerlin = Game.DetectMerlin(player, p), 
-					IsEvil = Game.DetectEvil(player, p) 
+					Knowledge = game.PlayerKnowledge(player, p)
 				};
 
 				//always know own character, or all characters if game is over
@@ -127,5 +129,8 @@ namespace ResistanceOnline.Site.Models
         }
 
         public Player AssassinsGuessAtMerlin { get; set; }
+
+
+        public bool AssassinIsInTheGame { get; set; }
     }
 }

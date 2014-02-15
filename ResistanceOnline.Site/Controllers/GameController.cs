@@ -2,6 +2,7 @@
 using Microsoft.Owin.Security;
 using ResistanceOnline.Core;
 using ResistanceOnline.Database;
+using ResistanceOnline.Site.ComputerPlayers;
 using ResistanceOnline.Site.Models;
 using System;
 using System.Collections.Generic;
@@ -15,96 +16,32 @@ namespace ResistanceOnline.Site.Controllers
 	public class GameController : Controller
 	{
 		readonly ResistanceOnlineDbContext _dbContext;
+		static List<ComputerPlayer> _computerPlayers = new List<ComputerPlayer>();
+		static List<Game> _games = new List<Game>();
 
-		public GameController(ResistanceOnlineDbContext dbContext)
+		public GameController(ResistanceOnlineDbContext dbContext) : this()
 		{
 			_dbContext = dbContext;
 		}
-
-		static List<Game> _games = new List<Game>();
 
 		public GameController()
 		{
 			//create a default game to make development easier
 			if (_games.Count == 0)
 			{
-				var game = new Game(5, true);
+				var game = new Game(5);
+				game.Rule_LancelotsKnowEachOther = true;
+				game.Rule_GoodMustAlwaysVoteSucess = true;
+				game.Rule_IncludeLadyOfTheLake = true;
 				game.AddCharacter(Character.LoyalServantOfArthur);
 				game.AddCharacter(Character.Assassin);
 				game.AddCharacter(Character.Percival);
 				game.AddCharacter(Character.Morgana);
 				game.AddCharacter(Character.Merlin);
-				var jordanGuid = Guid.NewGuid();
-				game.JoinGame("Jordan", jordanGuid);
-				var jordan = game.Players.First(player => player.Guid == jordanGuid);
-				var lukeGuid = Guid.NewGuid();
-				game.JoinGame("Luke", lukeGuid);
-				var luke = game.Players.First(player => player.Guid == lukeGuid);
-				var jeffreyGuid = Guid.NewGuid();
-				game.JoinGame("Jeffrey", jeffreyGuid);
-				var jeffrey = game.Players.First(player => player.Guid == jeffreyGuid);
-				var jayvinGuid = Guid.NewGuid();
-				game.JoinGame("Jayvin", jayvinGuid);
-				var jayvin = game.Players.First(player => player.Guid == jayvinGuid);
-				var verneGuid = Guid.NewGuid();
-				game.JoinGame("Verne", verneGuid);
-				var verne = game.Players.First(player => player.Guid == verneGuid);
-
-				game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jordan);
-				game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
-				game.VoteForTeam(jordan, true);
-				game.VoteForTeam(luke, true);
-				game.VoteForTeam(jayvin, false);
-				game.VoteForTeam(jeffrey, true);
-				game.VoteForTeam(verne, false);
-				game.SubmitQuest(jordan, true);
-				game.SubmitQuest(luke, false);
-
-				game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jordan);
-				game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
-				game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
-				game.VoteForTeam(jordan, false);
-				game.VoteForTeam(luke, true);
-				game.VoteForTeam(jayvin, false);
-				game.VoteForTeam(jeffrey, false);
-				game.VoteForTeam(verne, false);
-
-				game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jeffrey);
-				game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
-				game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
-				game.VoteForTeam(jordan, true);
-				game.VoteForTeam(luke, true);
-				game.VoteForTeam(jayvin, false);
-				game.VoteForTeam(jeffrey, false);
-				game.VoteForTeam(verne, true);
-
-				game.SubmitQuest(jeffrey, true);
-				game.SubmitQuest(luke, true);
-				game.SubmitQuest(jayvin, true);
-
-				game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
-				game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
-				game.VoteForTeam(jordan, true);
-				game.VoteForTeam(luke, true);
-				game.VoteForTeam(jayvin, false);
-				game.VoteForTeam(jeffrey, false);
-				game.VoteForTeam(verne, true);
-
-				game.SubmitQuest(luke, true);
-				game.SubmitQuest(jayvin, true);
-
-				game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jeffrey);
-				game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
-				game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
-				game.VoteForTeam(jordan, true);
-				game.VoteForTeam(luke, true);
-				game.VoteForTeam(jayvin, false);
-				game.VoteForTeam(jeffrey, false);
-				game.VoteForTeam(verne, true);
-
-				game.SubmitQuest(jeffrey, true);
-				game.SubmitQuest(luke, true);
-				game.SubmitQuest(jayvin, true);
+				_computerPlayers.Add(new TrustBot(game, game.JoinGame("Jordan", Guid.NewGuid())));
+				_computerPlayers.Add(new CheatBot(game, game.JoinGame("Luke", Guid.NewGuid())));
+				_computerPlayers.Add(new CheatBot(game, game.JoinGame("Jeffrey", Guid.NewGuid())));
+				_computerPlayers.Add(new SimpleBot(game, game.JoinGame("Jayvin", Guid.NewGuid())));
 
 				game.GameId = 0;
 				_games.Add(game);
@@ -146,10 +83,10 @@ namespace ResistanceOnline.Site.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult CreateGame(int players, bool impersonationEnabled)
+		public ActionResult CreateGame(int players)
 		{
 			//todo - something with the database :)
-			var game = new Game(players, impersonationEnabled);
+			var game = new Game(players);
 
 			_games.Add(game);
 			game.GameId = _games.IndexOf(game);
@@ -176,51 +113,97 @@ namespace ResistanceOnline.Site.Controllers
 		{
 			var game = GetGame(gameId);
 			var player = game.Players.First(p => p.Guid == PlayerGuid);
-			game.AddCharacter((Character)Enum.Parse(typeof(Character), character));
+			game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.AddCharacter, Character = (Character)Enum.Parse(typeof(Character), character) });
+			OnAfterAction(game);
+			return RedirectToAction("Game", new { gameId = gameId });
+		}
+
+		private void OnAfterAction(Game game)
+		{
+			var state = game.DetermineState();
+			if (state == Core.Game.State.Playing || state == Core.Game.State.GuessingMerlin)
+			{
+				var computersPlayersInGame = _computerPlayers.Where(c => game.Players.Select(p => p.Guid).Contains(c.PlayerGuid));
+				while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.PlayerGuid)).Any()))
+				{
+					foreach (var computerPlayer in computersPlayersInGame)
+					{
+						computerPlayer.DoSomething();
+					}
+				}
+			}
+		}
+
+		[HttpPost]
+		public ActionResult AddToTeam(int gameId, Guid playerGuid, string person) 
+		{
+			var game = GetGame(gameId);
+			var player = game.Players.First(p => p.Guid == playerGuid);
+			game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.AddToTeam, Player = game.Players.First(p => p.Name == person)});
+			OnAfterAction(game);
+			return RedirectToAction("Game", new { gameId = gameId });
+		}        
+		[HttpPost]
+		public ActionResult SubmitQuestCard(int gameId, Guid playerGuid, bool success) 
+		{
+			var game = GetGame(gameId);
+			var player = game.Players.First(p => p.Guid == playerGuid);
+			game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.SubmitQuestCard, Success = success });
+			OnAfterAction(game);
+			return RedirectToAction("Game", new { gameId = gameId });
+		}        
+		[HttpPost]
+		public ActionResult VoteForTeam(int gameId, Guid playerGuid, bool approve) 
+		{
+			var game = GetGame(gameId);
+			var player = game.Players.First(p => p.Guid == playerGuid);
+			game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.VoteForTeam, Accept = approve });
+			OnAfterAction(game);
+			return RedirectToAction("Game", new { gameId = gameId });
+		}                             
+		[HttpPost]
+		public ActionResult JoinGame(int gameId) 
+		{
+			var game = GetGame(gameId);
+			var playerGuid = game.JoinGame(CurrentUser.UserName, PlayerGuid.Value);
+			OnAfterAction(game);
 			return RedirectToAction("Game", new { gameId = gameId });
 		}
 
 		[HttpPost]
-		public ActionResult AddToTeam(int gameId, Guid playerGuid, string person)
+		public ActionResult AddComputerPlayer(int gameId, Guid playerGuid, string bot, string name)
 		{
 			var game = GetGame(gameId);
-			var player = game.Players.First(p => p.Guid == PlayerGuid);
-			game.AddToTeam(player, game.Players.First(p => p.Name == person));
+			switch (bot)
+			{
+				case "trustbot":
+					_computerPlayers.Add(new ComputerPlayers.TrustBot(game, game.JoinGame(name, Guid.NewGuid())));
+					break;
+				case "simplebot":
+				default:
+					_computerPlayers.Add(new ComputerPlayers.SimpleBot(game, game.JoinGame(name, Guid.NewGuid())));
+					break;
+			}
+			OnAfterAction(game);
 			return RedirectToAction("Game", new { gameId = gameId });
-		}
+		}        
 
 		[HttpPost]
-		public ActionResult SubmitQuestCard(int gameId, bool success)
+		public ActionResult GuessMerlin(int gameId, Guid playerGuid, string guess) 
 		{
 			var game = GetGame(gameId);
-			var player = game.Players.First(p => p.Guid == PlayerGuid);
-			game.SubmitQuest(player, success);
+			var player = game.Players.First(p => p.Guid == playerGuid);
+			game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.GuessMerlin, Player = game.Players.First(p => p.Name == guess) });
+			OnAfterAction(game);
 			return RedirectToAction("Game", new { gameId = gameId });
 		}
-
 		[HttpPost]
-		public ActionResult VoteForTeam(int gameId, bool approve)
+		public ActionResult LadyOfTheLake(int gameId, Guid playerGuid, string target)
 		{
 			var game = GetGame(gameId);
-			var player = game.Players.First(p => p.Guid == PlayerGuid);
-			game.VoteForTeam(player, approve);
-			return RedirectToAction("Game", new { gameId = gameId });
-		}
-
-		[HttpPost]
-		public ActionResult JoinGame(int gameId)
-		{
-			var game = GetGame(gameId);
-			game.JoinGame(User.Identity.GetUserName(), PlayerGuid.Value);
-			return RedirectToAction("Game", new { gameId = gameId });
-		}
-
-		[HttpPost]
-		public ActionResult GuessMerlin(int gameId, string guess)
-		{
-			var game = GetGame(gameId);
-			var player = game.Players.First(p => p.Guid == PlayerGuid);
-			game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
+			var player = game.Players.First(p => p.Guid == playerGuid);
+			game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.UseTheLadyOfTheLake, Player = game.Players.First(p => p.Name == target) });
+			OnAfterAction(game);
 			return RedirectToAction("Game", new { gameId = gameId });
 		}
 	}

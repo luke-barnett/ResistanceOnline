@@ -235,7 +235,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Infrastructure\ChallengeResult.cs" />
+    <Compile Include="ListExtensions.cs" />
     <Compile Include="Models\LoginConfirmationViewModel.cs" />
+    <Compile Include="Models\MessageModel.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ComputerPlayers\ComputerPlayer.cs" />
     <Compile Include="ComputerPlayers\CheatBot.cs" />

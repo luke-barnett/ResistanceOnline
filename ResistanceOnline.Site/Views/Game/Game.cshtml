@@ -173,6 +173,10 @@
                 <span class="waiting">Waiting for @Model.CommaQuibbling(Model.Waiting.Where(w => w.Action == ResistanceOnline.Core.Action.Type.VoteForTeam).Select(w => w.Name)) to use the lady of the lake</span>
             }
 		</div>
+        foreach (var message in team.Messages)
+        {
+            <div><span>@message.Player</span>@(": ")<span>@message.Message</span></div>
+        }    
 	}            
 }
 
@@ -289,4 +293,17 @@
             <input class="btn btn-default" type="submit" value="Vote for Team" />
         </form>
     }
+    if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.Message))
+    {
+    <form role="form" action="/Message" method="post">
+        <input type="hidden" name="gameid" value="@Model.GameId" />
+        <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+        <div class="form-group">
+            <input class="form-control" type="text" name="message" placeholder="Enter a message" />
+        </div>
+        <input class="btn btn-default" type="submit" value="Send" />
+    </form>
+    }
 }
+
+

@@ -21,6 +21,11 @@ namespace ResistanceOnline.Site.ComputerPlayers
             _game = game;
         }
 
+        public void Say(string message)
+        {
+            _game.PerformAction(_player, new Core.Action { ActionType = Core.Action.Type.Message, Message = message });
+        }
+
         public void DoSomething() 
         {
             _IAmEvil = _game.IsCharacterEvil(_player.Character);

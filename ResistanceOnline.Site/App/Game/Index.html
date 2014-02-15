@@ -79,13 +79,18 @@
                         <img src="/Images/teamtoken.png" title="{{$data}}" />
                         <div class="playername">{{$data}}</div>
                     </li>
-
                     <!-- /ko -->
+
                     <!-- ko foreach: Vote -->
                     <li>
                         <img class="vote" title="{{Player}}" data-bind="attr: { src: '/images/' + Image() + '.png' }" />
                         <div class="playername">{{Player}}</div>
                     </li>
+                     <!-- ko foreach: Vote -->
+                        <li>
+                            <img class="vote" title="{{Player}}" data-bind="attr: { src: '/images/' + Image() + '.png' }" />
+                            <div class="playername">{{Player}}</div>
+                        </li>
                     <!-- /ko -->
 
                 </ul>
@@ -131,4 +136,3 @@
         <div data-bind="compose: { model: '/app/widgets/' + $data + '.js', view: '/app/widgets/' + $data + '.html', activationData: $root.game }"></div>
     </li>
 </ul>
-

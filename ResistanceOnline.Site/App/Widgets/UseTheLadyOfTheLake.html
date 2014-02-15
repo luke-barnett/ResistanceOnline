@@ -1,0 +1,8 @@
+﻿ <form role="form" action="/LadyOfTheLake" method="post">
+            <input type="hidden" name="gameid" value="@Model.GameId" />
+            <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
+            <div class="form-group">
+                @Html.DropDownList("Target", Model.LadyOfTheLakePlayerSelectList, new { @class = "form-control" })
+            </div>
+            <input class="btn btn-default" type="submit" value="Use Lady of the Lake" />
+        </form>

@@ -6,13 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Security;
 
 namespace ResistanceOnline.Site.Controllers
 {
     public class GameHub : Hub
     {
-        //todo playerGuid
+        //todo logged in user
         static Dictionary<string, Guid> _players = new Dictionary<string, Guid>();
         Guid PlayerGuid
         {
@@ -29,12 +28,6 @@ namespace ResistanceOnline.Site.Controllers
             }
         }
 
-
-
-        static List<Game> _games = new List<Game>();
-
-       
-
         static List<Game> _games = new List<Game>();
 
         private Game GetGame(int? gameId)
@@ -46,7 +39,7 @@ namespace ResistanceOnline.Site.Controllers
             return _games[gameId.Value];
         }
 
-        private void Update()        
+        private void Update()
         {
             //todo playerGuid is the calling players Id not the player you're sending it to
             Clients.All.Update(_games.Select(g => new GameModel(g, PlayerGuid)));
@@ -59,10 +52,10 @@ namespace ResistanceOnline.Site.Controllers
             return base.OnConnected();
         }
 
-        public Game CreateGame(int players, bool impersonationEnabled)
+        public Game CreateGame(int players)
         {
-            var game = new Game(players,impersonationEnabled);
-			_games.Add(game);
+            var game = new Game(players);
+            _games.Add(game);
             game.GameId = _games.IndexOf(game);
 
             Update();
@@ -118,6 +111,14 @@ namespace ResistanceOnline.Site.Controllers
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
+            Update();
+        }
+
+        public void LadyOfTheLake(int gameId, Guid playerGuid, string target)
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.UseLadyOfTheLake(player, game.Players.First(p => p.Name == target));
             Update();
         }
     }

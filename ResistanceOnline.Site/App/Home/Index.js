@@ -5,10 +5,9 @@
         games: data,
 
         //create game
-        impersonation: ko.observable('false'),
         players: ko.observable(5),
         createGame: function () {
-            $.connection.gameHub.server.createGame(viewModel.players(), viewModel.impersonation());
+            $.connection.gameHub.server.createGame(viewModel.players());
             //todo redirect?
         }
     };

@@ -69,7 +69,7 @@
 <div data-bind="foreach: game().Rounds">
 	<h3>
         Round {{ $index() + 1 }}        
-        <img  title="{{Outcome}}" data-bind="visible: Outcome, attr: {src: '/images/' + Outcome() + '.png' }" />
+        <img  title="{{Outcome}}" data-bind="visible: Outcome, attr: { src: '/images/' + Outcome() + '.png' }" />
     </h3>
     <p>{{TeamSize}} player(s) ({{FailsRequired}} fail(s) required)</p>
 	
@@ -92,7 +92,7 @@
                     <!-- /ko -->
                      <!-- ko foreach: Vote -->
                         <li>
-                            <img class="vote" title="{{Player}}" data-bind="attr: {src: '/images/' + Image() + '.png' }" />
+                            <img class="vote" title="{{Player}}" data-bind="attr: { src: '/images/' + Image() + '.png' }" />
                             <div class="playername">{{Player}}</div>
                         </li>
                     <!-- /ko -->
@@ -159,95 +159,4 @@
         <!--todo find nicer syntax for this-->
         <div data-bind="compose: { model: '/app/widgets/' + $data + '.js', view: '/app/widgets/' + $data + '.html', activationData: $root.game }"></div>
     </li>
-<<<<<<< HEAD
 </ul>
-
-<!--@if (Model.Actions.Count>0) { 
-	if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.GuessMerlin))
-	{
-		<form role="form" action="/GuessMerlin" method="post">
-			<input type="hidden" name="gameid" value="@Model.GameId" />
-			<input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
-			<div class="form-group">
-				@Html.DropDownList("Guess", Model.GuessMerlinPlayersSelectList, new { @class = "form-control" })
-			</div>
-			<input class="btn btn-default" type="submit" value="Guess Merlin" />
-		</form>
-<<<<<<< HEAD
-    }
-    if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.UseTheLadyOfTheLake))
-    {
-        <form role="form" action="/LadyOfTheLake" method="post">
-            <input type="hidden" name="gameid" value="@Model.GameId" />
-            <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
-            <div class="form-group">
-                @Html.DropDownList("Target", Model.LadyOfTheLakePlayerSelectList, new { @class = "form-control" })
-            </div>
-            <input class="btn btn-default" type="submit" value="Use Lady of the Lake" />
-        </form>
-    }
-    if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.JoinGame))
-    {
-		<form role="form" action="/JoinGame" method="post">
-			<input type="hidden" name="gameid" value="@Model.GameId" />
-			<div class="form-group">
-                <input class="form-control" type="text" name="name" placeholder="Enter your name" />
-			</div>
-			<input class="btn btn-default" type="submit" value="Join Game" />
-		</form>
-    }
-=======
-	}
-
->>>>>>> attempt at binding widgets
-    if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.AddToTeam))
-    {
-        <form role="form" action="/AddToTeam" method="post">
-            <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
-            <input type="hidden" name="gameId" value="@Model.GameId" />
-            <div class="form-group">
-                @Html.DropDownList("Person", Model.AddToTeamPlayersSelectList, new { @class = "form-control" })
-            </div>
-            <input class="btn btn-default" type="submit" value="Add to Team" />
-        </form>
-    }
-    if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.SubmitQuestCard))
-    {
-		<form role="form" action="/SubmitQuestCard" method="post">
-			<input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
-			<input type="hidden" name="gameid" value="@Model.GameId" />
-			<div class="radio">
-				<label>
-					<input type="radio" name="success" value="true" />Success
-				</label>
-			</div>
-			<div class="radio">
-				<label>
-					<input type="radio" name="success" value="false" />Fail
-				</label>
-			</div>
-			<input class="btn btn-default" type="submit" value="Submit Quest Card" />
-		</form>
-    }
-    if (Model.Actions.Contains(ResistanceOnline.Core.Action.Type.VoteForTeam))
-    {
-        <form role="form" action="/VoteForTeam" method="post">
-            <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
-            <input type="hidden" name="gameid" value="@Model.GameId" />
-            <div class="radio">
-                <label>
-                    <input type="radio" name="approve" value="true" />Accept
-                </label>
-            </div>
-            <div class="radio">
-                <label>
-                    <input type="radio" name="approve" value="false" />Reject
-                </label>
-            </div>
-            <input class="btn btn-default" type="submit" value="Vote for Team" />
-        </form>
-    }
-}-->
-=======
-</ul>
->>>>>>> convert actions to widgets

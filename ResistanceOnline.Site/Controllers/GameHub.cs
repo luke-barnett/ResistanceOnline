@@ -5,13 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Security;
 
 namespace ResistanceOnline.Site.Controllers
 {
     public class GameHub : Hub
     {
-        //todo playerGuid
+        //todo logged in user
         static Dictionary<string, Guid> _players = new Dictionary<string, Guid>();
         Guid PlayerGuid
         {
@@ -28,92 +27,7 @@ namespace ResistanceOnline.Site.Controllers
             }
         }
 
-
-
         static List<Game> _games = new List<Game>();
-
-        public GameHub()
-        {
-            //create a default game to make development easier
-            if (_games.Count == 0)
-            {
-                var game = new Game(5, true);
-                game.AddCharacter(Character.LoyalServantOfArthur);
-                game.AddCharacter(Character.Assassin);
-                game.AddCharacter(Character.Percival);
-                game.AddCharacter(Character.Morgana);
-                game.AddCharacter(Character.Merlin);
-                var jordanGuid = game.JoinGame("Jordan");
-                var jordan = game.Players.First(p => p.Guid == jordanGuid);
-                var lukeGuid = game.JoinGame("Luke");
-                var luke = game.Players.First(p => p.Guid == lukeGuid);
-                var jeffreyGuid = game.JoinGame("Jeffrey");
-                var jeffrey = game.Players.First(p => p.Guid == jeffreyGuid);
-                var jayvinGuid = game.JoinGame("Jayvin");
-                var jayvin = game.Players.First(p => p.Guid == jayvinGuid);
-                var verneGuid = game.JoinGame("Verne");
-                var verne = game.Players.First(p => p.Guid == verneGuid);
-
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jordan);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
-                game.VoteForTeam(jordan, true);
-                game.VoteForTeam(luke, true);
-                game.VoteForTeam(jayvin, false);
-                game.VoteForTeam(jeffrey, true);
-                game.VoteForTeam(verne, false);
-                game.SubmitQuest(jordan, true);
-                game.SubmitQuest(luke, false);
-
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jordan);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
-                game.VoteForTeam(jordan, false);
-                game.VoteForTeam(luke, true);
-                game.VoteForTeam(jayvin, false);
-                game.VoteForTeam(jeffrey, false);
-                game.VoteForTeam(verne, false);
-
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jeffrey);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
-                game.VoteForTeam(jordan, true);
-                game.VoteForTeam(luke, true);
-                game.VoteForTeam(jayvin, false);
-                game.VoteForTeam(jeffrey, false);
-                game.VoteForTeam(verne, true);
-
-                game.SubmitQuest(jeffrey, true);
-                game.SubmitQuest(luke, true);
-                game.SubmitQuest(jayvin, true);
-
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
-                game.VoteForTeam(jordan, true);
-                game.VoteForTeam(luke, true);
-                game.VoteForTeam(jayvin, false);
-                game.VoteForTeam(jeffrey, false);
-                game.VoteForTeam(verne, true);
-
-                game.SubmitQuest(luke, true);
-                game.SubmitQuest(jayvin, true);
-
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jeffrey);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
-                game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jayvin);
-                game.VoteForTeam(jordan, true);
-                game.VoteForTeam(luke, true);
-                game.VoteForTeam(jayvin, false);
-                game.VoteForTeam(jeffrey, false);
-                game.VoteForTeam(verne, true);
-
-                game.SubmitQuest(jeffrey, true);
-                game.SubmitQuest(luke, true);
-                game.SubmitQuest(jayvin, true);
-
-                game.GameId = 0;
-                _games.Add(game);
-            }
-        }
 
         private Game GetGame(int? gameId)
         {
@@ -124,7 +38,7 @@ namespace ResistanceOnline.Site.Controllers
             return _games[gameId.Value];
         }
 
-        private void Update()        
+        private void Update()
         {
             //todo playerGuid is the calling players Id not the player you're sending it to
             Clients.All.Update(_games.Select(g => new GameModel(g, PlayerGuid)));
@@ -138,10 +52,10 @@ namespace ResistanceOnline.Site.Controllers
             return base.OnConnected();
         }
 
-        public Game CreateGame(int players, bool impersonationEnabled)
+        public Game CreateGame(int players)
         {
             //todo - something with the database :)
-            var game = new Game(players, impersonationEnabled);
+            var game = new Game(players);
             _games.Add(game);
             game.GameId = _games.IndexOf(game);
 
@@ -200,6 +114,16 @@ namespace ResistanceOnline.Site.Controllers
             game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
 
             Update();
+        }
+
+        public void LadyOfTheLake(int gameId, Guid playerGuid, string target)
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == playerGuid);
+            game.UseLadyOfTheLake(player, game.Players.First(p => p.Name == target));
+
+
+            Clients.All.Update(_games);
         }
     }
 }

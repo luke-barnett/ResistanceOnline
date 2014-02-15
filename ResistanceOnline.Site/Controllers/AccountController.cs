@@ -120,6 +120,14 @@ namespace ResistanceOnline.Site.Controllers
 			return View();
 		}
 
+		private ActionResult Redirect(string returnUrl)
+		{
+			if (string.IsNullOrWhiteSpace(returnUrl))
+				return RedirectToAction("Index", "Game");
+
+			return base.Redirect(returnUrl);
+		}
+
 		private async Task SignInAsync(UserAccount user)
 		{
 			AuthenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);

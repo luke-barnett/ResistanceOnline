@@ -107,8 +107,8 @@ namespace ResistanceOnline.Site.Models
 				//always know own character, or all characters if game is over
                 if ((p == player || GameState == Game.State.EvilTriumphs.ToString() || GameState == Game.State.GoodPrevails.ToString() || GameState == Game.State.MerlinDies.ToString()) && p.Character != Character.UnAllocated)
                 {
-                    playerInfo.CharacterCard = p.Character;
-                }
+					playerInfo.CharacterCard = p.Character; 
+				}
 
 				PlayerInfo.Add(playerInfo);
 

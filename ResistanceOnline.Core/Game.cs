@@ -74,7 +74,7 @@ namespace ResistanceOnline.Core
                 default:
                     throw new Exception("No tableaus for games with " + players + " players");
             }
-        }
+        }                  
 
         public int GameId { get; set; }
         public List<Character> AvailableCharacters { get; set; }
@@ -99,7 +99,7 @@ namespace ResistanceOnline.Core
                 throw new Exception("Hax. Player does not have lady of the lake.");
 
             LadyOfTheLakeUses.Add(new LadyOfTheLakeUse { UsedBy = player, UsedOn = target });
-            
+
             OnLadyOfTheLakeUsed();
         }
 
@@ -182,7 +182,7 @@ namespace ResistanceOnline.Core
 
         private void OnGameStart()
         {
-            //create first round
+                //create first round
             var leader = new Random().Next(GameSize);
             if (Rule_IncludeLadyOfTheLake)
             {
@@ -234,13 +234,13 @@ namespace ResistanceOnline.Core
 
         private void OnEndOfRound(int roundNumber)
         {
-            //3 failed missions, don't bother going any further
-            if (Rounds.Where(r => r.DetermineState() == Round.State.Failed).Count() >= 3)
-                return;
+                //3 failed missions, don't bother going any further
+                if (Rounds.Where(r => r.DetermineState() == Round.State.Failed).Count() >= 3)
+                    return;
 
-            //3 successful missions, don't bother going any further
-            if (Rounds.Where(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
-                return;
+                //3 successful missions, don't bother going any further
+                if (Rounds.Where(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
+                    return;
 
             if (roundNumber >= 2 && Rule_IncludeLadyOfTheLake)
             {
@@ -259,9 +259,9 @@ namespace ResistanceOnline.Core
 
         private void OnStartNextRound()
         {
-            //create the next round
-            CreateRound(CurrentRound.NextPlayer);            
-        }
+                //create the next round
+                CreateRound(CurrentRound.NextPlayer);
+            }
 
 
         public State DetermineState()

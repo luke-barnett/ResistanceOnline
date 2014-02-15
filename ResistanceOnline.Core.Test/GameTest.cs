@@ -73,12 +73,12 @@ namespace ResistanceOnline.Core.Test
             game.AddCharacter(Character.Merlin);
 
             Assert.AreEqual(Game.State.GameSetup, game.DetermineState());
-            game.JoinGame("a");
-            game.JoinGame("b");
-            game.JoinGame("c");
-            game.JoinGame("d");
+            game.JoinGame("a", Guid.NewGuid());
+            game.JoinGame("b", Guid.NewGuid());
+            game.JoinGame("c", Guid.NewGuid());
+            game.JoinGame("d", Guid.NewGuid());
             Assert.AreEqual(Game.State.GameSetup, game.DetermineState());
-            game.JoinGame("e");
+            game.JoinGame("e", Guid.NewGuid());
             Assert.AreEqual(Game.State.Playing, game.DetermineState());
 
             var allocatedCharacters = game.Players.Select(p=> p.Character).ToList();

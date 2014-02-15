@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System;
 using TechTalk.SpecFlow;
 
 namespace ResistanceOnline.Core.Test.SpecFlow
@@ -13,7 +14,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 			for (var i = 0; i < numberOfPlayers; i++)
 			{
 				game.AddCharacter(Character.LoyalServantOfArthur);
-				game.JoinGame(string.Format("player{0}", i));
+				game.JoinGame(string.Format("player{0}", i), Guid.NewGuid());
 			}
 
 			ContextAccess.Game = game;

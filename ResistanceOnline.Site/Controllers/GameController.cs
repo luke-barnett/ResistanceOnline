@@ -34,16 +34,21 @@ namespace ResistanceOnline.Site.Controllers
 				game.AddCharacter(Character.Percival);
 				game.AddCharacter(Character.Morgana);
 				game.AddCharacter(Character.Merlin);
-				var jordanGuid = game.JoinGame("Jordan");
-				var jordan = game.Players.First(p => p.Guid == jordanGuid);
-				var lukeGuid = game.JoinGame("Luke");
-				var luke = game.Players.First(p => p.Guid == lukeGuid);
-				var jeffreyGuid = game.JoinGame("Jeffrey");
-				var jeffrey = game.Players.First(p => p.Guid == jeffreyGuid);
-				var jayvinGuid = game.JoinGame("Jayvin");
-				var jayvin = game.Players.First(p => p.Guid == jayvinGuid);
-				var verneGuid = game.JoinGame("Verne");
-				var verne = game.Players.First(p => p.Guid == verneGuid);
+				var jordanGuid = Guid.NewGuid();
+				game.JoinGame("Jordan", jordanGuid);
+				var jordan = game.Players.First(player => player.Guid == jordanGuid);
+				var lukeGuid = Guid.NewGuid();
+				game.JoinGame("Luke", lukeGuid);
+				var luke = game.Players.First(player => player.Guid == lukeGuid);
+				var jeffreyGuid = Guid.NewGuid();
+				game.JoinGame("Jeffrey", jeffreyGuid);
+				var jeffrey = game.Players.First(player => player.Guid == jeffreyGuid);
+				var jayvinGuid = Guid.NewGuid();
+				game.JoinGame("Jayvin", jayvinGuid);
+				var jayvin = game.Players.First(player => player.Guid == jayvinGuid);
+				var verneGuid = Guid.NewGuid();
+				game.JoinGame("Verne", verneGuid);
+				var verne = game.Players.First(player => player.Guid == verneGuid);
 
 				game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, jordan);
 				game.AddToTeam(game.CurrentRound.CurrentTeam.Leader, luke);
@@ -206,7 +211,7 @@ namespace ResistanceOnline.Site.Controllers
 		public ActionResult JoinGame(int gameId)
 		{
 			var game = GetGame(gameId);
-			var playerGuid = game.JoinGame(User.Identity.GetUserName());
+			game.JoinGame(User.Identity.GetUserName(), PlayerGuid.Value);
 			return RedirectToAction("Game", new { gameId = gameId });
 		}
 

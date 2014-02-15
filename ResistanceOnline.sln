@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResistanceOnline.Site", "Re
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResistanceOnline.Database", "ResistanceOnline.Database\ResistanceOnline.Database.csproj", "{06F8EC69-64DF-4E16-AE26-1A9EA44F02D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResistanceOnline.Query", "ResistanceOnline.Query\ResistanceOnline.Query.csproj", "{11A74D2C-A101-4039-9157-951053CD2D95}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResistanceOnline.Core", "ResistanceOnline.Core\ResistanceOnline.Core.csproj", "{C0884D2B-CC50-49BA-AC49-829D9B192533}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BC7F3ED9-9862-4A6F-B7A6-DA007BB9880E}"
@@ -41,10 +39,6 @@ Global
 		{06F8EC69-64DF-4E16-AE26-1A9EA44F02D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06F8EC69-64DF-4E16-AE26-1A9EA44F02D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06F8EC69-64DF-4E16-AE26-1A9EA44F02D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{11A74D2C-A101-4039-9157-951053CD2D95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{11A74D2C-A101-4039-9157-951053CD2D95}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{11A74D2C-A101-4039-9157-951053CD2D95}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{11A74D2C-A101-4039-9157-951053CD2D95}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C0884D2B-CC50-49BA-AC49-829D9B192533}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C0884D2B-CC50-49BA-AC49-829D9B192533}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0884D2B-CC50-49BA-AC49-829D9B192533}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -164,7 +164,7 @@ namespace ResistanceOnline.Core
             AllocateCharactersToPlayers();
         }
 
-        public Guid JoinGame(string playerName)
+        public Guid JoinGame(string playerName, Guid playerGuid)
         {
             if (Players.Count == GameSize)
                 throw new Exception("Game already full");
@@ -172,14 +172,13 @@ namespace ResistanceOnline.Core
             while (Players.Select(p=>p.Name).Contains(playerName))
                 playerName = playerName + "2";
 
-            var guid = Guid.NewGuid();
-            Players.Add(new Player() { Name = playerName, Guid = guid });
+            Players.Add(new Player() { Name = playerName, Guid = playerGuid });
 
             OnCharacterAddedOrPlayerJoined();
 
             OnAfterAction();
 
-            return guid;
+            return playerGuid;
         }
 
         private void AllocateCharactersToPlayers()
@@ -421,7 +420,7 @@ namespace ResistanceOnline.Core
                     GuessMerlin(player, action.Player);
                     break;
                 case Action.Type.JoinGame:
-                    JoinGame(action.Name);
+                    JoinGame(action.Name, Guid.NewGuid());
                     break;
                 case Action.Type.AddToTeam:
                     AddToTeam(player, action.Player);

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System;
 using TechTalk.SpecFlow;
 
 namespace ResistanceOnline.Core.Test.SpecFlow
@@ -9,11 +10,13 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 		{
 			var game = new Game(numberOfPlayers);
 
+			game.Rule_IncludeLadyOfTheLake = false;
+
 			//TODO: map to standard game types for good/evil numbers
 			for (var i = 0; i < numberOfPlayers; i++)
 			{
 				game.AddCharacter(Character.LoyalServantOfArthur);
-				game.JoinGame(string.Format("player{0}", i));
+				game.JoinGame(string.Format("player{0}", i), Guid.NewGuid());
 			}
 
 			ContextAccess.Game = game;

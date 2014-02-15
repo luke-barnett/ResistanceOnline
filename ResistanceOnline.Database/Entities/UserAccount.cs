@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 using System;
 
-namespace ResistanceOnline.Database
+namespace ResistanceOnline.Database.Entities
 {
 	public class UserAccount : IdentityUser
 	{

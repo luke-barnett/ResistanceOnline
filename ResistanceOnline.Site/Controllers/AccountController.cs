@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
-using ResistanceOnline.Database;
+using ResistanceOnline.Database.Entities;
 using ResistanceOnline.Site.Infrastructure;
 using ResistanceOnline.Site.Models;
 using System;

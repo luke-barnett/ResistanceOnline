@@ -67,8 +67,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
             //if I'm evil, put anyone else on
             if (_IAmEvil)
             {
-                player = playersNotOnTeam.Random();
-                Say("I guess I'll put " + player.Name + " on this mission");
+                player = playersNotOnTeam.Random();                
                 return player;
             }
 
@@ -77,12 +76,11 @@ namespace ResistanceOnline.Site.ComputerPlayers
             //failing that we need to put someone evil on the mission :(
             if (player == null)
             {
-                Say("I guess I'll put " + player.Name + " on this mission");
                 player = playersNotOnTeam.Random();
             }
             else
             {
-                Say("I trust " + player.Name);
+                SayTheyAreGood(player.Name);
             }
             return player;
         }

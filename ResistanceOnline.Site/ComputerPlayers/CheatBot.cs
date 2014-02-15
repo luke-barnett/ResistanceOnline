@@ -34,7 +34,6 @@ namespace ResistanceOnline.Site.ComputerPlayers
             //put myself on
             if (!_game.CurrentRound.CurrentTeam.TeamMembers.Any(p => p == _player))
             {
-                Say("Obviously I need to be on this team");
                 return _player;
             }
 
@@ -45,7 +44,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
             if (_IAmEvil)
             {
                 player = playersNotOnTeam.Random();
-                Say("I trust " + player.Name);
+                SayTheyAreGood(player.Name);
                 return player;
             }
 
@@ -55,18 +54,17 @@ namespace ResistanceOnline.Site.ComputerPlayers
             if (player == null)
             {
                 player = playersNotOnTeam.First();
-                Say("I don't trust " + player.Name);
+                SayTheyAreEvil(player.Name);
             }
             else
             {
-                Say("I trust " + player.Name);
+                SayTheyAreGood(player.Name);
             }
             return player;
         }
 
         protected override bool Quest()
         {
-            Say("Obviously I'm putting in a success card");
             return _IAmEvil == false;
         }
 
@@ -78,20 +76,20 @@ namespace ResistanceOnline.Site.ComputerPlayers
             {
                 if (evilCount >= _game.CurrentRound.RequiredFails)
                 {
-                    Say("I trust this team");
+                    SayTeamIsOk();
                     return true;
                 }
-                Say("I don't trust this team");
+                SayTeamNotOk();
                 return false;
             }
             else
             {
                 if (evilCount >= _game.CurrentRound.RequiredFails)
                 {
-                    Say("I don't trust this team");
+                    SayTeamNotOk();
                     return false;
                 }
-                Say("I trust this team");
+                SayTeamIsOk();
                 return true;
             }
 

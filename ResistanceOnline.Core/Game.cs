@@ -89,6 +89,7 @@ namespace ResistanceOnline.Core
 
         public int GameId { get; set; }
         public List<Character> AvailableCharacters { get; set; }
+        public List<PlayerMessage> Messages { get; set; }
         public int GameSize { get; set; }
         public List<Player> Players { get; set; }
         public List<Round> Rounds { get; set; }
@@ -349,28 +350,28 @@ namespace ResistanceOnline.Core
                         case Round.State.ProposingPlayers:
                             if (player!=null && quest.Leader.Name == player.Name)
                             {
-                                return new List<Action.Type>() { Action.Type.AddToTeam };
+                                return new List<Action.Type>() { Action.Type.AddToTeam, Action.Type.Message };
                             }
-                            return new List<Action.Type>();
+                            return new List<Action.Type>() { Action.Type.Message };
                         case Round.State.Voting:
                             if (player!=null && !quest.Votes.Select(v => v.Player.Name).ToList().Contains(player.Name))
                             {
-                                return new List<Action.Type>() { Action.Type.VoteForTeam };
+                                return new List<Action.Type>() { Action.Type.VoteForTeam, Action.Type.Message };
                             }
-                            return new List<Action.Type>();
+                            return new List<Action.Type>() { Action.Type.Message };
                         case Round.State.Questing:
                             if (player != null && quest.TeamMembers.Select(v => v.Name).ToList().Contains(player.Name) &&
                                 !quest.Quests.Select(q => q.Player.Name).ToList().Contains(player.Name))
                             {
-                                return new List<Action.Type>() { Action.Type.SubmitQuestCard };
+                                return new List<Action.Type>() { Action.Type.Message, Action.Type.SubmitQuestCard };
                             }
-                            return new List<Action.Type>();
+                            return new List<Action.Type>() { Action.Type.Message };
                     }
 
                     //round over but still current
                     if (Rule_IncludeLadyOfTheLake && Rounds.Count >= 2 && HolderOfLadyOfTheLake == player)
                     {
-                        return new List<Action.Type>() { Action.Type.UseTheLadyOfTheLake };
+                        return new List<Action.Type>() { Action.Type.UseTheLadyOfTheLake, Action.Type.Message };
                     }
 
                     return new List<Action.Type>();
@@ -389,13 +390,13 @@ namespace ResistanceOnline.Core
                 
                 case Game.State.GuessingMerlin:
                     if (player != null && player.Character == Character.Assassin)
-                        return new List<Action.Type>() { Action.Type.GuessMerlin };
-                    return new List<Action.Type>();
+                        return new List<Action.Type>() { Action.Type.GuessMerlin, Action.Type.Message };
+                    return new List<Action.Type>() { Action.Type.Message };
 
                 case Game.State.EvilTriumphs:
                 case Game.State.GoodPrevails:
                 case Game.State.MerlinDies:
-                    return new List<Action.Type>();
+                    return new List<Action.Type>() { Action.Type.Message };
             }
             return new List<Action.Type>();
 
@@ -434,6 +435,9 @@ namespace ResistanceOnline.Core
                 case Action.Type.UseTheLadyOfTheLake:
                     UseLadyOfTheLake(player, action.Player);
                     break;
+                case Action.Type.Message:
+                    Message(player, action.Message);                    
+                    break;
                 default:
                     throw new NotImplementedException();
             }
@@ -441,6 +445,10 @@ namespace ResistanceOnline.Core
             OnAfterAction();
         }
 
+        private void Message(Player player, string message)
+        {
+            CurrentRound.CurrentTeam.Messages.Add(new PlayerMessage { Player = player, Message = message });
+        }
 
         public bool IsCharacterEvil(Character character)
         {

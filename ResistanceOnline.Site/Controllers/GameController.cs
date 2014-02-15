@@ -124,7 +124,7 @@ namespace ResistanceOnline.Site.Controllers
 			if (state == Core.Game.State.Playing || state == Core.Game.State.GuessingMerlin)
 			{
 				var computersPlayersInGame = _computerPlayers.Where(c => game.Players.Select(p => p.Guid).Contains(c.PlayerGuid));
-				while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.PlayerGuid)).Any()))
+				while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.PlayerGuid)).Any(a=>a!= Core.Action.Type.Message)))
 				{
 					foreach (var computerPlayer in computersPlayersInGame)
 					{
@@ -211,5 +211,15 @@ namespace ResistanceOnline.Site.Controllers
 			OnAfterAction(game);
 			return RedirectToAction("Game", new { gameId = gameId });
 		}
+
+        [HttpPost]
+        public ActionResult Message(int gameId, Guid playerGuid, string message)
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.FirstOrDefault(p => p.Guid == playerGuid);
+            game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.Message, Message = message });
+            OnAfterAction(game);
+            return RedirectToAction("Game", new { gameId = gameId });
+        }
 	}
 }

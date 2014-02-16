@@ -40,14 +40,6 @@ namespace ResistanceOnline.Core
             RoundTables = new List<RoundTable>();
             switch (players)
             {
-
-                case 1:
-                    RoundTables.Add(new RoundTable(1));
-                    RoundTables.Add(new RoundTable(1));
-                    RoundTables.Add(new RoundTable(1));
-                    RoundTables.Add(new RoundTable(1));
-                    RoundTables.Add(new RoundTable(1));
-                    break;
                 case 5:
                     RoundTables.Add(new RoundTable(2));
                     RoundTables.Add(new RoundTable(3));

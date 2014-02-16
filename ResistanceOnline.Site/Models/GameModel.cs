@@ -84,8 +84,7 @@ namespace ResistanceOnline.Site.Models
             GuessMerlinPlayersSelectList = new SelectList(game.Players.Where(p=>p!=player).Select(p => p.Name));
 
             //can use on anyone who hasn't had it
-            LadyOfTheLakePlayerSelectList = new SelectList(game.Players.Except(game.LadyOfTheLakeUses.Select(u => u.UsedBy)).Select(p => p.Name));
-            //todo debugging .Where(p => p != player)
+            LadyOfTheLakePlayerSelectList = new SelectList(game.Players.Where(p => p != player).Except(game.LadyOfTheLakeUses.Select(u => u.UsedBy)).Select(p => p.Name));
 
             //can put anyone on a team who isn't already on it
             if (game.CurrentRound != null)

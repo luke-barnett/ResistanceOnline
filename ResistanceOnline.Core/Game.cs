@@ -223,7 +223,7 @@ namespace ResistanceOnline.Core
             Rounds.Add(new Round(Players, leader, tableaus.TeamSize, tableaus.RequiredFails));
         }
 
-        public Round CurrentRound { get { return Rounds.Last(); } }
+        public Round CurrentRound { get { return Rounds.LastOrDefault(); } }
 
         public void AddToTeam(Player player, Player proposedPlayer)
         {
@@ -319,7 +319,7 @@ namespace ResistanceOnline.Core
                 if (Rule_IncludeLadyOfTheLake && LadyOfTheLakeUses.Count < Rounds.Count - 2)
                     return State.Playing;
 
-                if (AssassinsGuessAtMerlin == null && Players.Any(p=>p.Character == Character.Merlin))
+                if (AssassinsGuessAtMerlin == null && Players.Any(p=>p.Character == Character.Merlin) && Players.Any(p=>p.Character == Character.Assassin))
                     return State.GuessingMerlin;
 
                 if (AssassinsGuessAtMerlin != null && AssassinsGuessAtMerlin.Character == Character.Merlin)

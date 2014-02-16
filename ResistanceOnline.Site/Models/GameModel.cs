@@ -14,19 +14,21 @@ namespace ResistanceOnline.Site.Models
 
 		public Guid? PlayerGuid { get; set; }
 
-		public Core.Game.State GameState { get; set; }
+		public string GameState { get; set; }
 
         public bool GameOver
         {
             get
             {
-                return (GameState == Game.State.GoodPrevails || GameState == Game.State.MerlinDies || GameState == Game.State.EvilTriumphs);
+
+                return (GameState == Game.State.GoodPrevails.ToString() || GameState == Game.State.MerlinDies.ToString() || GameState == Game.State.EvilTriumphs.ToString());
             }
         }
 		
 		public List<Core.Player> ImpersonationList { get; set; }
 
-		public List<Core.Character> CharactersInGame { get; set; }
+        public List<string> AvailableCharacters { get { return Enum.GetNames(typeof(Character)).ToList(); } }
+		public List<string> CharactersInGame { get; set; }
 
 		public List<SelectListItem> AllCharactersSelectList { get; set; }
 
@@ -34,7 +36,7 @@ namespace ResistanceOnline.Site.Models
         public SelectList GuessMerlinPlayersSelectList { get; set; }
         public SelectList AddToTeamPlayersSelectList { get; set; }
 
-		public List<Core.Action.Type> Actions { get; set; }
+		public List<string> Actions { get; set; }
 
 		public List<WaitingActionsModel> Waiting { get; set; }
 
@@ -42,7 +44,7 @@ namespace ResistanceOnline.Site.Models
 
 		public List<RoundModel> Rounds { get; set; }
 
-        public List<RoundTable> RoundTables { get; set; } 
+        public List<string> RoundTables { get; set; } 
 
 		public bool IsSpectator { get; set; }
 
@@ -60,7 +62,7 @@ namespace ResistanceOnline.Site.Models
             PlayersMissing = game.GameSize - game.Players.Count;
             AssassinIsInTheGame = game.Players.Select(p => p.Character).Contains(Character.Assassin);
 
-            RoundTables = game.RoundTables;
+            RoundTables = game.RoundTables.Select(t=>String.Format("Round {0} has {1} and requires {2}", game.RoundTables.IndexOf(t).ToWords(), "player".ToQuantity(t.TeamSize, ShowQuantityAs.Words), "fail".ToQuantity(t.RequiredFails, ShowQuantityAs.Words))).ToList();
 
 			var player = game.Players.FirstOrDefault(p => p.Guid == playerGuid);
 			IsSpectator = player == null;
@@ -68,9 +70,10 @@ namespace ResistanceOnline.Site.Models
             PlayerName = player == null ? "Spectator" : player.Name;
 
             AssassinsGuessAtMerlin = game.AssassinsGuessAtMerlin;
-			GameState = game.DetermineState();
-			CharactersInGame = game.AvailableCharacters.ToList();
-			AllCharactersSelectList =
+			GameState = game.DetermineState().ToString();
+			CharactersInGame = game.AvailableCharacters.Select(i => i.ToString()).ToList();
+		
+            AllCharactersSelectList =
 				Enum.GetValues(typeof(Character))
 					.Cast<Character>()
 					.Where(c => c != Character.UnAllocated)
@@ -84,9 +87,12 @@ namespace ResistanceOnline.Site.Models
             LadyOfTheLakePlayerSelectList = new SelectList(game.Players.Where(p => p != player).Except(game.LadyOfTheLakeUses.Select(u => u.UsedBy)).Select(p => p.Name));
 
             //can put anyone on a team who isn't already on it
-			AddToTeamPlayersSelectList = new SelectList(game.Players.Where(p=> !game.CurrentRound.CurrentTeam.TeamMembers.Select(t=>t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
+            if (game.CurrentRound != null)
+            {
+                AddToTeamPlayersSelectList = new SelectList(game.Players.Where(p => !game.CurrentRound.CurrentTeam.TeamMembers.Select(t => t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
+            }
 
-			Actions = game.AvailableActions(player);
+			Actions = game.AvailableActions(player).OrderBy(x=>x != Core.Action.Type.Message).Select(i => i.ToString()).ToList();
 
 			PlayerInfo = new List<PlayerInfoModel>();
 			Waiting = new List<WaitingActionsModel>();
@@ -99,9 +105,10 @@ namespace ResistanceOnline.Site.Models
 				};
 
 				//always know own character, or all characters if game is over
-				if ((p==player || GameState == Game.State.EvilTriumphs || GameState == Game.State.GoodPrevails || GameState == Game.State.MerlinDies) && p.Character != Character.UnAllocated) {
-					playerInfo.CharacterCard = p.Character; 
-				}
+                if ((p == player || GameState == Game.State.EvilTriumphs.ToString() || GameState == Game.State.GoodPrevails.ToString() || GameState == Game.State.MerlinDies.ToString()) && p.Character != Character.UnAllocated)
+                {
+                    playerInfo.CharacterCard = p.Character;
+                }
 
 				PlayerInfo.Add(playerInfo);
 

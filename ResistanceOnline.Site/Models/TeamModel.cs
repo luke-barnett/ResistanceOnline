@@ -12,15 +12,17 @@ namespace ResistanceOnline.Site.Models
 		public List<VoteModel> Vote { get; set; }
 		public List<QuestModel> QuestCards { get; set; }
         public List<MessageModel> Messages { get; set; }
+        public string WaitingMessage { get; set; }
 
-		public TeamModel(Core.Team quest, int totalPlayers)
+
+		public TeamModel(Core.Team team, int totalPlayers)
 		{
-			Leader = quest.Leader.Name;
+			Leader = team.Leader.Name;
 
-			TeamMembers = quest.TeamMembers.Select(p => p.Name).ToList();
-			Vote = quest.Votes.OrderBy(v=>v.Player.Name).Select(v => new VoteModel(v, quest.Votes.Count != totalPlayers)).ToList();
-			QuestCards = quest.Quests.OrderBy(q=> q.Success).Select(q => new QuestModel(q.Success, quest.Quests.Count != TeamMembers.Count)).ToList();
-            Messages = quest.Messages.Select(m => new MessageModel(m.Player.Name, m.Message)).ToList();
+			TeamMembers = team.TeamMembers.Select(p => p.Name).ToList();
+			Vote = team.Votes.OrderBy(v=>v.Player.Name).Select(v => new VoteModel(v, team.Votes.Count != totalPlayers)).ToList();
+			QuestCards = team.Quests.OrderBy(q=> q.Success).Select(q => new QuestModel(q.Success, team.Quests.Count != TeamMembers.Count)).ToList();
+            Messages = team.Messages.Select(m => new MessageModel(m.Player.Name, m.Message)).ToList();
 		}
 	}
 }

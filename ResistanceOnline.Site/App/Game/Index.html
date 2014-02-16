@@ -1,7 +1,6 @@
 <h3>Game setup</h3>
 <p>
-    This is a {{game().GameSize}} player game with the following characters    
-    <span class="important" data-bind="visible: game().CharactersMissing">({{game().CharactersMissing}} still to be added)</span>    
+    {{game().GameSetup}}
 </p>
 
 <ul class="cards" data-bind="foreach: game().CharactersInGame">
@@ -20,7 +19,7 @@
     <ul class="cards" data-bind="foreach: game().PlayerInfo">
 		<li>
             <!--todo make clickable-->
-			<img class="playercard" src="/Images/player.png"  data-bind="attr: { data_actual: '/images/' + $data + '.png' }, click: function () { var old = $(this).attr('src'); $(this).attr('src', $(this).attr('data-actual')); $(this).attr('data-actual', old); }" />
+			<img class="playercard" src="/Images/player.png"  data-bind="attr: { data_actual: '/images/' + Knowledge + '.png' }, click: function () { var old = $(this).attr('src'); $(this).attr('src', $(this).attr('data_actual')); $(this).attr('data_actual', old); }" />
             <div class="playername">{{Name}}</div>
 		</li>
     </ul>
@@ -31,10 +30,10 @@
 
 <div data-bind="foreach: game().Rounds">
 	<h3>
-        Round {{ $index() + 1 }}        
+        {{Title}}
         <img  title="{{Outcome}}" data-bind="visible: Outcome, attr: { src: '/images/' + Outcome() + '.png' }" />
     </h3>
-    <p>{{TeamSize}} player(s) ({{FailsRequired}} fail(s) required)</p>
+    <p>{{Summary}}</p>
 	
     <div data-bind="foreach: Teams">
 		<div class="quest">
@@ -60,8 +59,6 @@
                     <!-- /ko -->
 
                 </ul>
-                <!--todo waiting for...-->
-                 <!--<pre data-bind="text: ko.toJSON($root.Waiting, null, 2)"></pre>-->
             </div>
             <div class="clear"></div>
             <div class="results">
@@ -71,8 +68,6 @@
                     </li>                    
                 </ul>
 
-                <!--todo waiting for...-->
-                 <!--<pre data-bind="text: ko.toJSON(game.Waiting, null, 2)"></pre>-->
             </div>
             <div class="clear"></div>
 
@@ -82,8 +77,7 @@
             </div>
             <!-- /ko -->
 
-            <!--todo waiting for...-->
-            <!--<pre data-bind="text: ko.toJSON(game.Waiting, null, 2)"></pre>-->
+            <span class="warning">{{WaitingMessage}}</span>
 
 		</div>
 	</div>          

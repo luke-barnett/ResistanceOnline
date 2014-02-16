@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Humanizer;
+using System.Text;
 
 namespace ResistanceOnline.Site.Models
 {
@@ -50,7 +51,22 @@ namespace ResistanceOnline.Site.Models
 
         public int GameSize { get; set; }
 
-        public int CharactersMissing { get { return GameSize - CharactersInGame.Count; } }
+        public string GameSetup
+        {
+            get
+            {
+                StringBuilder setup = new StringBuilder();
+                setup.AppendFormat("This is a {0} player game",GameSize.ToWords());
+                if (CharactersInGame.Count > 0) 
+                {
+                    setup.AppendFormat(" with the following characters");
+                }
+                if (CharactersInGame.Count<GameSize) {
+                    setup.AppendFormat(" (waiting on {0} to be added)", "more character".ToQuantity(GameSize - CharactersInGame.Count, ShowQuantityAs.Words));
+                }
+                return setup.ToString();
+            }
+        }
 
         public int PlayersMissing { get; private set; }
 
@@ -62,7 +78,7 @@ namespace ResistanceOnline.Site.Models
             PlayersMissing = game.GameSize - game.Players.Count;
             AssassinIsInTheGame = game.Players.Select(p => p.Character).Contains(Character.Assassin);
 
-            RoundTables = game.RoundTables.Select(t=>String.Format("Round {0} has {1} and requires {2}", game.RoundTables.IndexOf(t).ToWords(), "player".ToQuantity(t.TeamSize, ShowQuantityAs.Words), "fail".ToQuantity(t.RequiredFails, ShowQuantityAs.Words))).ToList();
+            RoundTables = game.RoundTables.Select(t=>String.Format("Round {0} has {1} and requires {2}", (game.RoundTables.IndexOf(t) + 1).ToWords(), "player".ToQuantity(t.TeamSize, ShowQuantityAs.Words), "fail".ToQuantity(t.RequiredFails, ShowQuantityAs.Words))).ToList();
 
 			var player = game.Players.FirstOrDefault(p => p.Guid == playerGuid);
 			IsSpectator = player == null;
@@ -117,10 +133,34 @@ namespace ResistanceOnline.Site.Models
 			
 			//game history
 			Rounds = new List<RoundModel>();
-			foreach (var round in game.Rounds)
+			for(int i=0; i<game.Rounds.Count; i++)
 			{
-				Rounds.Add(new RoundModel(round));
+				Rounds.Add(new RoundModel(game.Rounds[i],i+1));
 			}
+
+            if (Rounds.Count > 0)
+            {
+                var currentRound = Rounds.Last();
+                var currentTeam = currentRound.Teams.Last();
+                if (currentTeam.TeamMembers.Count < currentRound.TeamSize)
+                {
+                    currentTeam.WaitingMessage = String.Format("Waiting for {0} to choose {1}", currentTeam.Leader, "more team member".ToQuantity(currentRound.TeamSize - currentTeam.TeamMembers.Count, ShowQuantityAs.Words));
+                }
+                else
+                {
+                    if (currentTeam.Vote.Count < GameSize)
+                    {
+                        currentTeam.WaitingMessage = String.Format("Waiting for {0} to vote for {1}'s team", CommaQuibbling(game.Players.Select(p => p.Name).Except(currentTeam.Vote.Select(v => v.Player))), currentTeam.Leader);
+                    }
+                    else
+                    {
+                        if (currentTeam.QuestCards.Count < currentRound.TeamSize)
+                        {
+                            currentTeam.WaitingMessage = String.Format("Waiting for {0} to quest", CommaQuibbling(currentTeam.TeamMembers.Except(game.CurrentRound.CurrentTeam.Quests.Select(q => q.Player.Name))));
+                        }
+                    }
+                }
+            }
 		}
 
         public object PlayerName { get; set; }

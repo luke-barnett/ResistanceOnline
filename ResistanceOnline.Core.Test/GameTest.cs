@@ -63,7 +63,7 @@ namespace ResistanceOnline.Core.Test
         [TestMethod]
         public void JoinAndAllocate()
         {
-            var game = new Game(5);
+            var game = new Game();
 
             Assert.AreEqual(Game.State.GameSetup, game.DetermineState());
             game.AddCharacter(Character.Assassin);
@@ -79,6 +79,7 @@ namespace ResistanceOnline.Core.Test
             game.JoinGame("d", Guid.NewGuid());
             Assert.AreEqual(Game.State.GameSetup, game.DetermineState());
             game.JoinGame("e", Guid.NewGuid());
+            game.StartGame();
             Assert.AreEqual(Game.State.Playing, game.DetermineState());
 
             var allocatedCharacters = game.Players.Select(p=> p.Character).ToList();

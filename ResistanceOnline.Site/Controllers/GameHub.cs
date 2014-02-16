@@ -26,7 +26,7 @@ namespace ResistanceOnline.Site.Controllers
             //create a default game to make development easier
             if (_games.Count == 0)
             {
-                var game = new Game(5);
+                var game = new Game();
                 game.Rule_LancelotsKnowEachOther = true;
                 game.Rule_GoodMustAlwaysVoteSucess = true;
                 game.Rule_IncludeLadyOfTheLake = true;
@@ -111,7 +111,7 @@ namespace ResistanceOnline.Site.Controllers
         public Game CreateGame(int players)
         {
             //todo - something with the database :)
-            var game = new Game(players);
+            var game = new Game();
             _games.Add(game);
             game.GameId = _games.IndexOf(game);
 

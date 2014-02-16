@@ -83,6 +83,11 @@
 	</div>          
 </div>
 
+<div data-bind="visible: game().AssassinsGuessAtMerlin">
+    <h3>Guess at merlin</h3>
+    {{game().AssassinsGuessAtMerlin != null ? game().AssassinsGuessAtMerlin.Name : ''}}
+</div>
+
 <div data-bind="visible: game().GameOver">
     <h3>Game Over</h3>
     <p>{{game().GameState}}</p>
@@ -90,13 +95,9 @@
 
 <ul data-bind="foreach: game().Actions">
     <li >
+        <strong>{{$data}}</strong>
         <!--todo find nicer syntax for this-->
         <div data-bind="compose: { model: '/app/widgets/' + $data + '.js', view: '/app/widgets/' + $data + '.html', activationData: $root.game }"></div>
     </li>
 </ul>
 
-
-            <!--
-                see gamestate for debuggings
-                <pre data-bind="text: ko.toJSON($data, null, 2)"></pre>
-                -->

@@ -181,6 +181,8 @@
     <Content Include="App\Widgets\AddCharacter.js" />
     <Content Include="App\Widgets\AddToTeam.html" />
     <Content Include="App\Widgets\AddToTeam.js" />
+    <Content Include="App\Widgets\AddBot.html" />
+    <Content Include="App\Widgets\AddBot.js" />
     <Content Include="App\Widgets\Message.html" />
     <Content Include="App\Widgets\Message.js" />
     <Content Include="App\Widgets\UseTheLadyOfTheLake.html" />

@@ -1,0 +1,12 @@
+﻿ <form role="form" data-bind="submit: addComputerPlayer">
+    <div class="form-group">
+        <input class="form-control" type="text" name="name" placeholder="Enter a computer player name" data-bind="value: name" />
+        <select name="bot" data-bind="value: bot">
+            <!--//todo dynamic-->
+            <option value="simplebot">Simple Bot</option>
+            <option value="trustbot">Trust Bot</option>
+            <option value="trustbot">Cheat Bot</option>
+        </select>
+    </div>
+    <input class="btn btn-default" type="submit" value="Add Computer Player" />
+</form>

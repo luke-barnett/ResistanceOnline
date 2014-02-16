@@ -122,8 +122,7 @@ namespace ResistanceOnline.Site.Controllers
 
         public void AddCharacter(int gameId, string character)
         {
-            var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
+            var game = GetGame(gameId);            
             game.AddCharacter((Character)Enum.Parse(typeof(Character), character));
             OnAfterAction(game);
 
@@ -186,7 +185,7 @@ namespace ResistanceOnline.Site.Controllers
             game.UseLadyOfTheLake(player, game.Players.First(p => p.Name == target));
             OnAfterAction(game);
 
-            Clients.All.Update(_games);
+            Update();
         }
 
 
@@ -198,6 +197,26 @@ namespace ResistanceOnline.Site.Controllers
             OnAfterAction(game);
 
             Update();
+        }
+
+        public void AddComputerPlayer(int gameId, string bot, string name)
+        {
+            var game = GetGame(gameId);
+            switch (bot)
+            {
+                case "trustbot":
+                    _computerPlayers.Add(new ComputerPlayers.TrustBot(game, game.JoinGame(name, Guid.NewGuid())));
+                    break;
+                case "cheatbot":
+                    _computerPlayers.Add(new ComputerPlayers.CheatBot(game, game.JoinGame(name, Guid.NewGuid())));
+                    break;
+                case "simplebot":
+                default:
+                    _computerPlayers.Add(new ComputerPlayers.SimpleBot(game, game.JoinGame(name, Guid.NewGuid())));
+                    break;
+            }
+            OnAfterAction(game);
+            Update();   
         }
     }
 }

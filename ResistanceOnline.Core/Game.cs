@@ -382,7 +382,13 @@ namespace ResistanceOnline.Core
                     {
                         actions.Add(Action.Type.JoinGame);
                     }
-                    if (player != null && AvailableCharacters.Count < GameSize)
+
+                    if (Players.Count < GameSize)
+                    {
+                        actions.Add(Action.Type.AddBot);
+                    }
+
+                    if (AvailableCharacters.Count < GameSize)
                     {
                         actions.Add(Action.Type.AddCharacter);
                     }

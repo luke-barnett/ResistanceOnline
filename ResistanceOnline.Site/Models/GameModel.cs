@@ -28,7 +28,6 @@ namespace ResistanceOnline.Site.Models
 		
 		public List<Core.Player> ImpersonationList { get; set; }
 
-        public List<string> AvailableCharacters { get { return Enum.GetNames(typeof(Character)).ToList(); } }
 		public List<string> CharactersInGame { get; set; }
 
 		public List<SelectListItem> AllCharactersSelectList { get; set; }

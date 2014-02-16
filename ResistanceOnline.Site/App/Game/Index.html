@@ -6,7 +6,6 @@
     <span class="important" data-bind="visible: game().CharactersMissing">({{game().CharactersMissing}} still to be added)</span>    
 </p>
 
-
 <ul class="cards" data-bind="foreach: game().CharactersInGame">
     <li><img class="card" data-bind="attr: { src: '/Images/' + $data + '.png', title: $data }" alt="{{$data}"  /></li>	
 </ul>
@@ -22,11 +21,12 @@
     <p>Mouse over each player card to see information you may know about them.</p>    
     <ul class="cards" data-bind="foreach: game().PlayerInfo">
 		<li>
-			<img class="playercard" src="/Images/player.png"  data-bind="attr: { data_actual: '/images/' + $data + '.png' }, click: function () { var old = $(this).attr('src'); $(this).attr('src', $(this).attr('data-actual')); $(this).attr('data-actual', old); };" />
+            <!--todo make clickable-->
+			<img class="playercard" src="/Images/player.png"  data-bind="attr: { data_actual: '/images/' + $data + '.png' }, click: function () { var old = $(this).attr('src'); $(this).attr('src', $(this).attr('data-actual')); $(this).attr('data-actual', old); }" />
             <div class="playername">{{Name}}</div>
 		</li>
     </ul>
-    SHOW ALL TODO
+    <!--todo show all-->
 </div>
 
 <div class="clear"></div>
@@ -73,10 +73,12 @@
                     </li>                    
                 </ul>
 
+                <!--todo waiting for...-->
                  <!--<pre data-bind="text: ko.toJSON(game.Waiting, null, 2)"></pre>-->
             </div>
             <div class="clear"></div>
 
+            <!--todo waiting for...-->
             <!--<pre data-bind="text: ko.toJSON(game.Waiting, null, 2)"></pre>-->
 
 		</div>
@@ -122,4 +124,7 @@
 </ul>
 
 
-            <pre data-bind="text: ko.toJSON($data, null, 2)"></pre>
+            <!--
+                see gamestate for debuggings
+                <pre data-bind="text: ko.toJSON($data, null, 2)"></pre>
+                -->

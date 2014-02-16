@@ -44,5 +44,15 @@
     @*@Scripts.Render("~/bundles/jquery")*@    
     @*@Scripts.Render("~/bundles/bootstrap")*@
     @RenderSection("scripts", required: false)
+
+    <script>
+        function showcards() {
+            $('.playercard').each(function (index, element) {
+                var old = $(this).attr('src');
+                $(this).attr('src', $(this).attr('data_actual'));
+                $(this).attr('data_actual', old);
+            });
+        }
+    </script>
 </body>
 </html>

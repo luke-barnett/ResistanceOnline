@@ -15,15 +15,13 @@
 
 <div data-bind="visible: game().PlayerInfo">
     <h3>Oracle</h3>
-    <p>Mouse over each player card to see information you may know about them.</p>    
+    <p>Click any card to see the knowledge you have about all cards</p>    
     <ul class="cards" data-bind="foreach: game().PlayerInfo">
 		<li>
-            <!--todo make clickable-->
-			<img class="playercard" src="/Images/player.png"  data-bind="attr: { data_actual: '/images/' + Knowledge + '.png' }, click: function () { var old = $(this).attr('src'); $(this).attr('src', $(this).attr('data_actual')); $(this).attr('data_actual', old); }" />
+            <img class="playercard" src="/Images/player.png" data-bind="attr: { data_actual: '/images/' + Knowledge() + '.png'}, click: showcards" />
             <div class="playername">{{Name}}</div>
 		</li>
     </ul>
-    <!--todo show all-->
 </div>
 
 <div class="clear"></div>

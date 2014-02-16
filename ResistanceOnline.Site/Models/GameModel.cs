@@ -117,13 +117,14 @@ namespace ResistanceOnline.Site.Models
 				var playerInfo = new PlayerInfoModel 
 				{ 
 					Name = p.Name, 
-					Knowledge = game.PlayerKnowledge(player, p)
+					Knowledge = game.PlayerKnowledge(player, p).ToString()
 				};
 
 				//always know own character, or all characters if game is over
                 if ((p == player || GameState == Game.State.EvilTriumphs.ToString() || GameState == Game.State.GoodPrevails.ToString() || GameState == Game.State.MerlinDies.ToString()) && p.Character != Character.UnAllocated)
                 {
                     playerInfo.CharacterCard = p.Character;
+                    playerInfo.Knowledge = p.Character.ToString();
                 }
 
 				PlayerInfo.Add(playerInfo);
@@ -163,7 +164,7 @@ namespace ResistanceOnline.Site.Models
             }
 		}
 
-        public object PlayerName { get; set; }
+        public string PlayerName { get; set; }
 
         public string CommaQuibbling(IEnumerable<string> items)
         {

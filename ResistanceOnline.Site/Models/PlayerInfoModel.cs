@@ -21,6 +21,6 @@ namespace ResistanceOnline.Site.Models
             }
         }
 
-        public Knowledge Knowledge { get; set; }
+        public string Knowledge { get; set; }
     }
 }

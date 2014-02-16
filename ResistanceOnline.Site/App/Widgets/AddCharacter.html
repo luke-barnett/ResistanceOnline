@@ -1,9 +1,6 @@
 ﻿<form role="form" data-bind="submit: addCharacter">
-    <input type="hidden" name="gameid" value="@Model.GameId" />
-    <input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
     <div class="form-group">
-        <select data-bind="options: characters, value: character">
-        </select>        
+        <select data-bind="options: characters, value: character"></select>
     </div>
     <input class="btn btn-default" type="submit" value="Add Character" />
 </form>

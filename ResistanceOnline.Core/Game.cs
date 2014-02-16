@@ -40,6 +40,14 @@ namespace ResistanceOnline.Core
             RoundTables = new List<RoundTable>();
             switch (players)
             {
+
+                case 1:
+                    RoundTables.Add(new RoundTable(1));
+                    RoundTables.Add(new RoundTable(1));
+                    RoundTables.Add(new RoundTable(1));
+                    RoundTables.Add(new RoundTable(1));
+                    RoundTables.Add(new RoundTable(1));
+                    break;
                 case 5:
                     RoundTables.Add(new RoundTable(2));
                     RoundTables.Add(new RoundTable(3));
@@ -318,7 +326,7 @@ namespace ResistanceOnline.Core
                 if (Rule_IncludeLadyOfTheLake && LadyOfTheLakeUses.Count < Rounds.Count - 2)
                     return State.Playing;
 
-                if (AssassinsGuessAtMerlin == null && Players.Any(p=>p.Character == Character.Merlin))
+                if (AssassinsGuessAtMerlin == null && Players.Any(p=>p.Character == Character.Merlin) && Players.Any(p=>p.Character == Character.Assassin))
                     return State.GuessingMerlin;
 
                 if (AssassinsGuessAtMerlin != null && AssassinsGuessAtMerlin.Character == Character.Merlin)

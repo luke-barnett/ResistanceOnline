@@ -1,31 +1,52 @@
 ﻿using Microsoft.AspNet.SignalR;
 using ResistanceOnline.Core;
+using ResistanceOnline.Database;
 using ResistanceOnline.Site.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
+using ResistanceOnline.Core;
+using ResistanceOnline.Database;
+using ResistanceOnline.Site.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
 
 namespace ResistanceOnline.Site.Controllers
 {
+    //[Authorize]
     public class GameHub : Hub
     {
+        readonly ResistanceOnlineDbContext _dbContext;
+        public GameHub()//(ResistanceOnlineDbContext dbContext)
+		{
+			_dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
+		}
+
         //todo logged in user
-        static Dictionary<string, Guid> _players = new Dictionary<string, Guid>();
-        Guid PlayerGuid
+        private Guid PlayerGuid
+		{
+			get
+			{
+				return CurrentUser != null ? CurrentUser.PlayerGuid : Guid.Empty;
+			}
+		}
+
+        private UserAccount CurrentUser
         {
             get
             {
-                if (_players.ContainsKey(Context.ConnectionId))
-                    return _players[Context.ConnectionId];
-
-                return Guid.Empty;
-            }
-            set
-            {
-                _players[Context.ConnectionId] = value;
+                var userId = Context.User.Identity.GetUserId();
+                return _dbContext.Users.FirstOrDefault(user => user.Id == userId);
             }
         }
+
 
         static List<Game> _games = new List<Game>();
 
@@ -103,7 +124,7 @@ namespace ResistanceOnline.Site.Controllers
         public void JoinGame(int gameId, string name)
         {
             var game = GetGame(gameId);
-            PlayerGuid = game.JoinGame(name);
+            game.JoinGame(name, PlayerGuid);
             Update();
         }
 
@@ -116,12 +137,11 @@ namespace ResistanceOnline.Site.Controllers
             Update();
         }
 
-        public void LadyOfTheLake(int gameId, Guid playerGuid, string target)
+        public void LadyOfTheLake(int gameId, string target)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == playerGuid);
+            var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.UseLadyOfTheLake(player, game.Players.First(p => p.Name == target));
-
 
             Clients.All.Update(_games);
         }

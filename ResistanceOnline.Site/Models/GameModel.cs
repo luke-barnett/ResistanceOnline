@@ -21,7 +21,7 @@ namespace ResistanceOnline.Site.Models
             get
             {
 
-                return false; // TODO string compare? (GameState == Game.State.GoodPrevails || GameState == Game.State.MerlinDies || GameState == Game.State.EvilTriumphs);
+                return (GameState == Game.State.GoodPrevails.ToString() || GameState == Game.State.MerlinDies.ToString() || GameState == Game.State.EvilTriumphs.ToString());
             }
         }
 		
@@ -70,7 +70,7 @@ namespace ResistanceOnline.Site.Models
             PlayerName = player == null ? "Spectator" : player.Name;
 
             AssassinsGuessAtMerlin = game.AssassinsGuessAtMerlin;
-			GameState = game.DetermineState().Humanize();
+			GameState = game.DetermineState().ToString();
 			CharactersInGame = game.AvailableCharacters.Select(i => i.ToString()).ToList();
 		
             AllCharactersSelectList =
@@ -84,7 +84,8 @@ namespace ResistanceOnline.Site.Models
             GuessMerlinPlayersSelectList = new SelectList(game.Players.Where(p=>p!=player).Select(p => p.Name));
 
             //can use on anyone who hasn't had it
-            LadyOfTheLakePlayerSelectList = new SelectList(game.Players.Where(p => p != player).Except(game.LadyOfTheLakeUses.Select(u => u.UsedBy)).Select(p => p.Name));
+            LadyOfTheLakePlayerSelectList = new SelectList(game.Players.Except(game.LadyOfTheLakeUses.Select(u => u.UsedBy)).Select(p => p.Name));
+            //todo debugging .Where(p => p != player)
 
             //can put anyone on a team who isn't already on it
             if (game.CurrentRound != null)

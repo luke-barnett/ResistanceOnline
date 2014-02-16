@@ -1,15 +1,14 @@
 ﻿define(['data', 'knockout', 'knockout.punches'], function (data, ko, kop) {
-    console.log('not u');
-    //todo ctor?
     var viewModel = {
         gameId: ko.observable(),
-        name: ko.observable(''),
-        joinGame: function () {
-            $.connection.gameHub.server.joinGame(viewModel.gameId(), viewModel.name());
-            //player guid?
+        player: ko.observable(),
+        players: ko.observableArray(),
+        addToTeam: function () {
+            $.connection.gameHub.server.addToTeam(viewModel.gameId(), viewModel.player().Text());
         },
         activate: function(game) {            
             viewModel.gameId(game.GameId());
+            viewModel.players(game.AddToTeamPlayersSelectList());
         }
     };
 

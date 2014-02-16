@@ -88,7 +88,6 @@
       <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.0.2\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
@@ -192,8 +191,6 @@
     <Content Include="App\Widgets\SubmitQuestCard.js" />
     <Content Include="App\Widgets\VoteForTeam.html" />
     <Content Include="App\Widgets\VoteForTeam.js" />
-    <Content Include="App\Widgets\JoinGame.html" />
-    <Content Include="App\Widgets\JoinGame.js" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />

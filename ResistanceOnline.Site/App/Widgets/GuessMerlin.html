@@ -1,8 +1,6 @@
 ﻿<form role="form" data-bind="submit: guessMerlin">
-			<input type="hidden" name="gameid" value="@Model.GameId" />
-			<input type="hidden" name="playerGuid" value="@Model.PlayerGuid" />
-			<div class="form-group">
-				@Html.DropDownList("Guess", Model.GuessMerlinPlayersSelectList, new { @class = "form-control" })
-			</div>
-			<input class="btn btn-default" type="submit" value="Guess Merlin" />
-		</form>
+    <div class="form-group">
+        <select data-bind="options: players, value: player, optionsText: 'Text'"></select>
+    </div>
+    <input class="btn btn-default" type="submit" value="Guess Merlin" />
+</form>

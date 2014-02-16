@@ -16,6 +16,7 @@ namespace ResistanceOnline.Core
             TeamMembers = new List<Player>();
             Votes = new List<Vote>();
             Quests = new List<Quest>();
+            Messages = new List<PlayerMessage>();
         }
 
         public void AddToTeam(Player player, Player proposedPlayer)
@@ -49,5 +50,7 @@ namespace ResistanceOnline.Core
         public List<Player> TeamMembers { get; set; }
         public List<Vote> Votes { get; set; }
         public List<Quest> Quests { get; set; }
+
+        public List<PlayerMessage> Messages { get; set; }
     }
 }

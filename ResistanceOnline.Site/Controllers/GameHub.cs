@@ -8,14 +8,9 @@ using System.Linq;
 using System.Web;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
-using ResistanceOnline.Core;
-using ResistanceOnline.Database;
-using ResistanceOnline.Site.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
+using ResistanceOnline.Database.Entities;
+using ResistanceOnline.Site.ComputerPlayers;
 
 
 namespace ResistanceOnline.Site.Controllers
@@ -27,6 +22,27 @@ namespace ResistanceOnline.Site.Controllers
         public GameHub()//(ResistanceOnlineDbContext dbContext)
 		{
 			_dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
+
+            //create a default game to make development easier
+            if (_games.Count == 0)
+            {
+                var game = new Game(5);
+                game.Rule_LancelotsKnowEachOther = true;
+                game.Rule_GoodMustAlwaysVoteSucess = true;
+                game.Rule_IncludeLadyOfTheLake = true;
+                game.AddCharacter(Character.LoyalServantOfArthur);
+                game.AddCharacter(Character.Assassin);
+                game.AddCharacter(Character.Percival);
+                game.AddCharacter(Character.Morgana);
+                game.AddCharacter(Character.Merlin);
+                _computerPlayers.Add(new TrustBot(game, game.JoinGame("Jordan", Guid.NewGuid())));
+                _computerPlayers.Add(new CheatBot(game, game.JoinGame("Luke", Guid.NewGuid())));
+                _computerPlayers.Add(new CheatBot(game, game.JoinGame("Jeffrey", Guid.NewGuid())));
+                _computerPlayers.Add(new SimpleBot(game, game.JoinGame("Jayvin", Guid.NewGuid())));
+
+                game.GameId = 0;
+                _games.Add(game);
+            }
 		}
 
         //todo logged in user
@@ -42,6 +58,8 @@ namespace ResistanceOnline.Site.Controllers
         {
             get
             {
+                if (Context.User == null)
+                    return null;
                 var userId = Context.User.Identity.GetUserId();
                 return _dbContext.Users.FirstOrDefault(user => user.Id == userId);
             }
@@ -49,6 +67,8 @@ namespace ResistanceOnline.Site.Controllers
 
 
         static List<Game> _games = new List<Game>();
+        static List<ComputerPlayer> _computerPlayers = new List<ComputerPlayer>();
+
 
         private Game GetGame(int? gameId)
         {
@@ -65,6 +85,21 @@ namespace ResistanceOnline.Site.Controllers
             Clients.All.Update(_games.Select(g => new GameModel(g, PlayerGuid)));
         }
 
+        private void OnAfterAction(Game game)
+        {
+            var state = game.DetermineState();
+            if (state == Core.Game.State.Playing || state == Core.Game.State.GuessingMerlin)
+            {
+                var computersPlayersInGame = _computerPlayers.Where(c => game.Players.Select(p => p.Guid).Contains(c.PlayerGuid));
+                while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.PlayerGuid)).Any(a => a != Core.Action.Type.Message)))
+                {
+                    foreach (var computerPlayer in computersPlayersInGame)
+                    {
+                        computerPlayer.DoSomething();
+                    }
+                }
+            }
+        }
 
         public override System.Threading.Tasks.Task OnConnected()
         {
@@ -90,6 +125,7 @@ namespace ResistanceOnline.Site.Controllers
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.AddCharacter((Character)Enum.Parse(typeof(Character), character));
+            OnAfterAction(game);
 
             Update();
         }
@@ -99,6 +135,7 @@ namespace ResistanceOnline.Site.Controllers
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.AddToTeam(player, game.Players.First(p => p.Name == person));
+            OnAfterAction(game);
 
             Update();
         }
@@ -108,6 +145,7 @@ namespace ResistanceOnline.Site.Controllers
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.SubmitQuest(player, success);
+            OnAfterAction(game);
 
             Update();
         }
@@ -117,6 +155,7 @@ namespace ResistanceOnline.Site.Controllers
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.VoteForTeam(player, approve);
+            OnAfterAction(game);
 
             Update();
         }
@@ -125,6 +164,8 @@ namespace ResistanceOnline.Site.Controllers
         {
             var game = GetGame(gameId);
             game.JoinGame(name, PlayerGuid);
+            OnAfterAction(game);
+
             Update();
         }
 
@@ -133,6 +174,7 @@ namespace ResistanceOnline.Site.Controllers
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
+            OnAfterAction(game);
 
             Update();
         }
@@ -142,8 +184,20 @@ namespace ResistanceOnline.Site.Controllers
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.UseLadyOfTheLake(player, game.Players.First(p => p.Name == target));
+            OnAfterAction(game);
 
             Clients.All.Update(_games);
+        }
+
+
+        public void Message(int gameId, string message)
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == PlayerGuid);
+            game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.Message, Message = message });
+            OnAfterAction(game);
+
+            Update();
         }
     }
 }

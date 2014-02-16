@@ -36,9 +36,11 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
         protected override Core.Player LadyOfTheLakeTarget()
         {
+            Say("I'm just going use the lady of the lake on someone other than me.");
+
             if (_game.LadyOfTheLakeUses.Count == 0)
             {
-                return _game.Players.First(p => p != _player);
+                return _game.Players.Random(p => p != _player);
             }
 
             return _game.LadyOfTheLakeUses.Select(u => u.UsedBy).Where(p => p != _player).First();
@@ -46,7 +48,8 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
         protected override Core.Player GuessMerlin()
         {
-            return _game.Players.FirstOrDefault(p => p != _player && IKnowTheyAreEvil(p, _game) == false);
+            Say("I'm just going to guess anyone I know isn't evil..");
+            return _game.Players.RandomOrDefault(p => p != _player && IKnowTheyAreEvil(p, _game) == false);
         }
 
         protected override Core.Player ChooseTeamPlayer()
@@ -58,19 +61,27 @@ namespace ResistanceOnline.Site.ComputerPlayers
             }
 
             var playersNotOnTeam = _game.Players.Where(p => p != _player).Except(_game.CurrentRound.CurrentTeam.TeamMembers);
+            Player player = null;
 
             //if I'm evil, put anyone else on
             if (_IAmEvil)
             {
-                return playersNotOnTeam.First();
+                player = playersNotOnTeam.Random();
+                SayTheyAreGood(player.Name);
+                return player;
             }
 
             //if I'm good, try not to put evil on the mission
-            var player = playersNotOnTeam.FirstOrDefault(p=>IKnowTheyAreEvil(p, _game) == false);
+            player = playersNotOnTeam.RandomOrDefault(p => IKnowTheyAreEvil(p, _game) == false);
             //failing that we need to put someone evil on the mission :(
             if (player == null)
             {
-                player = playersNotOnTeam.First();
+                player = playersNotOnTeam.Random();
+                SayTheyAreGood(player.Name);
+            }
+            else
+            {
+                SayTheyAreGood(player.Name);
             }
             return player;
         }
@@ -86,13 +97,21 @@ namespace ResistanceOnline.Site.ComputerPlayers
             if (_IAmEvil)
             {
                 if (evilCount >= _game.CurrentRound.RequiredFails)
+                {
+                    Say("I like this team");
                     return true;
+                }
+                Say("This could be ok, but I'm not sure");
                 return false;
             }
             else
             {
                 if (evilCount >= _game.CurrentRound.RequiredFails)
+                {
+                    Say("I really don't like this");
                     return false;
+                }
+                Say("I like this team");
                 return true;
             }
 

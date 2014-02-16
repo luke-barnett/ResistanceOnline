@@ -19,7 +19,8 @@ namespace ResistanceOnline.Core
             VoteForTeam,
             SubmitQuestCard,
             GuessMerlin,
-            UseTheLadyOfTheLake
+            UseTheLadyOfTheLake,
+            Message
         };
 
         public Type ActionType { get; set; }
@@ -33,6 +34,11 @@ namespace ResistanceOnline.Core
         /// only useful for Joining games
         /// </summary>
         public String Name { get; set; }
+
+        /// <summary>
+        /// only usefule for sending messages
+        /// </summary>
+        public string Message { get; set; }
 
         /// <summary>
         ///  only useful for Voting on quests

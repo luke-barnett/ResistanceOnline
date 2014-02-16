@@ -27,7 +27,12 @@ namespace ResistanceOnline.Site.ComputerPlayers
             double evilProbability = 0;
 
             var evilCharactersInGame = _game.AvailableCharacters.Count(c => _game.IsCharacterEvil(c));
-            evilProbability = (double)evilCharactersInGame / (double)_game.GameSize;
+            if (_IAmEvil)
+            {
+                evilCharactersInGame--;
+            }
+
+            evilProbability = (double)evilCharactersInGame / (double)(_game.GameSize - 1);
 
             //nothing confirmed, look at quest behaviour
             foreach (var round in _game.Rounds)
@@ -37,6 +42,12 @@ namespace ResistanceOnline.Site.ComputerPlayers
                 {
                     var fails = round.Teams.Last().Quests.Count(q => !q.Success);
                     var size = round.Teams.Last().TeamMembers.Count();
+
+                    if (round.Teams.Last().TeamMembers.Contains(_player))
+                    {
+                        if (_IAmEvil) { fails = fails - 1; }
+                        size = size - 1;
+                    }
 
                     int roundEvilProbability = (int)(((double)fails / (double)size) * 100.0);
                     if (roundEvilProbability > evilProbability)
@@ -77,13 +88,18 @@ namespace ResistanceOnline.Site.ComputerPlayers
             var playersNotOnTeam = _game.Players.Where(p => p != _player).Except(_game.CurrentRound.CurrentTeam.TeamMembers);
 
             //if I'm evil, put anyone else on
+            Player player = null;
             if (_IAmEvil)
             {
-                return playersNotOnTeam.First();
+                player = playersNotOnTeam.Random();
+                SayTheyAreGood(player.Name);
+                return player;
             }
 
             //if I'm good, put most trustworthy person on
-            return playersNotOnTeam.Select(p => new { Player = p, ProbabilityOfEvil = ProbabilityOfEvil(p) }).OrderByDescending(p => p.ProbabilityOfEvil).Select(p => p.Player).First();
+            player = playersNotOnTeam.Select(p => new { Player = p, ProbabilityOfEvil = ProbabilityOfEvil(p) }).OrderByDescending(p => p.ProbabilityOfEvil).Select(p => p.Player).First();
+            SayTheyAreGood(player.Name);
+            return player;
         }
 
         protected override bool Quest()
@@ -96,6 +112,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
             //always succeed the last round
             if (_game.CurrentRound.Teams.Count == 5)
             {
+                SayTeamIsOk();
                 return true;
             }            
 
@@ -104,13 +121,21 @@ namespace ResistanceOnline.Site.ComputerPlayers
             if (_IAmEvil)
             {
                 if (evilCount >= _game.CurrentRound.RequiredFails)
+                {
+                    SayTeamIsOk();
                     return true;
+                }
+                SayTeamNotOk();
                 return false;
             }
             else
             {
                 if (evilCount >= _game.CurrentRound.RequiredFails)
+                {
+                    SayTeamNotOk();
                     return false;
+                }
+                SayTeamIsOk();
                 return true;
             }
 

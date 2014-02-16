@@ -3,7 +3,6 @@
 	<ol data-bind="foreach: games">
 		<li>              
 			<span data-bind="text: GameSize() + ' player(s)'"></span>			
-			<span data-bind="visible: ImpersonationList ">(Impersonation Enabled)</span>			
 			<span>{{GameState}}</span>
 			<a data-bind="attr: { href: '#/game/' + $index() }">Spectate Game</a>
 		</li>

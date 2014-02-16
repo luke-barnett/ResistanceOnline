@@ -181,6 +181,8 @@
     <Content Include="App\Widgets\AddCharacter.js" />
     <Content Include="App\Widgets\AddToTeam.html" />
     <Content Include="App\Widgets\AddToTeam.js" />
+    <Content Include="App\Widgets\Message.html" />
+    <Content Include="App\Widgets\Message.js" />
     <Content Include="App\Widgets\UseTheLadyOfTheLake.html" />
     <Content Include="App\Widgets\UseTheLadyOfTheLake.js" />
     <Content Include="App\Widgets\GuessMerlin.html" />
@@ -300,7 +302,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Infrastructure\ChallengeResult.cs" />
+    <Compile Include="ListExtensions.cs" />
     <Compile Include="Models\LoginConfirmationViewModel.cs" />
+    <Compile Include="Models\MessageModel.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ComputerPlayers\ComputerPlayer.cs" />
     <Compile Include="ComputerPlayers\CheatBot.cs" />

@@ -62,7 +62,8 @@ namespace ResistanceOnline.Site.ComputerPlayers
             "Everyone needs to trust me when I say this is a good team",
             "I'm a cheatbot and I know this team is successful",
             "Awesome",
-            "Very happy with this"
+            "I'm very happy with this",
+            "Sweet. Keep this team next time"
         };
 
         private List<string> _teamIsNotOk = new List<string>() 
@@ -70,7 +71,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
             "I really don't like this team",
             "This team will not succeed",
             "DO NOT ACCEPT THIS TEAM!",
-            "If you are good and you have to reject this team",
+            "If you are good then you have to reject this team",
             "Everyone needs to trust me when I say this is not a good team",
             "I'm a cheatbot and I know this is not a good team",
             "OMG this is bad",

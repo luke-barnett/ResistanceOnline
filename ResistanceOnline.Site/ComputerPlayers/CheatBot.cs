@@ -49,7 +49,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
             }
 
             //if I'm good, only put good on
-            player = playersNotOnTeam.FirstOrDefault(p=> !_game.IsCharacterEvil(p.Character));
+            player = playersNotOnTeam.RandomOrDefault(p=> !_game.IsCharacterEvil(p.Character));
             //failing that we need to put someone evil on the mission :(
             if (player == null)
             {

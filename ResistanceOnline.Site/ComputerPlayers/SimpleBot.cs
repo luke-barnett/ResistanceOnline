@@ -49,7 +49,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
         protected override Core.Player GuessMerlin()
         {
             Say("I'm just going to guess anyone I know isn't evil..");
-            return _game.Players.Shuffle().FirstOrDefault(p => p != _player && IKnowTheyAreEvil(p, _game) == false);
+            return _game.Players.RandomOrDefault(p => p != _player && IKnowTheyAreEvil(p, _game) == false);
         }
 
         protected override Core.Player ChooseTeamPlayer()
@@ -57,7 +57,6 @@ namespace ResistanceOnline.Site.ComputerPlayers
             //put myself on
             if (!_game.CurrentRound.CurrentTeam.TeamMembers.Any(p => p == _player))
             {
-                Say("Obviously I need to be on this mission");
                 return _player;
             }
 
@@ -67,16 +66,18 @@ namespace ResistanceOnline.Site.ComputerPlayers
             //if I'm evil, put anyone else on
             if (_IAmEvil)
             {
-                player = playersNotOnTeam.Random();                
+                player = playersNotOnTeam.Random();
+                SayTheyAreGood(player.Name);
                 return player;
             }
 
             //if I'm good, try not to put evil on the mission
-            player = playersNotOnTeam.FirstOrDefault(p=>IKnowTheyAreEvil(p, _game) == false);
+            player = playersNotOnTeam.RandomOrDefault(p => IKnowTheyAreEvil(p, _game) == false);
             //failing that we need to put someone evil on the mission :(
             if (player == null)
             {
                 player = playersNotOnTeam.Random();
+                SayTheyAreGood(player.Name);
             }
             else
             {

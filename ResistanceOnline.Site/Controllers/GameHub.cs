@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNet.SignalR;
 using ResistanceOnline.Core;
 using ResistanceOnline.Site.Models;
-using ResistanceOnline.Site.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,12 +47,14 @@ namespace ResistanceOnline.Site.Controllers
 
         public override System.Threading.Tasks.Task OnConnected()
         {
+            //todo split into individual updates
             Update();
             return base.OnConnected();
         }
 
         public Game CreateGame(int players)
         {
+            //todo - something with the database :)
             var game = new Game(players);
             _games.Add(game);
             game.GameId = _games.IndexOf(game);
@@ -102,8 +103,7 @@ namespace ResistanceOnline.Site.Controllers
         public void JoinGame(int gameId, string name)
         {
             var game = GetGame(gameId);
-            PlayerGuid = Guid.NewGuid();
-            game.JoinGame(name, PlayerGuid);
+            PlayerGuid = game.JoinGame(name);
             Update();
         }
 
@@ -112,6 +112,7 @@ namespace ResistanceOnline.Site.Controllers
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == PlayerGuid);
             game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
+
             Update();
         }
 
@@ -120,7 +121,9 @@ namespace ResistanceOnline.Site.Controllers
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == playerGuid);
             game.UseLadyOfTheLake(player, game.Players.First(p => p.Name == target));
-            Update();
+
+
+            Clients.All.Update(_games);
         }
     }
 }

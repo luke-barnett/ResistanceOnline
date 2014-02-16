@@ -3,10 +3,12 @@
 
     var viewModel =  {
         games: data,
+
         //create game
         players: ko.observable(5),
         createGame: function () {
             $.connection.gameHub.server.createGame(viewModel.players());
+            //todo redirect?
         }
     };
 

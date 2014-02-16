@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.AspNet.SignalR;
 using Owin;
 
 [assembly: OwinStartup(typeof(ResistanceOnline.Site.Startup))]
@@ -20,6 +21,8 @@ namespace ResistanceOnline.Site
 				AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
 				LoginPath = new PathString("/Account/Login")
 			});
+
+            app.MapSignalR();
 
 			app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 

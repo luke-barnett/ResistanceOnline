@@ -1,9 +1,4 @@
 ﻿define(['require', 'plugins/router', 'signalr.hubs'], function (require, router, signalr) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-  
-=======
-    
     var update = function (games) {
         console.log(games);
     };
@@ -15,10 +10,6 @@
     //todo map games to be a knockout object
     //todo pass model to the views (maybe they should all have their own subscriptions?)
         
->>>>>>> add signalr/durandal
-=======
-  
->>>>>>> knockouts
     return {
         router: router,
         activate: function () {

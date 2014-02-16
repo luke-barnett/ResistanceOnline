@@ -182,8 +182,10 @@ namespace ResistanceOnline.Site.Controllers
 				case "trustbot":
 					_computerPlayers.Add(new ComputerPlayers.TrustBot(game, game.JoinGame(name, Guid.NewGuid())));
 					break;
-
-				case "simplebot":
+                case "cheatbot":
+                    _computerPlayers.Add(new ComputerPlayers.CheatBot(game, game.JoinGame(name, Guid.NewGuid())));
+                    break;
+                case "simplebot":
 				default:
 					_computerPlayers.Add(new ComputerPlayers.SimpleBot(game, game.JoinGame(name, Guid.NewGuid())));
 					break;

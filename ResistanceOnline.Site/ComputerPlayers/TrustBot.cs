@@ -27,7 +27,12 @@ namespace ResistanceOnline.Site.ComputerPlayers
             double evilProbability = 0;
 
             var evilCharactersInGame = _game.AvailableCharacters.Count(c => _game.IsCharacterEvil(c));
-            evilProbability = (double)evilCharactersInGame / (double)_game.GameSize;
+            if (_IAmEvil)
+            {
+                evilCharactersInGame--;
+            }
+
+            evilProbability = (double)evilCharactersInGame / (double)(_game.GameSize - 1);
 
             //nothing confirmed, look at quest behaviour
             foreach (var round in _game.Rounds)
@@ -37,6 +42,12 @@ namespace ResistanceOnline.Site.ComputerPlayers
                 {
                     var fails = round.Teams.Last().Quests.Count(q => !q.Success);
                     var size = round.Teams.Last().TeamMembers.Count();
+
+                    if (round.Teams.Last().TeamMembers.Contains(_player))
+                    {
+                        if (_IAmEvil) { fails = fails - 1; }
+                        size = size - 1;
+                    }
 
                     int roundEvilProbability = (int)(((double)fails / (double)size) * 100.0);
                     if (roundEvilProbability > evilProbability)

@@ -152,17 +152,16 @@ namespace ResistanceOnline.Core
 
 
         private void OnCharacterAddedOrPlayerJoined()
-        {
-            //check if game ready to start
-            if (AvailableCharacters.Count == GameSize && Players.Count == GameSize)
-            {
-                OnAllCharactersAndPlayersAdded();
-            }
+        {            
         }
 
-        private void OnAllCharactersAndPlayersAdded()
+        public void StartGame()
         {
-            AllocateCharactersToPlayers();
+            //check if game ready to start
+            if (AvailableCharacters.Count == GameSize)
+            {
+                AllocateCharactersToPlayers();
+            }            
         }
 
         public Guid JoinGame(string playerName, Guid playerGuid)
@@ -378,6 +377,13 @@ namespace ResistanceOnline.Core
                 
                 case Game.State.GameSetup:
                     var actions = new List<Action.Type>();
+
+
+                    if (Players.Count == AvailableCharacters.Count && Players.Count >= 5 && Players.Count <= 10)
+                    {
+                        actions.Add(Action.Type.StartGame);
+                    }
+
                     if (player == null && Players.Count < GameSize)
                     {
                         actions.Add(Action.Type.JoinGame);

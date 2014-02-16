@@ -199,6 +199,14 @@ namespace ResistanceOnline.Site.Controllers
             Update();
         }
 
+        public void StartGame(int gameId)
+        {
+            var game = GetGame(gameId);
+            game.StartGame();
+            Update();
+        }
+
+
         public void AddComputerPlayer(int gameId, string bot, string name)
         {
             var game = GetGame(gameId);

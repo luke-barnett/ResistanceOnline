@@ -21,7 +21,8 @@ namespace ResistanceOnline.Core
             GuessMerlin,
             UseTheLadyOfTheLake,
             Message,
-            AddBot
+            AddBot,
+            StartGame
         };
 
         public Type ActionType { get; set; }

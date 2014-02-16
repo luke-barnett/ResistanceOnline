@@ -62,8 +62,8 @@
                     <!-- /ko -->
 
                 </ul>
-
-                 <pre data-bind="text: ko.toJSON($root.Waiting, null, 2)"></pre>
+                <!--todo waiting for...-->
+                 <!--<pre data-bind="text: ko.toJSON($root.Waiting, null, 2)"></pre>-->
             </div>
             <div class="clear"></div>
             <div class="results">
@@ -85,8 +85,7 @@
 	</div>          
 </div>
 
-
-            <pre data-bind="text: ko.toJSON(game().state, null, 2)"></pre>
+        <pre data-bind="text: ko.toJSON(game().state, null, 2)"></pre>
         <pre data-bind="text: ko.toJSON(game().AssassinsGuessAtMerlin, null, 2)"></pre>
 
 <!--@if (Model.GameState == ResistanceOnline.Core.game().State.GuessingMerlin || Model.AssassinsGuessAtMerlin != null)

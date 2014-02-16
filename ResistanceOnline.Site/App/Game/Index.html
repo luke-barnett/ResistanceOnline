@@ -19,7 +19,7 @@
     <ul class="cards" data-bind="foreach: game().PlayerInfo">
 		<li>
             <!--todo make clickable-->
-			<img class="playercard" src="/Images/player.png"  data-bind="attr: { data_actual: '/images/' + Knowledge + '.png' }, click: function () { var old = $(this).attr('src'); $(this).attr('src', $(this).attr('data_actual')); $(this).attr('data_actual', old); }" />
+			<img class="playercard" data-bind="attr: { src: image }, click: toggleShowActual" />
             <div class="playername">{{Name}}</div>
 		</li>
     </ul>

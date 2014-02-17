@@ -159,10 +159,10 @@ namespace ResistanceOnline.Site.Controllers
             Update();
         }
 
-        public void JoinGame(int gameId, string name)
+        public void JoinGame(int gameId)
         {
             var game = GetGame(gameId);
-            game.JoinGame(name, PlayerGuid);
+            game.JoinGame(CurrentUser.UserName, PlayerGuid);
             OnAfterAction(game);
 
             Update();

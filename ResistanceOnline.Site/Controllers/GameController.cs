@@ -31,19 +31,21 @@ namespace ResistanceOnline.Site.Controllers
 			//create a default game to make development easier
 			if (_games.Count == 0)
 			{
-				var game = new Game(5);
+				var game = new Game();
 				game.Rule_LancelotsKnowEachOther = true;
 				game.Rule_GoodMustAlwaysVoteSucess = true;
 				game.Rule_IncludeLadyOfTheLake = true;
-				game.AddCharacter(Character.LoyalServantOfArthur);
-				game.AddCharacter(Character.Assassin);
-				game.AddCharacter(Character.Percival);
-				game.AddCharacter(Character.Morgana);
-				game.AddCharacter(Character.Merlin);
+				
 				_computerPlayers.Add(new TrustBot(game, game.JoinGame("Jordan", Guid.NewGuid())));
 				_computerPlayers.Add(new CheatBot(game, game.JoinGame("Luke", Guid.NewGuid())));
 				_computerPlayers.Add(new CheatBot(game, game.JoinGame("Jeffrey", Guid.NewGuid())));
 				_computerPlayers.Add(new SimpleBot(game, game.JoinGame("Jayvin", Guid.NewGuid())));
+
+                game.AddCharacter(Character.LoyalServantOfArthur);
+                game.AddCharacter(Character.Assassin);
+                game.AddCharacter(Character.Percival);
+                game.AddCharacter(Character.Morgana);
+                game.AddCharacter(Character.Merlin);
 
 				game.GameId = 0;
 				_games.Add(game);
@@ -76,7 +78,7 @@ namespace ResistanceOnline.Site.Controllers
 			}
 		}
 
-		[AllowAnonymous]
+		//[AllowAnonymous]
 		public ActionResult Index()
 		{
 			return View(_games);
@@ -86,7 +88,7 @@ namespace ResistanceOnline.Site.Controllers
 		public ActionResult CreateGame(int players)
 		{
 			//todo - something with the database :)
-			var game = new Game(players);
+			var game = new Game();
 
 			_games.Add(game);
 			game.GameId = _games.IndexOf(game);

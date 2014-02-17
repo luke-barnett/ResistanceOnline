@@ -18,12 +18,12 @@ namespace ResistanceOnline.Core
             MerlinDies
         }
 
-        public Game(int players)
+        public Game()
         {
             Players = new List<Player>();
             Rounds = new List<Round>();
             AvailableCharacters = new List<Character>();
-            GameSize = players;
+
             LadyOfTheLakeUses = new List<LadyOfTheLakeUse>();
             LoyaltyDeck = new List<LoyaltyCard> { LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.SwitchAlegiance, LoyaltyCard.SwitchAlegiance };
 
@@ -37,65 +37,18 @@ namespace ResistanceOnline.Core
             Rule_LancelotsMustVoteFanatically = false;
             Rule_LoyaltyCardsDeltInAdvance = false;
 
-            RoundTables = new List<RoundTable>();
-            switch (players)
-            {
-                case 5:
-                    RoundTables.Add(new RoundTable(2));
-                    RoundTables.Add(new RoundTable(3));
-                    RoundTables.Add(new RoundTable(2));
-                    RoundTables.Add(new RoundTable(3));
-                    RoundTables.Add(new RoundTable(3));
-                    break;
-                case 6:
-                    RoundTables.Add(new RoundTable(2));
-                    RoundTables.Add(new RoundTable(3));
-                    RoundTables.Add(new RoundTable(4));
-                    RoundTables.Add(new RoundTable(3));
-                    RoundTables.Add(new RoundTable(4));
-                    break;
-                case 7:
-                    RoundTables.Add(new RoundTable(2));
-                    RoundTables.Add(new RoundTable(3));
-                    RoundTables.Add(new RoundTable(3));
-                    RoundTables.Add(new RoundTable(4,2));
-                    RoundTables.Add(new RoundTable(4));
-                    break;
-                case 8:
-                    RoundTables.Add(new RoundTable(3));
-                    RoundTables.Add(new RoundTable(4));
-                    RoundTables.Add(new RoundTable(4));
-                    RoundTables.Add(new RoundTable(5,2));
-                    RoundTables.Add(new RoundTable(5));
-                    break;
-                case 9:
-                    RoundTables.Add(new RoundTable(3));
-                    RoundTables.Add(new RoundTable(4));
-                    RoundTables.Add(new RoundTable(4));
-                    RoundTables.Add(new RoundTable(5,2));
-                    RoundTables.Add(new RoundTable(5));
-                    break;
-                case 10:
-                    RoundTables.Add(new RoundTable(3));
-                    RoundTables.Add(new RoundTable(4));
-                    RoundTables.Add(new RoundTable(4));
-                    RoundTables.Add(new RoundTable(5,2));
-                    RoundTables.Add(new RoundTable(5));
-                    break;
-                default:
-                    throw new Exception("No round tables for games with " + players + " players");
-            }
+
         }
 
         public int GameId { get; set; }
         public List<Character> AvailableCharacters { get; set; }
         public List<PlayerMessage> Messages { get; set; }
-        public int GameSize { get; set; }
+
         public List<Player> Players { get; set; }
         public List<Round> Rounds { get; set; }
         public int QuestIndicator { get; set; }
         public Player AssassinsGuessAtMerlin { get; set; }
-        public List<RoundTable> RoundTables { get; set; }
+
         public List<LadyOfTheLakeUse> LadyOfTheLakeUses { get; set; }
         public Player HolderOfLadyOfTheLake { get; set; }
         public bool LancelotAllegianceSwitched { get; set; }
@@ -109,13 +62,70 @@ namespace ResistanceOnline.Core
 
         public bool Rule_GoodMustAlwaysVoteSucess { get; set; }
 
+        public int GameSize { get { return Players.Count; } }
+        public List<RoundTable> RoundTables
+        {
+            get
+            {
+                var roundTables = new List<RoundTable>();
+                switch (GameSize)
+                {
+                    case 5:
+                        roundTables.Add(new RoundTable(2));
+                        roundTables.Add(new RoundTable(3));
+                        roundTables.Add(new RoundTable(2));
+                        roundTables.Add(new RoundTable(3));
+                        roundTables.Add(new RoundTable(3));
+                        break;
+                    case 6:
+                        roundTables.Add(new RoundTable(2));
+                        roundTables.Add(new RoundTable(3));
+                        roundTables.Add(new RoundTable(4));
+                        roundTables.Add(new RoundTable(3));
+                        roundTables.Add(new RoundTable(4));
+                        break;
+                    case 7:
+                        roundTables.Add(new RoundTable(2));
+                        roundTables.Add(new RoundTable(3));
+                        roundTables.Add(new RoundTable(3));
+                        roundTables.Add(new RoundTable(4, 2));
+                        roundTables.Add(new RoundTable(4));
+                        break;
+                    case 8:
+                        roundTables.Add(new RoundTable(3));
+                        roundTables.Add(new RoundTable(4));
+                        roundTables.Add(new RoundTable(4));
+                        roundTables.Add(new RoundTable(5, 2));
+                        roundTables.Add(new RoundTable(5));
+                        break;
+                    case 9:
+                        roundTables.Add(new RoundTable(3));
+                        roundTables.Add(new RoundTable(4));
+                        roundTables.Add(new RoundTable(4));
+                        roundTables.Add(new RoundTable(5, 2));
+                        roundTables.Add(new RoundTable(5));
+                        break;
+                    case 10:
+                        roundTables.Add(new RoundTable(3));
+                        roundTables.Add(new RoundTable(4));
+                        roundTables.Add(new RoundTable(4));
+                        roundTables.Add(new RoundTable(5, 2));
+                        roundTables.Add(new RoundTable(5));
+                        break;
+                    //default:
+                    //    throw new Exception("No round tables for games with " + GameSize + " players");
+                }
+                return roundTables;
+            }
+        }
+
         public void UseLadyOfTheLake(Player player, Player target)
         {
             if (HolderOfLadyOfTheLake != player)
                 throw new Exception("Hax. Player does not have lady of the lake.");
 
             LadyOfTheLakeUses.Add(new LadyOfTheLakeUse { UsedBy = player, UsedOn = target });
-            
+
             OnLadyOfTheLakeUsed();
         }
 
@@ -138,13 +148,13 @@ namespace ResistanceOnline.Core
 
         private void OnAfterAction()
         {
-                
+
         }
 
         public void AddCharacter(Character character)
         {
-            if (AvailableCharacters.Count == GameSize)
-                throw new Exception("All roles added");
+            //if (AvailableCharacters.Count == Players.Count)
+            //    throw new Exception("All roles added");
             AvailableCharacters.Add(character);
 
             OnCharacterAddedOrPlayerJoined();
@@ -153,24 +163,20 @@ namespace ResistanceOnline.Core
 
         private void OnCharacterAddedOrPlayerJoined()
         {
-            //check if game ready to start
-            if (AvailableCharacters.Count == GameSize && Players.Count == GameSize)
-            {
-                OnAllCharactersAndPlayersAdded();
-            }
         }
 
-        private void OnAllCharactersAndPlayersAdded()
+        public void StartGame()
         {
-            AllocateCharactersToPlayers();
+            //check if game ready to start
+            if (AvailableCharacters.Count == GameSize)
+            {
+                AllocateCharactersToPlayers();
+            }
         }
 
         public Guid JoinGame(string playerName, Guid playerGuid)
         {
-            if (Players.Count == GameSize)
-                throw new Exception("Game already full");
-
-            while (Players.Select(p=>p.Name).Contains(playerName))
+            while (Players.Select(p => p.Name).Contains(playerName))
                 playerName = playerName + "2";
 
             Players.Add(new Player() { Name = playerName, Guid = playerGuid });
@@ -232,7 +238,7 @@ namespace ResistanceOnline.Core
 
         public void VoteForTeam(Player player, bool approve)
         {
-            CurrentRound.VoteForTeam(player, approve);           
+            CurrentRound.VoteForTeam(player, approve);
         }
 
         public void SubmitQuest(Player player, bool success)
@@ -271,7 +277,7 @@ namespace ResistanceOnline.Core
                 return;
             }
 
-            OnStartNextRound(roundNumber+1);
+            OnStartNextRound(roundNumber + 1);
         }
 
         private void OnLadyOfTheLakeUsed()
@@ -287,7 +293,7 @@ namespace ResistanceOnline.Core
 
             if (Rule_LoyaltyCardsDeltInAdvance)
             {
-                if (LoyaltyDeck[roundNumber-1] == LoyaltyCard.SwitchAlegiance)
+                if (LoyaltyDeck[roundNumber - 1] == LoyaltyCard.SwitchAlegiance)
                 {
                     LancelotAllegianceSwitched = !LancelotAllegianceSwitched;
                 }
@@ -308,7 +314,7 @@ namespace ResistanceOnline.Core
 
         public State DetermineState()
         {
-            if (AvailableCharacters.Count < GameSize || Players.Count < GameSize)
+            if (AvailableCharacters.Count != Players.Count || Players.Count == 0 || Players.Any(i => i.Character == Character.UnAllocated))
                 return State.GameSetup;
 
             if (Rounds.Where(r => r.DetermineState() == Round.State.Failed).Count() >= 3)
@@ -319,7 +325,7 @@ namespace ResistanceOnline.Core
                 if (Rule_IncludeLadyOfTheLake && LadyOfTheLakeUses.Count < Rounds.Count - 2)
                     return State.Playing;
 
-                if (AssassinsGuessAtMerlin == null && Players.Any(p=>p.Character == Character.Merlin) && Players.Any(p=>p.Character == Character.Assassin))
+                if (AssassinsGuessAtMerlin == null && Players.Any(p => p.Character == Character.Merlin) && Players.Any(p => p.Character == Character.Assassin))
                     return State.GuessingMerlin;
 
                 if (AssassinsGuessAtMerlin != null && AssassinsGuessAtMerlin.Character == Character.Merlin)
@@ -348,13 +354,13 @@ namespace ResistanceOnline.Core
                     switch (roundState)
                     {
                         case Round.State.ProposingPlayers:
-                            if (player!=null && quest.Leader.Name == player.Name)
+                            if (player != null && quest.Leader.Name == player.Name)
                             {
                                 return new List<Action.Type>() { Action.Type.AddToTeam, Action.Type.Message };
                             }
                             return new List<Action.Type>() { Action.Type.Message };
                         case Round.State.Voting:
-                            if (player!=null && !quest.Votes.Select(v => v.Player.Name).ToList().Contains(player.Name))
+                            if (player != null && !quest.Votes.Select(v => v.Player.Name).ToList().Contains(player.Name))
                             {
                                 return new List<Action.Type>() { Action.Type.VoteForTeam, Action.Type.Message };
                             }
@@ -375,19 +381,23 @@ namespace ResistanceOnline.Core
                     }
 
                     return new List<Action.Type>();
-                
+
                 case Game.State.GameSetup:
                     var actions = new List<Action.Type>();
-                    if (player == null && Players.Count < GameSize)
-                    {
-                        actions.Add(Action.Type.JoinGame);
-                    }
-                    if (player != null && AvailableCharacters.Count < GameSize)
-                    {
+                        if (Players.Count == AvailableCharacters.Count && Players.Count >= 5 && Players.Count <= 10)
+                        {
+                            actions.Add(Action.Type.StartGame);
+                        }
+
+                        if (player == null)
+                        {
+                            actions.Add(Action.Type.JoinGame);
+                        }
+
+                        actions.Add(Action.Type.AddBot);
                         actions.Add(Action.Type.AddCharacter);
-                    }
                     return actions;
-                
+
                 case Game.State.GuessingMerlin:
                     if (player != null && player.Character == Character.Assassin)
                         return new List<Action.Type>() { Action.Type.GuessMerlin, Action.Type.Message };
@@ -436,7 +446,7 @@ namespace ResistanceOnline.Core
                     UseLadyOfTheLake(player, action.Player);
                     break;
                 case Action.Type.Message:
-                    Message(player, action.Message);                    
+                    Message(player, action.Message);
                     break;
                 default:
                     throw new NotImplementedException();
@@ -485,7 +495,7 @@ namespace ResistanceOnline.Core
             {
                 if ((myself.Character == Character.Lancelot || myself.Character == Character.EvilLancelot) && (someoneelse.Character == Character.Lancelot))
                 {
-                    return Knowledge.Lancelot;    
+                    return Knowledge.Lancelot;
                 }
                 if ((myself.Character == Character.Lancelot || myself.Character == Character.EvilLancelot) && (someoneelse.Character == Character.EvilLancelot))
                 {
@@ -499,7 +509,8 @@ namespace ResistanceOnline.Core
                 return IsCharacterEvil(ladyofthelake.UsedOn.Character) ? Knowledge.Evil : Knowledge.Good;
             }
 
-            if (DetectEvil(myself, someoneelse)) {
+            if (DetectEvil(myself, someoneelse))
+            {
                 return Knowledge.Evil;
             }
 

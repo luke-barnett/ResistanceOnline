@@ -8,7 +8,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 	{
 		internal void CreateStandardGame(int numberOfPlayers)
 		{
-			var game = new Game(numberOfPlayers);
+			var game = new Game();
 
 			game.Rule_IncludeLadyOfTheLake = false;
 
@@ -18,6 +18,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 				game.AddCharacter(Character.LoyalServantOfArthur);
 				game.JoinGame(string.Format("player{0}", i), Guid.NewGuid());
 			}
+            game.StartGame();
 
 			ContextAccess.Game = game;
 		}

@@ -13,6 +13,10 @@
     <li>{{$data}}</li>    
 </ul>
 
+<div data-bind="visible: game().RoundTables().length == 0">
+    This game only supports 5-10 players
+</div>
+
 <div data-bind="visible: game().PlayerInfo">
     <h3>Oracle</h3>
     <p>Mouse over each player card to see information you may know about them.</p>    

@@ -112,8 +112,8 @@ namespace ResistanceOnline.Core
                         roundTables.Add(new RoundTable(5, 2));
                         roundTables.Add(new RoundTable(5));
                         break;
-                    default:
-                        throw new Exception("No round tables for games with " + GameSize + " players");
+                    //default:
+                    //    throw new Exception("No round tables for games with " + GameSize + " players");
                 }
                 return roundTables;
             }
@@ -176,9 +176,6 @@ namespace ResistanceOnline.Core
 
         public Guid JoinGame(string playerName, Guid playerGuid)
         {
-            //if (Players.Count == GameSize)
-            //    throw new Exception("Game already full");
-
             while (Players.Select(p => p.Name).Contains(playerName))
                 playerName = playerName + "2";
 
@@ -387,27 +384,18 @@ namespace ResistanceOnline.Core
 
                 case Game.State.GameSetup:
                     var actions = new List<Action.Type>();
+                        if (Players.Count == AvailableCharacters.Count && Players.Count >= 5 && Players.Count <= 10)
+                        {
+                            actions.Add(Action.Type.StartGame);
+                        }
 
+                        if (player == null)
+                        {
+                            actions.Add(Action.Type.JoinGame);
+                        }
 
-                    if (Players.Count == AvailableCharacters.Count && Players.Count >= 5 && Players.Count <= 10)
-                    {
-                        actions.Add(Action.Type.StartGame);
-                    }
-
-                    if (player == null && Players.Count < GameSize)
-                    {
-                        actions.Add(Action.Type.JoinGame);
-                    }
-
-                    if (Players.Count < GameSize)
-                    {
                         actions.Add(Action.Type.AddBot);
-                    }
-
-                    if (AvailableCharacters.Count < GameSize)
-                    {
                         actions.Add(Action.Type.AddCharacter);
-                    }
                     return actions;
 
                 case Game.State.GuessingMerlin:

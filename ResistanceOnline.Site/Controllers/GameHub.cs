@@ -203,6 +203,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             var game = GetGame(gameId);
             game.StartGame();
+            OnAfterAction(game);
             Update();
         }
 

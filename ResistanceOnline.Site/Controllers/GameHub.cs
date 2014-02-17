@@ -20,8 +20,8 @@ namespace ResistanceOnline.Site.Controllers
     {
         readonly ResistanceOnlineDbContext _dbContext;
         public GameHub()//(ResistanceOnlineDbContext dbContext)
-		{
-			_dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
+        {
+            _dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
 
             //create a default game to make development easier
             if (_games.Count == 0)
@@ -43,16 +43,16 @@ namespace ResistanceOnline.Site.Controllers
                 game.GameId = 0;
                 _games.Add(game);
             }
-		}
+        }
 
         //todo logged in user
         private Guid PlayerGuid
-		{
-			get
-			{
-				return CurrentUser != null ? CurrentUser.PlayerGuid : Guid.Empty;
-			}
-		}
+        {
+            get
+            {
+                return CurrentUser != null ? CurrentUser.PlayerGuid : Guid.Empty;
+            }
+        }
 
         private UserAccount CurrentUser
         {
@@ -68,6 +68,7 @@ namespace ResistanceOnline.Site.Controllers
 
         static List<Game> _games = new List<Game>();
         static List<ComputerPlayer> _computerPlayers = new List<ComputerPlayer>();
+        static Dictionary<Guid, List<string>> _userConnections = new Dictionary<Guid, List<string>>();
 
 
         private Game GetGame(int? gameId)
@@ -81,8 +82,15 @@ namespace ResistanceOnline.Site.Controllers
 
         private void Update()
         {
-            //todo playerGuid is the calling players Id not the player you're sending it to
-            Clients.All.Update(_games.Select(g => new GameModel(g, PlayerGuid)));
+            foreach (var guid in _userConnections.Keys)
+            {
+                var games = _games.Select(g => new GameModel(g, guid));
+
+                foreach (var connection in _userConnections[guid])
+                {
+                    Clients.Client(connection).Update(games);
+                }
+            }
         }
 
         private void OnAfterAction(Game game)
@@ -103,7 +111,15 @@ namespace ResistanceOnline.Site.Controllers
 
         public override System.Threading.Tasks.Task OnConnected()
         {
-            //todo split into individual updates
+            //todo cleanup on disconnection
+            if (PlayerGuid != Guid.Empty)
+            {
+                if (!_userConnections.ContainsKey(PlayerGuid))
+                {
+                    _userConnections[PlayerGuid] = new List<string>();
+                }
+                _userConnections[PlayerGuid].Add(Context.ConnectionId);
+            }
             Update();
             return base.OnConnected();
         }
@@ -122,7 +138,7 @@ namespace ResistanceOnline.Site.Controllers
 
         public void AddCharacter(int gameId, string character)
         {
-            var game = GetGame(gameId);            
+            var game = GetGame(gameId);
             game.AddCharacter((Character)Enum.Parse(typeof(Character), character));
             OnAfterAction(game);
 
@@ -225,7 +241,7 @@ namespace ResistanceOnline.Site.Controllers
                     break;
             }
             OnAfterAction(game);
-            Update();   
+            Update();
         }
     }
 }

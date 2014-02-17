@@ -21,7 +21,7 @@
 
         return this;
     }
-
+   
     var update = function (g) {
         var mapping = {
             PlayerInfo: { create: function (options) { return new PlayerInfo(options.data, options.parent); } }

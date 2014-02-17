@@ -124,7 +124,7 @@ namespace ResistanceOnline.Core
             if (HolderOfLadyOfTheLake != player)
                 throw new Exception("Hax. Player does not have lady of the lake.");
 
-            LadyOfTheLakeUses.Add(new LadyOfTheLakeUse { UsedBy = player, UsedOn = target });
+            LadyOfTheLakeUses.Add(new LadyOfTheLakeUse { UsedBy = player, UsedOn = target, ResultWasEvil = IsCharacterEvil(target.Character), UsedOnRoundNumber = Rounds.Count+1 });
 
             OnLadyOfTheLakeUsed();
         }
@@ -501,12 +501,6 @@ namespace ResistanceOnline.Core
                 {
                     return Knowledge.EvilLancelot;
                 }
-            }
-
-            var ladyofthelake = LadyOfTheLakeUses.FirstOrDefault(u => u.UsedBy == myself && u.UsedOn == someoneelse);
-            if (ladyofthelake != null)
-            {
-                return IsCharacterEvil(ladyofthelake.UsedOn.Character) ? Knowledge.Evil : Knowledge.Good;
             }
 
             if (DetectEvil(myself, someoneelse))

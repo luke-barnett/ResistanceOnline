@@ -44,6 +44,7 @@ namespace ResistanceOnline.Site.Models
 
 		public List<RoundModel> Rounds { get; set; }
 
+
         public List<string> RoundTables { get; set; } 
 
 		public bool IsSpectator { get; set; }
@@ -135,7 +136,7 @@ namespace ResistanceOnline.Site.Models
 			Rounds = new List<RoundModel>();
 			for(int i=0; i<game.Rounds.Count; i++)
 			{
-				Rounds.Add(new RoundModel(game.Rounds[i],i+1));
+                Rounds.Add(new RoundModel(game.Rounds[i], i + 1, game, player));
 			}
 
             if (Rounds.Count > 0)
@@ -176,8 +177,6 @@ namespace ResistanceOnline.Site.Models
         }
 
         public Player AssassinsGuessAtMerlin { get; set; }
-
-
         public bool AssassinIsInTheGame { get; set; }
     }
 }

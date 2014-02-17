@@ -14,12 +14,16 @@ namespace ResistanceOnline.Site.Models
         private int _roundNumber;
         public string Title { get { return String.Format("Round {0}", _roundNumber.ToWords()); } }
         public string Summary { get { return String.Format("This is a {0} player round and requires {1}", TeamSize.ToWords(), "fail".ToQuantity(FailsRequired, ShowQuantityAs.Words)); } }
+        public List<LadyOfTheLakeUseModel> LadyOfTheLakeUses { get; set; }
 
-        public RoundModel(Core.Round round, int roundNumber)
+
+        public RoundModel(Core.Round round, int roundNumber, Core.Game game, Core.Player player)
         {
             TeamSize = round.TeamSize;
             FailsRequired = round.RequiredFails;
             _roundNumber = roundNumber;
+
+            LadyOfTheLakeUses = game.LadyOfTheLakeUses.Where(u=>u.UsedOnRoundNumber == roundNumber+1).Select(u => new LadyOfTheLakeUseModel(u, player)).ToList();
 
             Teams = new List<TeamModel>();
             foreach (var quest in round.Teams)

@@ -206,6 +206,7 @@
     <Content Include="Content\images\ios-startup-image-landscape.png" />
     <Content Include="Content\images\ios-startup-image-portrait.png" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Images\allegiance.png" />
     <Content Include="Images\assassin.png" />
     <Content Include="Images\avalon.png" />
     <Content Include="Images\evil-wins.png" />
@@ -307,6 +308,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Infrastructure\ChallengeResult.cs" />
     <Compile Include="ListExtensions.cs" />
+    <Compile Include="Models\LadyOfTheLakeUseModel.cs" />
     <Compile Include="Models\LoginConfirmationViewModel.cs" />
     <Compile Include="Models\MessageModel.cs" />
     <Compile Include="Startup.cs" />
@@ -352,7 +354,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>18128</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

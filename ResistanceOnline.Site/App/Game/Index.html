@@ -19,10 +19,9 @@
 
 <div data-bind="visible: game().PlayerInfo">
     <h3>Oracle</h3>
-    <p>Click any card to see the knowledge you have about all cards</p>    
+    <p>Click any card to see the knowledge you have about that player</p>    
     <ul class="cards" data-bind="foreach: game().PlayerInfo">
 		<li>
-            <!--todo make clickable-->
 			<img class="playercard" data-bind="attr: { src: image }, click: toggleShowActual" />
             <div class="playername">{{Name}}</div>
 		</li>
@@ -83,7 +82,22 @@
             <span class="warning">{{WaitingMessage}}</span>
 
 		</div>
-	</div>          
+	</div>
+    
+    <div class="ladyofthelake">
+        <ul class="cards" data-bind="foreach: LadyOfTheLakeUses">
+            <li>
+                <img src="/images/ladyofthelake.png" />
+                <div class="playername">{{UsedBy}}</div>
+            </li>
+            <li>
+                <img class="card" data-bind="attr: { src: '/images/' + Result() + '.png' }" />
+                <div class="playername">{{UsedOn}}</div>
+            </li>
+        </ul>
+    </div>
+    <div class="clear"></div>     
+    
 </div>
 
 <div data-bind="visible: game().AssassinsGuessAtMerlin">

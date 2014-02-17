@@ -20,7 +20,9 @@ namespace ResistanceOnline.Core
             SubmitQuestCard,
             GuessMerlin,
             UseTheLadyOfTheLake,
-            Message
+            Message,
+            AddBot,
+            StartGame
         };
 
         public Type ActionType { get; set; }

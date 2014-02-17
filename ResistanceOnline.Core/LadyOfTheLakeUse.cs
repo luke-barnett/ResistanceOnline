@@ -9,5 +9,7 @@ namespace ResistanceOnline.Core
     {
         public Player UsedBy { get; set; }
         public Player UsedOn { get; set; }
+        public bool ResultWasEvil { get; set; }
+        public int UsedOnRoundNumber { get; set; }
     }
 }

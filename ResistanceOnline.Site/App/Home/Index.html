@@ -1,0 +1,14 @@
+﻿<div class="jumbotron">
+	<h2>Current Games</h2>
+	<ol data-bind="foreach: games">
+		<li>              
+			<span data-bind="text: GameSize() + ' player(s)'"></span>			
+			<span>{{GameState}}</span>
+			<a data-bind="attr: { href: '#/game/' + $index() }">Spectate Game</a>
+		</li>
+	</ol>
+
+	<form role="form" data-bind="submit: createGame">		
+		<input class="btn btn-default" type="submit" value="Create New Game">
+    </form>
+</div>

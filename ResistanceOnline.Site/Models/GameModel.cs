@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Humanizer;
+using System.Text;
 
 namespace ResistanceOnline.Site.Models
 {
@@ -14,19 +15,20 @@ namespace ResistanceOnline.Site.Models
 
 		public Guid? PlayerGuid { get; set; }
 
-		public Core.Game.State GameState { get; set; }
+		public string GameState { get; set; }
 
         public bool GameOver
         {
             get
             {
-                return (GameState == Game.State.GoodPrevails || GameState == Game.State.MerlinDies || GameState == Game.State.EvilTriumphs);
+
+                return (GameState == Game.State.GoodPrevails.ToString() || GameState == Game.State.MerlinDies.ToString() || GameState == Game.State.EvilTriumphs.ToString());
             }
         }
 		
 		public List<Core.Player> ImpersonationList { get; set; }
 
-		public List<Core.Character> CharactersInGame { get; set; }
+		public List<string> CharactersInGame { get; set; }
 
 		public List<SelectListItem> AllCharactersSelectList { get; set; }
 
@@ -34,7 +36,7 @@ namespace ResistanceOnline.Site.Models
         public SelectList GuessMerlinPlayersSelectList { get; set; }
         public SelectList AddToTeamPlayersSelectList { get; set; }
 
-		public List<Core.Action.Type> Actions { get; set; }
+		public List<string> Actions { get; set; }
 
 		public List<WaitingActionsModel> Waiting { get; set; }
 
@@ -42,13 +44,29 @@ namespace ResistanceOnline.Site.Models
 
 		public List<RoundModel> Rounds { get; set; }
 
-        public List<RoundTable> RoundTables { get; set; } 
+
+        public List<string> RoundTables { get; set; } 
 
 		public bool IsSpectator { get; set; }
 
         public int GameSize { get; set; }
 
-        public int CharactersMissing { get { return GameSize - CharactersInGame.Count; } }
+        public string GameSetup
+        {
+            get
+            {
+                StringBuilder setup = new StringBuilder();
+                setup.AppendFormat("This is a {0} player game",GameSize.ToWords());
+                if (CharactersInGame.Count > 0) 
+                {
+                    setup.AppendFormat(" with the following characters");
+                }
+                if (CharactersInGame.Count<GameSize) {
+                    setup.AppendFormat(" (waiting on {0} to be added)", "more character".ToQuantity(GameSize - CharactersInGame.Count, ShowQuantityAs.Words));
+                }
+                return setup.ToString();
+            }
+        }
 
         public int PlayersMissing { get; private set; }
 
@@ -60,7 +78,7 @@ namespace ResistanceOnline.Site.Models
             PlayersMissing = game.GameSize - game.Players.Count;
             AssassinIsInTheGame = game.Players.Select(p => p.Character).Contains(Character.Assassin);
 
-            RoundTables = game.RoundTables;
+            RoundTables = game.RoundTables.Select(t=>String.Format("Round {0} has {1} and requires {2}", (game.RoundTables.IndexOf(t) + 1).ToWords(), "player".ToQuantity(t.TeamSize, ShowQuantityAs.Words), "fail".ToQuantity(t.RequiredFails, ShowQuantityAs.Words))).ToList();
 
 			var player = game.Players.FirstOrDefault(p => p.Guid == playerGuid);
 			IsSpectator = player == null;
@@ -68,9 +86,10 @@ namespace ResistanceOnline.Site.Models
             PlayerName = player == null ? "Spectator" : player.Name;
 
             AssassinsGuessAtMerlin = game.AssassinsGuessAtMerlin;
-			GameState = game.DetermineState();
-			CharactersInGame = game.AvailableCharacters.ToList();
-			AllCharactersSelectList =
+			GameState = game.DetermineState().ToString();
+			CharactersInGame = game.AvailableCharacters.Select(i => i.ToString()).ToList();
+		
+            AllCharactersSelectList =
 				Enum.GetValues(typeof(Character))
 					.Cast<Character>()
 					.Where(c => c != Character.UnAllocated)
@@ -84,9 +103,12 @@ namespace ResistanceOnline.Site.Models
             LadyOfTheLakePlayerSelectList = new SelectList(game.Players.Where(p => p != player).Except(game.LadyOfTheLakeUses.Select(u => u.UsedBy)).Select(p => p.Name));
 
             //can put anyone on a team who isn't already on it
-			AddToTeamPlayersSelectList = new SelectList(game.Players.Where(p=> !game.CurrentRound.CurrentTeam.TeamMembers.Select(t=>t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
+            if (game.CurrentRound != null)
+            {
+                AddToTeamPlayersSelectList = new SelectList(game.Players.Where(p => !game.CurrentRound.CurrentTeam.TeamMembers.Select(t => t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
+            }
 
-			Actions = game.AvailableActions(player);
+			Actions = game.AvailableActions(player).OrderBy(x=>x != Core.Action.Type.Message).Select(i => i.ToString()).ToList();
 
 			PlayerInfo = new List<PlayerInfoModel>();
 			Waiting = new List<WaitingActionsModel>();
@@ -95,13 +117,15 @@ namespace ResistanceOnline.Site.Models
 				var playerInfo = new PlayerInfoModel 
 				{ 
 					Name = p.Name, 
-					Knowledge = game.PlayerKnowledge(player, p)
+					Knowledge = game.PlayerKnowledge(player, p).ToString()
 				};
 
 				//always know own character, or all characters if game is over
-				if ((p==player || GameState == Game.State.EvilTriumphs || GameState == Game.State.GoodPrevails || GameState == Game.State.MerlinDies) && p.Character != Character.UnAllocated) {
-					playerInfo.CharacterCard = p.Character; 
-				}
+                if ((p == player || GameState == Game.State.EvilTriumphs.ToString() || GameState == Game.State.GoodPrevails.ToString() || GameState == Game.State.MerlinDies.ToString()) && p.Character != Character.UnAllocated)
+                {
+                    playerInfo.CharacterCard = p.Character;
+                    playerInfo.Knowledge = p.Character.ToString();
+                }
 
 				PlayerInfo.Add(playerInfo);
 
@@ -110,13 +134,37 @@ namespace ResistanceOnline.Site.Models
 			
 			//game history
 			Rounds = new List<RoundModel>();
-			foreach (var round in game.Rounds)
+			for(int i=0; i<game.Rounds.Count; i++)
 			{
-				Rounds.Add(new RoundModel(round));
+                Rounds.Add(new RoundModel(game.Rounds[i], i + 1, game, player));
 			}
+
+            if (Rounds.Count > 0)
+            {
+                var currentRound = Rounds.Last();
+                var currentTeam = currentRound.Teams.Last();
+                if (currentTeam.TeamMembers.Count < currentRound.TeamSize)
+                {
+                    currentTeam.WaitingMessage = String.Format("Waiting for {0} to choose {1}", currentTeam.Leader, "more team member".ToQuantity(currentRound.TeamSize - currentTeam.TeamMembers.Count, ShowQuantityAs.Words));
+                }
+                else
+                {
+                    if (currentTeam.Vote.Count < GameSize)
+                    {
+                        currentTeam.WaitingMessage = String.Format("Waiting for {0} to vote for {1}'s team", CommaQuibbling(game.Players.Select(p => p.Name).Except(currentTeam.Vote.Select(v => v.Player))), currentTeam.Leader);
+                    }
+                    else
+                    {
+                        if (currentTeam.QuestCards.Count < currentRound.TeamSize)
+                        {
+                            currentTeam.WaitingMessage = String.Format("Waiting for {0} to quest", CommaQuibbling(currentTeam.TeamMembers.Except(game.CurrentRound.CurrentTeam.Quests.Select(q => q.Player.Name))));
+                        }
+                    }
+                }
+            }
 		}
 
-        public object PlayerName { get; set; }
+        public string PlayerName { get; set; }
 
         public string CommaQuibbling(IEnumerable<string> items)
         {
@@ -129,8 +177,6 @@ namespace ResistanceOnline.Site.Models
         }
 
         public Player AssassinsGuessAtMerlin { get; set; }
-
-
         public bool AssassinIsInTheGame { get; set; }
     }
 }

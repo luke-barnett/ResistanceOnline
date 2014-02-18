@@ -8,6 +8,9 @@ namespace ResistanceOnline.Core
 {
     public class Game
     {
+        const int MIN_GAME_SIZE = 5;
+        const int MAX_GAME_SIZE = 10;
+
         public enum State
         {
             GameSetup,
@@ -124,7 +127,7 @@ namespace ResistanceOnline.Core
             if (HolderOfLadyOfTheLake != player)
                 throw new Exception("Hax. Player does not have lady of the lake.");
 
-            LadyOfTheLakeUses.Add(new LadyOfTheLakeUse { UsedBy = player, UsedOn = target, ResultWasEvil = IsCharacterEvil(target.Character), UsedOnRoundNumber = Rounds.Count+1 });
+            LadyOfTheLakeUses.Add(new LadyOfTheLakeUse { UsedBy = player, UsedOn = target });
 
             OnLadyOfTheLakeUsed();
         }
@@ -384,17 +387,21 @@ namespace ResistanceOnline.Core
 
                 case Game.State.GameSetup:
                     var actions = new List<Action.Type>();
-                        if (Players.Count == AvailableCharacters.Count && Players.Count >= 5 && Players.Count <= 10)
+                        if (Players.Count == AvailableCharacters.Count && Players.Count >= MIN_GAME_SIZE && Players.Count <= MAX_GAME_SIZE)
                         {
                             actions.Add(Action.Type.StartGame);
                         }
 
-                        if (player == null)
+                        if (player == null && Players.Count < MAX_GAME_SIZE)
                         {
                             actions.Add(Action.Type.JoinGame);
                         }
 
-                        actions.Add(Action.Type.AddBot);
+                        if (Players.Count < MAX_GAME_SIZE)
+                        {
+                            actions.Add(Action.Type.AddBot);
+                        }
+
                         actions.Add(Action.Type.AddCharacter);
                     return actions;
 
@@ -501,6 +508,12 @@ namespace ResistanceOnline.Core
                 {
                     return Knowledge.EvilLancelot;
                 }
+            }
+
+            var ladyofthelake = LadyOfTheLakeUses.FirstOrDefault(u => u.UsedBy == myself && u.UsedOn == someoneelse);
+            if (ladyofthelake != null)
+            {
+                return IsCharacterEvil(ladyofthelake.UsedOn.Character) ? Knowledge.Evil : Knowledge.Good;
             }
 
             if (DetectEvil(myself, someoneelse))

@@ -402,7 +402,10 @@ namespace ResistanceOnline.Core
                             actions.Add(Action.Type.AddBot);
                         }
 
-                        actions.Add(Action.Type.AddCharacter);
+                        if (AvailableCharacters.Count < MAX_GAME_SIZE)
+                        {
+                            actions.Add(Action.Type.AddCharacter);
+                        }
                     return actions;
 
                 case Game.State.GuessingMerlin:

@@ -167,6 +167,11 @@ namespace ResistanceOnline.Core
 
         public void StartGame()
         {
+            //check that game hasn't already started
+            if (Rounds.Count > 0)
+            {
+                return;
+            }
             //check if game ready to start
             if (AvailableCharacters.Count == GameSize)
             {

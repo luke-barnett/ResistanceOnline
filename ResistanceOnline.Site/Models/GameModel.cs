@@ -136,9 +136,14 @@ namespace ResistanceOnline.Site.Models
             if (waiting.Count > 0)
             {
                 List<string> waitings = new List<string>();
-                foreach (var action in waiting.Select(w => w.Action).Distinct())
+                foreach (var action in waiting.Where(w=> w.Action != Core.Action.Type.Message).Select(w => w.Action).Distinct())                
                 {
-                    waitings.Add(String.Format("{0} to {1}", CommaQuibbling(waiting.Where(w => w.Action == action).Select(w => w.Name).ToList()), action.Humanize(LetterCasing.LowerCase)));
+                    var players = "someone";
+                    if (waiting.Count(w => w.Action == action) < GameSize)
+                    {
+                        players = CommaQuibbling(waiting.Where(w => w.Action == action).Select(w => w.Name).ToList());
+                    }
+                    waitings.Add(String.Format("{0} to {1}", players, action.Humanize(LetterCasing.LowerCase)));
                 }
                 WaitingMessage = String.Format("Waiting for {0}.", string.Join(" or ", waitings));
             }

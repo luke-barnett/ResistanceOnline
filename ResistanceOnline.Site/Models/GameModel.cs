@@ -45,7 +45,9 @@ namespace ResistanceOnline.Site.Models
 		public List<RoundModel> Rounds { get; set; }
 
 
-        public List<string> RoundTables { get; set; } 
+        public List<string> RoundTables { get; set; }
+
+        public List<string> LoyaltyCardsDeltInAdvance { get; set; }
 
 		public bool IsSpectator { get; set; }
 
@@ -79,6 +81,15 @@ namespace ResistanceOnline.Site.Models
             AssassinIsInTheGame = game.Players.Select(p => p.Character).Contains(Character.Assassin);
 
             RoundTables = game.RoundTables.Select(t=>String.Format("Round {0} has {1} and requires {2}", (game.RoundTables.IndexOf(t) + 1).ToWords(), "player".ToQuantity(t.TeamSize, ShowQuantityAs.Words), "fail".ToQuantity(t.RequiredFails, ShowQuantityAs.Words))).ToList();
+
+            LoyaltyCardsDeltInAdvance = new List<string>();
+            if (game.DetermineState() != Game.State.GameSetup && game.Rule_LoyaltyCardsDeltInAdvance && game.ContainsLancelot())
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    LoyaltyCardsDeltInAdvance.Add(string.Format("Round {0} - {1}", (i+1).ToWords(), game.LoyaltyDeck[i].Humanize()));
+                }
+            }
 
 			var player = game.Players.FirstOrDefault(p => p.Guid == playerGuid);
 			IsSpectator = player == null;
@@ -148,36 +159,11 @@ namespace ResistanceOnline.Site.Models
                 WaitingMessage = String.Format("Waiting for {0}.", string.Join(" or ", waitings));
             }
 			
-			//game history
 			Rounds = new List<RoundModel>();
 			for(int i=0; i<game.Rounds.Count; i++)
 			{
                 Rounds.Add(new RoundModel(game.Rounds[i], i + 1, game, player));
-			}
-
-            if (Rounds.Count > 0)
-            {
-                var currentRound = Rounds.Last();
-                var currentTeam = currentRound.Teams.Last();
-                if (currentTeam.TeamMembers.Count < currentRound.TeamSize)
-                {
-                    //currentTeam.WaitingMessage = String.Format("Waiting for {0} to choose {1}", currentTeam.Leader, "more team member".ToQuantity(currentRound.TeamSize - currentTeam.TeamMembers.Count, ShowQuantityAs.Words));
-                }
-                else
-                {
-                    if (currentTeam.Vote.Count < GameSize)
-                    {
-                        //currentTeam.WaitingMessage = String.Format("Waiting for {0} to vote for {1}'s team", CommaQuibbling(game.Players.Select(p => p.Name).Except(currentTeam.Vote.Select(v => v.Player))), currentTeam.Leader);
-                    }
-                    else
-                    {
-                        if (currentTeam.QuestCards.Count < currentRound.TeamSize)
-                        {
-                            //currentTeam.WaitingMessage = String.Format("Waiting for {0} to quest", CommaQuibbling(currentTeam.TeamMembers.Except(game.CurrentRound.CurrentTeam.Quests.Select(q => q.Player.Name))));
-                        }
-                    }
-                }
-            }
+			}          
 		}
 
         public string PlayerName { get; set; }

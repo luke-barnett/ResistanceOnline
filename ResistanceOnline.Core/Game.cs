@@ -31,7 +31,7 @@ namespace ResistanceOnline.Core
             LoyaltyDeck = new List<LoyaltyCard> { LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.SwitchAlegiance, LoyaltyCard.SwitchAlegiance };
 
             Random random = new Random();
-            LoyaltyDeck.OrderBy(l => random.Next());
+            LoyaltyDeck = LoyaltyDeck.OrderBy(l => random.Next()).ToList();
 
             //standard rules
             Rule_GoodMustAlwaysVoteSucess = false;
@@ -310,23 +310,10 @@ namespace ResistanceOnline.Core
             //create the next round
             CreateRound(CurrentRound.NextPlayer);
 
-            if (Rule_LoyaltyCardsDeltInAdvance)
+            var loyaltyCard = GetLoyaltyCard(roundNumber);
+            if (loyaltyCard == LoyaltyCard.SwitchAlegiance)
             {
-                if (LoyaltyDeck[roundNumber - 1] == LoyaltyCard.SwitchAlegiance)
-                {
-                    LancelotAllegianceSwitched = !LancelotAllegianceSwitched;
-                }
-            }
-            else
-            {
-                //loyalty cards start at round 3
-                if (roundNumber >= 3)
-                {
-                    if (LoyaltyDeck[roundNumber - 3] == LoyaltyCard.SwitchAlegiance)
-                    {
-                        LancelotAllegianceSwitched = !LancelotAllegianceSwitched;
-                    }
-                }
+                LancelotAllegianceSwitched = !LancelotAllegianceSwitched;
             }
         }
 
@@ -601,6 +588,20 @@ namespace ResistanceOnline.Core
             }
 
             return false;
+        }
+
+        public bool ContainsLancelot()
+        {
+            return (AvailableCharacters.Contains(Character.EvilLancelot) || AvailableCharacters.Contains(Character.Lancelot));
+        }
+
+        public LoyaltyCard? GetLoyaltyCard(int roundNumber)
+        {
+            if (Rule_LoyaltyCardsDeltInAdvance)
+                return null;
+            if (!ContainsLancelot())
+                return null;
+            return LoyaltyDeck[roundNumber - 1];
         }
     }
 }

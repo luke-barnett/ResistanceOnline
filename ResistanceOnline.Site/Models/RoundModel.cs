@@ -15,6 +15,7 @@ namespace ResistanceOnline.Site.Models
         public string Title { get { return String.Format("Round {0}", _roundNumber.ToWords()); } }
         public string Summary { get { return String.Format("This is a {0} player round and requires {1}", TeamSize.ToWords(), "fail".ToQuantity(FailsRequired, ShowQuantityAs.Words)); } }
         public List<LadyOfTheLakeUseModel> LadyOfTheLakeUses { get; set; }
+        public string LoyaltyCard { get; set; }
 
 
         public RoundModel(Core.Round round, int roundNumber, Core.Game game, Core.Player player)
@@ -36,6 +37,13 @@ namespace ResistanceOnline.Site.Models
                 Outcome = "evil-wins";
             if (state == Core.Round.State.Succeeded)
                 Outcome = "good-wins";
+
+            var loyaltyCard = game.GetLoyaltyCard(roundNumber);
+            if (loyaltyCard.HasValue && round != game.CurrentRound)
+            {
+                LoyaltyCard = string.Format("Lancelot loyalty card: {0}", loyaltyCard.Value.Humanize());
+            }
+
         }
 
         public string Outcome { get; set; }

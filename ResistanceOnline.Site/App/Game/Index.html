@@ -13,6 +13,10 @@
     <li>{{$data}}</li>    
 </ul>
 
+<ul class="loyaltycards-table" data-bind="foreach: game().LoyaltyCardsDeltInAdvance">
+    <li>{{$data}}</li>
+</ul>
+
 <div data-bind="visible: game().RoundTables().length == 0">
     This game only supports five to ten players
 </div>
@@ -94,6 +98,10 @@
         </ul>
     </div>
     <div class="clear"></div>     
+
+    <p data-bind="visible: LoyaltyCard!=null">
+        {{LoyaltyCard}}
+    </p>
     
 </div>
 

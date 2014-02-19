@@ -4,7 +4,8 @@
         joinGame: function () {
             $.connection.gameHub.server.joinGame(viewModel.gameId());
         },
-        activate: function(game) {            
+        activate: function (game) {
+            console.log(game.GameId());
             viewModel.gameId(game.GameId());
         }
     };

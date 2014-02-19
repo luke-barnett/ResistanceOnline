@@ -39,9 +39,9 @@ namespace ResistanceOnline.Site.Controllers
                 _computerPlayers.Add(new CheatBot(game, game.JoinGame("Luke", Guid.NewGuid())));
                 _computerPlayers.Add(new CheatBot(game, game.JoinGame("Jeffrey", Guid.NewGuid())));
                 _computerPlayers.Add(new SimpleBot(game, game.JoinGame("Jayvin", Guid.NewGuid())));
-
-                game.GameId = 0;
+                
                 _games.Add(game);
+                game.GameId = _games.IndexOf(game);
             }
         }
 

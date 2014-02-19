@@ -251,6 +251,17 @@ namespace ResistanceOnline.Core
 
         public void SubmitQuest(Player player, bool success)
         {
+            if (Rule_GoodMustAlwaysVoteSucess && !success && !IsCharacterEvil(player.Character))
+            {
+                throw new Exception("Good must always vote success");
+            }
+            if (Rule_LancelotsMustVoteFanatically && (player.Character == Character.Lancelot || player.Character == Character.EvilLancelot))
+            {
+                if ((success && IsCharacterEvil(player.Character)) || (!success && !IsCharacterEvil(player.Character))) 
+                {
+                    throw new Exception("Lancelot must move fanatically");
+                }
+            }
             CurrentRound.SubmitQuest(player, success);
 
             if (CurrentRound.CurrentTeam.Quests.Count == CurrentRound.TeamSize)

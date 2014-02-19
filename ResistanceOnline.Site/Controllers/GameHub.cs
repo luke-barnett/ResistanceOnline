@@ -50,7 +50,11 @@ namespace ResistanceOnline.Site.Controllers
         {
             get
             {
-                return CurrentUser != null ? CurrentUser.PlayerGuid : Guid.Empty;
+                if (CurrentUser != null)
+                {
+                    return CurrentUser.PlayerGuid;
+                }
+                return Guid.Empty;
             }
         }
 

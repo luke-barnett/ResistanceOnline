@@ -38,7 +38,7 @@ namespace ResistanceOnline.Site.Models
 
 		public List<string> Actions { get; set; }
 
-		public List<WaitingActionsModel> Waiting { get; set; }
+		public string WaitingMessage { get; set; }
 
 		public List<PlayerInfoModel> PlayerInfo { get; set; }
 
@@ -111,7 +111,7 @@ namespace ResistanceOnline.Site.Models
 			Actions = game.AvailableActions(player).OrderBy(x=>x != Core.Action.Type.Message).Select(i => i.ToString()).ToList();
 
 			PlayerInfo = new List<PlayerInfoModel>();
-			Waiting = new List<WaitingActionsModel>();
+			var waiting = new List<WaitingActionsModel>();
 			foreach (var p in game.Players)
 			{
 				var playerInfo = new PlayerInfoModel 
@@ -129,8 +129,19 @@ namespace ResistanceOnline.Site.Models
 
 				PlayerInfo.Add(playerInfo);
 
-				Waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a, Name = p.Name }));
+				waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a, Name = p.Name }));
 			}
+
+            //build waiting message
+            if (waiting.Count > 0)
+            {
+                List<string> waitings = new List<string>();
+                foreach (var action in waiting.Select(w => w.Action).Distinct())
+                {
+                    waitings.Add(String.Format("{0} to {1}", CommaQuibbling(waiting.Where(w => w.Action == action).Select(w => w.Name).ToList()), action.Humanize(LetterCasing.LowerCase)));
+                }
+                WaitingMessage = String.Format("Waiting for {0}.", string.Join(" or ", waitings));
+            }
 			
 			//game history
 			Rounds = new List<RoundModel>();
@@ -145,19 +156,19 @@ namespace ResistanceOnline.Site.Models
                 var currentTeam = currentRound.Teams.Last();
                 if (currentTeam.TeamMembers.Count < currentRound.TeamSize)
                 {
-                    currentTeam.WaitingMessage = String.Format("Waiting for {0} to choose {1}", currentTeam.Leader, "more team member".ToQuantity(currentRound.TeamSize - currentTeam.TeamMembers.Count, ShowQuantityAs.Words));
+                    //currentTeam.WaitingMessage = String.Format("Waiting for {0} to choose {1}", currentTeam.Leader, "more team member".ToQuantity(currentRound.TeamSize - currentTeam.TeamMembers.Count, ShowQuantityAs.Words));
                 }
                 else
                 {
                     if (currentTeam.Vote.Count < GameSize)
                     {
-                        currentTeam.WaitingMessage = String.Format("Waiting for {0} to vote for {1}'s team", CommaQuibbling(game.Players.Select(p => p.Name).Except(currentTeam.Vote.Select(v => v.Player))), currentTeam.Leader);
+                        //currentTeam.WaitingMessage = String.Format("Waiting for {0} to vote for {1}'s team", CommaQuibbling(game.Players.Select(p => p.Name).Except(currentTeam.Vote.Select(v => v.Player))), currentTeam.Leader);
                     }
                     else
                     {
                         if (currentTeam.QuestCards.Count < currentRound.TeamSize)
                         {
-                            currentTeam.WaitingMessage = String.Format("Waiting for {0} to quest", CommaQuibbling(currentTeam.TeamMembers.Except(game.CurrentRound.CurrentTeam.Quests.Select(q => q.Player.Name))));
+                            //currentTeam.WaitingMessage = String.Format("Waiting for {0} to quest", CommaQuibbling(currentTeam.TeamMembers.Except(game.CurrentRound.CurrentTeam.Quests.Select(q => q.Player.Name))));
                         }
                     }
                 }

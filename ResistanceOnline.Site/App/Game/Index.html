@@ -78,9 +78,6 @@
                 <span>{{Player}}</span>: <span>{{Message}}</span>
             </div>
             <!-- /ko -->
-
-            <span class="warning">{{WaitingMessage}}</span>
-
 		</div>
 	</div>
     
@@ -109,6 +106,8 @@
     <h3>Game Over</h3>
     <p>{{game().GameState}}</p>
 </div>
+
+<span class="warning">{{game().WaitingMessage}}</span>
 
 <ul data-bind="foreach: game().Actions">
     <li >

@@ -16,7 +16,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
             var knowledge = _game.PlayerKnowledge(_player, player);
             if (knowledge == Knowledge.Evil || (knowledge == Knowledge.EvilLancelot && !_game.LancelotAllegianceSwitched) || (knowledge == Knowledge.Lancelot && _game.LancelotAllegianceSwitched))
             {
-                return 1;
+                return 100;
             }
 
             if (knowledge == Knowledge.Good || (knowledge == Knowledge.EvilLancelot && _game.LancelotAllegianceSwitched) || (knowledge == Knowledge.Lancelot && !_game.LancelotAllegianceSwitched))
@@ -74,7 +74,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
         protected override Core.Player GuessMerlin()
         {
             //suspect the most good person
-            return _game.Players.Where(p => p.Guid != PlayerGuid).Select(p => new { Player = p, ProbabilityOfEvil = ProbabilityOfEvil(p) }).OrderByDescending(p => p.ProbabilityOfEvil).Select(p => p.Player).First();
+            return _game.Players.Where(p => p.Guid != PlayerGuid).Select(p => new { Player = p, ProbabilityOfEvil = ProbabilityOfEvil(p) }).OrderBy(p => p.ProbabilityOfEvil).Select(p => p.Player).First();
         }
 
         protected override Core.Player ChooseTeamPlayer()
@@ -97,7 +97,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
             }
 
             //if I'm good, put most trustworthy person on
-            player = playersNotOnTeam.Select(p => new { Player = p, ProbabilityOfEvil = ProbabilityOfEvil(p) }).OrderByDescending(p => p.ProbabilityOfEvil).Select(p => p.Player).First();
+            player = playersNotOnTeam.Select(p => new { Player = p, ProbabilityOfEvil = ProbabilityOfEvil(p) }).OrderBy(p => p.ProbabilityOfEvil).Select(p => p.Player).First();
             SayTheyAreGood(player.Name);
             return player;
         }
@@ -138,13 +138,12 @@ namespace ResistanceOnline.Site.ComputerPlayers
                 SayTeamIsOk();
                 return true;
             }
-
         }
 
         private bool IsProbablyEvil(Player player)
         {
             var trust = ProbabilityOfEvil(player);
-            return (new Random().Next(100) < trust * 100);            
+            return (new Random().Next(100) < trust);            
         }
      
     }

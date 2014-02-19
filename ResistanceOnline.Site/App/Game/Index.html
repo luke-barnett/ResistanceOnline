@@ -13,6 +13,10 @@
     <li>{{$data}}</li>    
 </ul>
 
+<ul class="loyaltycards-table" data-bind="foreach: game().LoyaltyCardsDeltInAdvance">
+    <li>{{$data}}</li>
+</ul>
+
 <div data-bind="visible: game().RoundTables().length == 0">
     This game only supports five to ten players
 </div>
@@ -78,9 +82,6 @@
                 <span>{{Player}}</span>: <span>{{Message}}</span>
             </div>
             <!-- /ko -->
-
-            <span class="warning">{{WaitingMessage}}</span>
-
 		</div>
 	</div>
     
@@ -97,6 +98,10 @@
         </ul>
     </div>
     <div class="clear"></div>     
+
+    <p data-bind="visible: LoyaltyCard!=null">
+        {{LoyaltyCard}}
+    </p>
     
 </div>
 
@@ -109,6 +114,8 @@
     <h3>Game Over</h3>
     <p>{{game().GameState}}</p>
 </div>
+
+<span class="warning">{{game().WaitingMessage}}</span>
 
 <ul data-bind="foreach: game().Actions">
     <li >

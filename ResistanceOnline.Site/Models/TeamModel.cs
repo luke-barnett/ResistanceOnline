@@ -12,10 +12,8 @@ namespace ResistanceOnline.Site.Models
 		public List<VoteModel> Vote { get; set; }
 		public List<QuestModel> QuestCards { get; set; }
         public List<MessageModel> Messages { get; set; }
-        public string WaitingMessage { get; set; }
 
-
-		public TeamModel(Core.Team team, int totalPlayers)
+        public TeamModel(Core.Team team, int totalPlayers)
 		{
 			Leader = team.Leader.Name;
 

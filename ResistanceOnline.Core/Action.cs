@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,15 +14,25 @@ namespace ResistanceOnline.Core
     {
         public enum Type
         {
+            [Description("Add a character card")]
             AddCharacter,
+            [Description("Join the game")]
             JoinGame,
+            [Description("Add a player to the current team")]
             AddToTeam,
+            [Description("Vote for the current team")]
             VoteForTeam,
+            [Description("Quest")]
             SubmitQuestCard,
+            [Description("Try to assassinate Merlin")]
             GuessMerlin,
+            [Description("Use the lady of the lake")]
             UseTheLadyOfTheLake,
+            [Description("Send a message")]
             Message,
+            [Description("Add a computer player")]
             AddBot,
+            [Description("Start the game")]
             StartGame
         };
 

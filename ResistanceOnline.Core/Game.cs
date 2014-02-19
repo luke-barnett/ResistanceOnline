@@ -127,7 +127,7 @@ namespace ResistanceOnline.Core
             if (HolderOfLadyOfTheLake != player)
                 throw new Exception("Hax. Player does not have lady of the lake.");
 
-            LadyOfTheLakeUses.Add(new LadyOfTheLakeUse { UsedBy = player, UsedOn = target });
+			LadyOfTheLakeUses.Add(new LadyOfTheLakeUse { UsedBy = player, UsedOn = target, ResultWasEvil = IsCharacterEvil(target.Character), UsedOnRoundNumber = Rounds.Count + 1 });
 
             OnLadyOfTheLakeUsed();
         }

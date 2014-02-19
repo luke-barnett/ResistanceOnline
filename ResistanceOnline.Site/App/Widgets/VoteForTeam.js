@@ -2,8 +2,11 @@
     var viewModel = {
         gameId: ko.observable(),
         approve: ko.observable(),
-        voteForTeam: function () {
-            $.connection.gameHub.server.voteForTeam(viewModel.gameId(), viewModel.approve());
+        accept: function () {
+            $.connection.gameHub.server.voteForTeam(viewModel.gameId(), true);
+        },
+        reject: function () {
+            $.connection.gameHub.server.voteForTeam(viewModel.gameId(), false);
         },
         activate: function(game) {            
             viewModel.gameId(game.GameId());

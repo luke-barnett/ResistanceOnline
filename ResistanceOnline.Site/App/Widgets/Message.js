@@ -4,6 +4,7 @@
         text: ko.observable(),
         message: function () {
             $.connection.gameHub.server.message(viewModel.gameId(), viewModel.text());
+            viewModel.text('');
         },
         activate: function(game) {            
             viewModel.gameId(game.GameId());

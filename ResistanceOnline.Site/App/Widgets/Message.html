@@ -1,6 +1,6 @@
 ﻿<form role="form" data-bind="submit: message">
     <div class="form-group">
-        <input class="form-control" type="text" placeholder="Enter your message" data-bind="value:text" style="float:left;" />
+        <input class="form-control" type="text" placeholder="Enter your message" data-bind="value:text, valueUpdate: 'afterkeydown'" style="float:left;" />
         <input class="btn btn-default" type="submit" value="Send" style="float:left;" />
     </div>
     <div class="clear" />

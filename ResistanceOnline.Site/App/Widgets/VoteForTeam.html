@@ -1,13 +1,6 @@
-﻿<form role="form" data-bind="submit: voteForTeam">
-    <div class="radio">
-        <label>
-            <input type="radio" name="approve" value="true" data-bind="checked: approve" />Accept
-        </label>
-    </div>
-    <div class="radio">
-        <label>
-            <input type="radio" name="approve" value="false" data-bind="checked: approve"/>Reject
-        </label>
-    </div>
-    <input class="btn btn-default" type="submit" value="Vote for Team" />
+﻿<form class="form-inline" role="form">
+  <div class="form-group">
+    <button type="button" class="btn btn-success" data-bind="click: accept">Accept Team</button>
+    <button type="button" class="btn btn-danger" data-bind="click: reject">Reject Team</button>
+  </div>
 </form>

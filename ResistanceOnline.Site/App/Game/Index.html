@@ -9,6 +9,10 @@
 
 <div class="clear"></div>    
 
+<ul class="rules-table" data-bind="foreach: game().Rules">
+	<li>{{$data}}</li>
+</ul>
+
 <ul class="round-table" data-bind="foreach: game().RoundTables">
     <li>{{$data}}</li>    
 </ul>

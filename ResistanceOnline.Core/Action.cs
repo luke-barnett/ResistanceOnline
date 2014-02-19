@@ -18,7 +18,9 @@ namespace ResistanceOnline.Core
             AddCharacter,
             [Description("Join the game")]
             JoinGame,
-            [Description("Add a player to the current team")]
+			[Description("Add a game rule")]
+			AddRule,
+			[Description("Add a player to the current team")]
             AddToTeam,
             [Description("Vote for the current team")]
             VoteForTeam,
@@ -67,5 +69,10 @@ namespace ResistanceOnline.Core
         /// only useful for adding characters to the game before in starts
         /// </summary>
         public Character Character { get; set; }
+
+		/// <summary>
+		/// only useful for adding game rules
+		/// </summary>
+		public Rule Rule { get; set; }
     }
 }

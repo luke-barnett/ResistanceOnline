@@ -177,6 +177,8 @@
     <Content Include="App\main.js" />
     <Content Include="App\shell.html" />
     <Content Include="App\shell.js" />
+    <Content Include="App\Widgets\AddRule.html" />
+    <Content Include="App\Widgets\AddRule.js" />
     <Content Include="App\Widgets\AddCharacter.html" />
     <Content Include="App\Widgets\AddCharacter.js" />
     <Content Include="App\Widgets\AddToTeam.html" />

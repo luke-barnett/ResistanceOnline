@@ -34,13 +34,10 @@ namespace ResistanceOnline.Core
             LoyaltyDeck = LoyaltyDeck.OrderBy(l => random.Next()).ToList();
 
             //standard rules
-            Rule_GoodMustAlwaysVoteSucess = false;
-            Rule_IncludeLadyOfTheLake = true;
-            Rule_LancelotsKnowEachOther = false;
-            Rule_LancelotsMustVoteFanatically = false;
-            Rule_LoyaltyCardsDeltInAdvance = false;
-
-
+			Rules = new List<Rule>()
+			{
+				Rule.IncludeLadyOfTheLake,
+			};
         }
 
         public int GameId { get; set; }
@@ -57,13 +54,7 @@ namespace ResistanceOnline.Core
         public bool LancelotAllegianceSwitched { get; set; }
         public List<LoyaltyCard> LoyaltyDeck { get; set; }
 
-        public bool Rule_IncludeLadyOfTheLake { get; set; }
-
-        public bool Rule_LancelotsKnowEachOther { get; set; } //variation #3
-        public bool Rule_LancelotsMustVoteFanatically { get; set; } //variation #2
-        public bool Rule_LoyaltyCardsDeltInAdvance { get; set; } //variation #2
-
-        public bool Rule_GoodMustAlwaysVoteSucess { get; set; }
+		public List<Rule> Rules { get; set; }  
 
         public int GameSize { get { return Players.Count; } }
         public List<RoundTable> RoundTables
@@ -221,7 +212,7 @@ namespace ResistanceOnline.Core
         {
             //create first round
             var leader = new Random().Next(GameSize);
-            if (Rule_IncludeLadyOfTheLake)
+            if (Rules.Contains(Rule.IncludeLadyOfTheLake))
             {
                 HolderOfLadyOfTheLake = Players[(leader + GameSize - 1) % GameSize];
             }
@@ -251,11 +242,11 @@ namespace ResistanceOnline.Core
 
         public void SubmitQuest(Player player, bool success)
         {
-            if (Rule_GoodMustAlwaysVoteSucess && !success && !IsCharacterEvil(player.Character))
+            if (Rules.Contains(Rule.GoodMustAlwaysVoteSucess) && !success && !IsCharacterEvil(player.Character))
             {
                 throw new Exception("Good must always vote success");
             }
-            if (Rule_LancelotsMustVoteFanatically && (player.Character == Character.Lancelot || player.Character == Character.EvilLancelot))
+            if (Rules.Contains(Rule.LancelotsMustVoteFanatically) && (player.Character == Character.Lancelot || player.Character == Character.EvilLancelot))
             {
                 if ((success && IsCharacterEvil(player.Character)) || (!success && !IsCharacterEvil(player.Character))) 
                 {
@@ -290,7 +281,7 @@ namespace ResistanceOnline.Core
             if (Rounds.Where(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
                 return;
 
-            if (roundNumber >= 2 && Rule_IncludeLadyOfTheLake)
+            if (roundNumber >= 2 && Rules.Contains(Rule.IncludeLadyOfTheLake))
             {
                 //wait for lady of the lake to be used
                 return;
@@ -328,7 +319,7 @@ namespace ResistanceOnline.Core
 
             if (Rounds.Where(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
             {
-                if (Rule_IncludeLadyOfTheLake && LadyOfTheLakeUses.Count < Rounds.Count - 2)
+				if (Rules.Contains(Rule.IncludeLadyOfTheLake) && LadyOfTheLakeUses.Count < Rounds.Count - 2)
                     return State.Playing;
 
                 if (AssassinsGuessAtMerlin == null && Players.Any(p => p.Character == Character.Merlin) && Players.Any(p => p.Character == Character.Assassin))
@@ -381,7 +372,7 @@ namespace ResistanceOnline.Core
                     }
 
                     //round over but still current
-                    if (Rule_IncludeLadyOfTheLake && Rounds.Count >= 2 && HolderOfLadyOfTheLake == player)
+					if (Rules.Contains(Rule.IncludeLadyOfTheLake) && Rounds.Count >= 2 && HolderOfLadyOfTheLake == player)
                     {
                         return new List<Action.Type>() { Action.Type.UseTheLadyOfTheLake, Action.Type.Message };
                     }
@@ -390,25 +381,26 @@ namespace ResistanceOnline.Core
 
                 case Game.State.GameSetup:
                     var actions = new List<Action.Type>();
-                        if (Players.Count == AvailableCharacters.Count && Players.Count >= MIN_GAME_SIZE && Players.Count <= MAX_GAME_SIZE)
-                        {
-                            actions.Add(Action.Type.StartGame);
-                        }
+					actions.Add(Action.Type.AddRule);
+					if (Players.Count == AvailableCharacters.Count && Players.Count >= MIN_GAME_SIZE && Players.Count <= MAX_GAME_SIZE)
+					{
+						actions.Add(Action.Type.StartGame);
+					}
 
-                        if (player == null && Players.Count < MAX_GAME_SIZE)
-                        {
-                            actions.Add(Action.Type.JoinGame);
-                        }
+					if (player == null && Players.Count < MAX_GAME_SIZE)
+					{
+						actions.Add(Action.Type.JoinGame);
+					}
 
-                        if (Players.Count < MAX_GAME_SIZE)
-                        {
-                            actions.Add(Action.Type.AddBot);
-                        }
+					if (Players.Count < MAX_GAME_SIZE)
+					{
+						actions.Add(Action.Type.AddBot);
+					}
 
-                        if (AvailableCharacters.Count < MAX_GAME_SIZE)
-                        {
-                            actions.Add(Action.Type.AddCharacter);
-                        }
+					if (AvailableCharacters.Count < MAX_GAME_SIZE)
+					{
+						actions.Add(Action.Type.AddCharacter);
+					}
                     return actions;
 
                 case Game.State.GuessingMerlin:
@@ -437,6 +429,9 @@ namespace ResistanceOnline.Core
 
             switch (action.ActionType)
             {
+				case Action.Type.AddRule:
+					AddRule(action.Rule);
+					break;
                 case Action.Type.AddCharacter:
                     AddCharacter(action.Character);
                     break;
@@ -467,6 +462,19 @@ namespace ResistanceOnline.Core
 
             OnAfterAction();
         }
+
+		public void AddRule(Rule rule)
+		{
+			//if adding twice, then remove. bit hax but useful for accidents
+			if (Rules.Contains(rule))
+			{
+				Rules.Remove(rule);
+			}
+			else
+			{
+				Rules.Add(rule);
+			}
+		}
 
         private void Message(Player player, string message)
         {
@@ -504,7 +512,7 @@ namespace ResistanceOnline.Core
             if (myself == null)
                 return Knowledge.Player;
 
-            if (Rule_LancelotsKnowEachOther)
+			if (Rules.Contains(Rule.LancelotsKnowEachOther))
             {
                 if ((myself.Character == Character.Lancelot || myself.Character == Character.EvilLancelot) && (someoneelse.Character == Character.Lancelot))
                 {
@@ -597,7 +605,7 @@ namespace ResistanceOnline.Core
 
         public LoyaltyCard? GetLoyaltyCard(int roundNumber)
         {
-            if (Rule_LoyaltyCardsDeltInAdvance)
+			if (Rules.Contains(Rule.LoyaltyCardsDeltInAdvance))
                 return null;
             if (!ContainsLancelot())
                 return null;

@@ -27,19 +27,20 @@ namespace ResistanceOnline.Site.Controllers
             if (_games.Count == 0)
             {
                 var game = new Game();
-                game.Rule_LancelotsKnowEachOther = true;
-                game.Rule_GoodMustAlwaysVoteSucess = true;
-                game.Rule_IncludeLadyOfTheLake = true;
-                //game.Rule_LoyaltyCardsDeltInAdvance = true;
-                game.AddCharacter(Character.LoyalServantOfArthur);
+				game.Rules.Clear();
+				game.Rules.Add(Rule.LancelotsKnowEachOther);
+				game.Rules.Add(Rule.GoodMustAlwaysVoteSucess);
+				game.Rules.Add(Rule.IncludeLadyOfTheLake);
+
+				game.AddCharacter(Character.LoyalServantOfArthur);
                 game.AddCharacter(Character.Assassin);
                 game.AddCharacter(Character.Percival);
                 game.AddCharacter(Character.Morgana);
                 game.AddCharacter(Character.Merlin);
-                _computerPlayers.Add(new TrustBot(game, game.JoinGame("Jordan", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game, game.JoinGame("Luke", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game, game.JoinGame("Jeffrey", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game, game.JoinGame("Jayvin", Guid.NewGuid())));
+				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Jordan\"", Guid.NewGuid())));
+				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Luke\"", Guid.NewGuid())));
+				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Jeffrey\"", Guid.NewGuid())));
+				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Jayvin\"", Guid.NewGuid())));
                 
                 _games.Add(game);
                 game.GameId = _games.IndexOf(game);
@@ -149,6 +150,16 @@ namespace ResistanceOnline.Site.Controllers
 
             Update();
         }
+
+		public void AddRule(int gameId, string rule)
+		{
+			var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == PlayerGuid);
+			game.PerformAction(player, new Core.Action { Rule = (Core.Rule)Enum.Parse(typeof(Core.Rule), rule), ActionType = Core.Action.Type.AddRule });
+			OnAfterAction(game);
+
+			Update();
+		}
 
         public void AddToTeam(int gameId, string person)
         {

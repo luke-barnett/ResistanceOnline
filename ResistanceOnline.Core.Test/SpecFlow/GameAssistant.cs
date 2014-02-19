@@ -10,7 +10,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 		{
 			var game = new Game();
 
-			game.Rule_IncludeLadyOfTheLake = false;
+			game.Rules.Remove(Rule.IncludeLadyOfTheLake);
 
 			//TODO: map to standard game types for good/evil numbers
 			for (var i = 0; i < numberOfPlayers; i++)

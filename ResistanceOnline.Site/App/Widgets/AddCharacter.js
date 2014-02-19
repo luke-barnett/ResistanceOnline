@@ -2,9 +2,8 @@
     var viewModel = {
         gameId: ko.observable(),
         characters: ko.observableArray([]),
-        character: ko.observable(''),
-        addCharacter: function () {
-            console.log(viewModel.character().Text());
+        character: ko.observable(),
+        addCharacter: function () {            
             $.connection.gameHub.server.addCharacter(viewModel.gameId(), viewModel.character().Value());            
         },
         activate: function(game) {            

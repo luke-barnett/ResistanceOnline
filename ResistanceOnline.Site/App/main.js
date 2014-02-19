@@ -11,7 +11,8 @@
         'knockout.punches': '/scripts/knockout.punches.min',
         'jquery': '/scripts/jquery-2.1.0',
         'signalr.core': '/scripts/jquery.signalR-2.0.2.min',
-        'signalr.hubs': '/signalr/hubs?'
+        'signalr.hubs': '/signalr/hubs?',
+        'bootstrap': '/bundles/bootstrap?'
     },
     shim: {
         "signalr.core": {

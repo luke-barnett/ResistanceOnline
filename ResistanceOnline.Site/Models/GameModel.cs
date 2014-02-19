@@ -38,14 +38,16 @@ namespace ResistanceOnline.Site.Models
 
 		public List<string> Actions { get; set; }
 
-		public List<WaitingActionsModel> Waiting { get; set; }
+		public string WaitingMessage { get; set; }
 
 		public List<PlayerInfoModel> PlayerInfo { get; set; }
 
 		public List<RoundModel> Rounds { get; set; }
 
 
-        public List<string> RoundTables { get; set; } 
+        public List<string> RoundTables { get; set; }
+
+        public List<string> LoyaltyCardsDeltInAdvance { get; set; }
 
 		public bool IsSpectator { get; set; }
 
@@ -80,6 +82,15 @@ namespace ResistanceOnline.Site.Models
 
             RoundTables = game.RoundTables.Select(t=>String.Format("Round {0} has {1} and requires {2}", (game.RoundTables.IndexOf(t) + 1).ToWords(), "player".ToQuantity(t.TeamSize, ShowQuantityAs.Words), "fail".ToQuantity(t.RequiredFails, ShowQuantityAs.Words))).ToList();
 
+            LoyaltyCardsDeltInAdvance = new List<string>();
+            if (game.DetermineState() != Game.State.GameSetup && game.Rule_LoyaltyCardsDeltInAdvance && game.ContainsLancelot())
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    LoyaltyCardsDeltInAdvance.Add(string.Format("Round {0} - {1}", (i+1).ToWords(), game.LoyaltyDeck[i].Humanize()));
+                }
+            }
+
 			var player = game.Players.FirstOrDefault(p => p.Guid == playerGuid);
 			IsSpectator = player == null;
 
@@ -111,7 +122,7 @@ namespace ResistanceOnline.Site.Models
 			Actions = game.AvailableActions(player).OrderBy(x=>x != Core.Action.Type.Message).Select(i => i.ToString()).ToList();
 
 			PlayerInfo = new List<PlayerInfoModel>();
-			Waiting = new List<WaitingActionsModel>();
+			var waiting = new List<WaitingActionsModel>();
 			foreach (var p in game.Players)
 			{
 				var playerInfo = new PlayerInfoModel 
@@ -129,39 +140,30 @@ namespace ResistanceOnline.Site.Models
 
 				PlayerInfo.Add(playerInfo);
 
-				Waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a, Name = p.Name }));
+				waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a, Name = p.Name }));
 			}
+
+            //build waiting message
+            if (waiting.Count > 0)
+            {
+                List<string> waitings = new List<string>();
+                foreach (var action in waiting.Where(w=> w.Action != Core.Action.Type.Message).Select(w => w.Action).Distinct())                
+                {
+                    var players = "someone";
+                    if (waiting.Count(w => w.Action == action) < GameSize)
+                    {
+                        players = CommaQuibbling(waiting.Where(w => w.Action == action).Select(w => w.Name).ToList());
+                    }
+                    waitings.Add(String.Format("{0} to {1}", players, action.Humanize(LetterCasing.LowerCase)));
+                }
+                WaitingMessage = String.Format("Waiting for {0}.", string.Join(" or ", waitings));
+            }
 			
-			//game history
 			Rounds = new List<RoundModel>();
 			for(int i=0; i<game.Rounds.Count; i++)
 			{
                 Rounds.Add(new RoundModel(game.Rounds[i], i + 1, game, player));
-			}
-
-            if (Rounds.Count > 0)
-            {
-                var currentRound = Rounds.Last();
-                var currentTeam = currentRound.Teams.Last();
-                if (currentTeam.TeamMembers.Count < currentRound.TeamSize)
-                {
-                    currentTeam.WaitingMessage = String.Format("Waiting for {0} to choose {1}", currentTeam.Leader, "more team member".ToQuantity(currentRound.TeamSize - currentTeam.TeamMembers.Count, ShowQuantityAs.Words));
-                }
-                else
-                {
-                    if (currentTeam.Vote.Count < GameSize)
-                    {
-                        currentTeam.WaitingMessage = String.Format("Waiting for {0} to vote for {1}'s team", CommaQuibbling(game.Players.Select(p => p.Name).Except(currentTeam.Vote.Select(v => v.Player))), currentTeam.Leader);
-                    }
-                    else
-                    {
-                        if (currentTeam.QuestCards.Count < currentRound.TeamSize)
-                        {
-                            currentTeam.WaitingMessage = String.Format("Waiting for {0} to quest", CommaQuibbling(currentTeam.TeamMembers.Except(game.CurrentRound.CurrentTeam.Quests.Select(q => q.Player.Name))));
-                        }
-                    }
-                }
-            }
+			}          
 		}
 
         public string PlayerName { get; set; }

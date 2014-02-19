@@ -30,6 +30,7 @@ namespace ResistanceOnline.Site.Controllers
                 game.Rule_LancelotsKnowEachOther = true;
                 game.Rule_GoodMustAlwaysVoteSucess = true;
                 game.Rule_IncludeLadyOfTheLake = true;
+                //game.Rule_LoyaltyCardsDeltInAdvance = true;
                 game.AddCharacter(Character.LoyalServantOfArthur);
                 game.AddCharacter(Character.Assassin);
                 game.AddCharacter(Character.Percival);
@@ -50,7 +51,11 @@ namespace ResistanceOnline.Site.Controllers
         {
             get
             {
-                return CurrentUser != null ? CurrentUser.PlayerGuid : Guid.Empty;
+                if (CurrentUser != null)
+                {
+                    return CurrentUser.PlayerGuid;
+                }
+                return Guid.Empty;
             }
         }
 

@@ -206,6 +206,7 @@
     <Content Include="Content\images\ios-startup-image-landscape.png" />
     <Content Include="Content\images\ios-startup-image-portrait.png" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Images\allegiance.png" />
     <Content Include="Images\assassin.png" />
     <Content Include="Images\avalon.png" />
     <Content Include="Images\evil-wins.png" />

@@ -31,17 +31,18 @@ namespace ResistanceOnline.Site.Controllers
 				game.Rules.Add(Rule.LancelotsKnowEachOther);
 				game.Rules.Add(Rule.GoodMustAlwaysVoteSucess);
 				game.Rules.Add(Rule.IncludeLadyOfTheLake);
-
-				game.AddCharacter(Character.LoyalServantOfArthur);
-                game.AddCharacter(Character.Assassin);
-                game.AddCharacter(Character.Percival);
-                game.AddCharacter(Character.Morgana);
-                game.AddCharacter(Character.Merlin);
+                
 				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Jordan\"", Guid.NewGuid())));
 				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Luke\"", Guid.NewGuid())));
 				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Jeffrey\"", Guid.NewGuid())));
 				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Jayvin\"", Guid.NewGuid())));
-                
+
+                game.SetCharacter(0, Character.LoyalServantOfArthur);
+                game.SetCharacter(1, Character.Assassin);
+                game.SetCharacter(2, Character.Percival);
+                game.SetCharacter(3, Character.Morgana);
+                game.AddCharacter(Character.Merlin);
+
                 _games.Add(game);
                 game.GameId = _games.IndexOf(game);
             }
@@ -143,10 +144,10 @@ namespace ResistanceOnline.Site.Controllers
             return game;
         }
 
-        public void AddCharacter(int gameId, string character)
+        public void SetCharacter(int gameId, int index, string character)
         {
             var game = GetGame(gameId);
-            game.AddCharacter((Character)Enum.Parse(typeof(Character), character));
+            game.SetCharacter(index, (Character)Enum.Parse(typeof(Character), character));
             OnAfterAction(game);
 
             Update();

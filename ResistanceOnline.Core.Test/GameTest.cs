@@ -65,20 +65,22 @@ namespace ResistanceOnline.Core.Test
         {
             var game = new Game();
 
-            Assert.AreEqual(Game.State.GameSetup, game.DetermineState());
-            game.AddCharacter(Character.Assassin);
-            game.AddCharacter(Character.LoyalServantOfArthur);
-            game.AddCharacter(Character.Percival);
-            game.AddCharacter(Character.Morgana);
-            game.AddCharacter(Character.Merlin);
-
+           
             Assert.AreEqual(Game.State.GameSetup, game.DetermineState());
             game.JoinGame("a", Guid.NewGuid());
             game.JoinGame("b", Guid.NewGuid());
             game.JoinGame("c", Guid.NewGuid());
             game.JoinGame("d", Guid.NewGuid());
-            Assert.AreEqual(Game.State.GameSetup, game.DetermineState());
             game.JoinGame("e", Guid.NewGuid());
+
+            Assert.AreEqual(Game.State.GameSetup, game.DetermineState());
+            game.SetCharacter(0, Character.Assassin);
+            game.SetCharacter(1, Character.LoyalServantOfArthur);
+            game.SetCharacter(2, Character.Percival);
+            game.SetCharacter(3, Character.Morgana);
+            game.SetCharacter(4, Character.Merlin);
+
+            Assert.AreEqual(Game.State.GameSetup, game.DetermineState());
             game.StartGame();
             Assert.AreEqual(Game.State.Playing, game.DetermineState());
 

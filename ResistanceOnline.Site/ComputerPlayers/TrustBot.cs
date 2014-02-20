@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 namespace ResistanceOnline.Site.ComputerPlayers
 {
     public class TrustBot : ComputerPlayer
-    {        
+    {
         public TrustBot(Game game, Guid playerGuid) : base(game, playerGuid) { }
 
-        private double ProbabilityOfEvil(Player player) 
+        private double ProbabilityOfEvil(Player player)
         {
             var knowledge = _game.PlayerKnowledge(_player, player);
             if (knowledge == Knowledge.Evil || (knowledge == Knowledge.EvilLancelot && !_game.LancelotAllegianceSwitched) || (knowledge == Knowledge.Lancelot && _game.LancelotAllegianceSwitched))
@@ -34,6 +34,8 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
             evilProbability = (double)evilCharactersInGame / (double)(_game.GameSize - 1);
 
+            int correctVotes = 0, votesCounted = 0;
+
             //nothing confirmed, look at quest behaviour
             foreach (var round in _game.Rounds)
             {
@@ -55,10 +57,29 @@ namespace ResistanceOnline.Site.ComputerPlayers
                         evilProbability = roundEvilProbability;
                     }
                 }
+
+                if(round.Teams.Count() < 5) { //ignore last round as everyone votes accept
+                    var state = round.DetermineState();
+                    if (state == Round.State.Succeeded || state == Round.State.Failed)
+                    {
+                        var vote = round.Teams.Last().Votes.FirstOrDefault(v => v.Player == player);
+                        if (vote.Approve == (round.DetermineState() == Round.State.Succeeded))
+                            correctVotes++;
+                        votesCounted++;
+                    }
+                }
+            }
+
+            //if they vote correctly each round they're probably merlin.            
+            //todo handle off by a couple
+            //also check known evils instead of just outcome
+            if (correctVotes == votesCounted && votesCounted > 1)
+            {
+                evilProbability = 0;
             }
 
             return evilProbability;
-        }    
+        }
 
 
 
@@ -68,7 +89,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
             //use it on the person you know the least about
             return eligiblePlayers.Select(p => new { Player = p, Confidence = Math.Abs(ProbabilityOfEvil(p) - 0.5) }).OrderBy(p => p.Confidence).Select(p => p.Player).First();
-            
+
         }
 
         protected override Core.Player GuessMerlin()
@@ -114,7 +135,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
             {
                 SayTeamIsOk();
                 return true;
-            }            
+            }
 
             //work out how many evil players I think might be on the team
             var evilCount = _game.CurrentRound.CurrentTeam.TeamMembers.Select(p => IsProbablyEvil(p)).Count(x => x);
@@ -143,9 +164,9 @@ namespace ResistanceOnline.Site.ComputerPlayers
         private bool IsProbablyEvil(Player player)
         {
             var trust = ProbabilityOfEvil(player);
-            return (new Random().Next(100) < trust);            
+            return (new Random().Next(100) < trust);
         }
-     
+
     }
-        
+
 }

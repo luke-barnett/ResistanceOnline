@@ -14,8 +14,8 @@ namespace ResistanceOnline.Core
     {
         public enum Type
         {
-            [Description("Add a character card")]
-            AddCharacter,
+            //[Description("Add a character card")]
+            //AddCharacter,
             [Description("Join the game")]
             JoinGame,
 			[Description("Add a game rule")]

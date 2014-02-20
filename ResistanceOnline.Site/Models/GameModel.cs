@@ -70,6 +70,10 @@ namespace ResistanceOnline.Site.Models
             }
         }
 
+		public List<SelectListItem> AllRulesSelectList { get; set; }
+
+		public List<string> Rules { get; set; }
+
         public int PlayersMissing { get; private set; }
 
 		public GameModel(Game game, Guid? playerGuid)
@@ -79,11 +83,12 @@ namespace ResistanceOnline.Site.Models
             GameSize = game.GameSize;
             PlayersMissing = game.GameSize - game.Players.Count;
             AssassinIsInTheGame = game.Players.Select(p => p.Character).Contains(Character.Assassin);
+			Rules = game.Rules.Select(r => r.Humanize()).ToList();
 
             RoundTables = game.RoundTables.Select(t=>String.Format("Round {0} has {1} and requires {2}", (game.RoundTables.IndexOf(t) + 1).ToWords(), "player".ToQuantity(t.TeamSize, ShowQuantityAs.Words), "fail".ToQuantity(t.RequiredFails, ShowQuantityAs.Words))).ToList();
 
             LoyaltyCardsDeltInAdvance = new List<string>();
-            if (game.DetermineState() != Game.State.GameSetup && game.Rule_LoyaltyCardsDeltInAdvance && game.ContainsLancelot())
+            if (game.DetermineState() != Game.State.GameSetup && game.Rules.Contains(Rule.LoyaltyCardsDeltInAdvance) && game.ContainsLancelot())
             {
                 for (int i = 0; i < 5; i++)
                 {
@@ -105,6 +110,12 @@ namespace ResistanceOnline.Site.Models
 					.Cast<Character>()
 					.Where(c => c != Character.UnAllocated)
 					.Select(c => new SelectListItem { Text = c.Humanize(LetterCasing.Sentence), Value = c.ToString() })
+					.ToList();
+
+			AllRulesSelectList =
+				Enum.GetValues(typeof(Rule))
+					.Cast<Rule>()
+					.Select(r => new SelectListItem { Text = r.Humanize(LetterCasing.Sentence), Value = r.ToString() })
 					.ToList();
 
             //can guess anyone but self
@@ -144,7 +155,7 @@ namespace ResistanceOnline.Site.Models
 			}
 
             //build waiting message
-            if (waiting.Count > 0)
+            if (waiting.Count > 0 && GameState != Game.State.GameSetup.ToString())
             {
                 List<string> waitings = new List<string>();
                 foreach (var action in waiting.Where(w=> w.Action != Core.Action.Type.Message).Select(w => w.Action).Distinct())                
@@ -156,7 +167,10 @@ namespace ResistanceOnline.Site.Models
                     }
                     waitings.Add(String.Format("{0} to {1}", players, action.Humanize(LetterCasing.LowerCase)));
                 }
-                WaitingMessage = String.Format("Waiting for {0}.", string.Join(" or ", waitings));
+                if (waitings.Any())
+                {
+                    WaitingMessage = String.Format("Waiting for {0}.", string.Join(" or ", waitings));
+                }
             }
 			
 			Rounds = new List<RoundModel>();

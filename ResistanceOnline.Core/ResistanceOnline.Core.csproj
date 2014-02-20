@@ -49,6 +49,7 @@
     <Compile Include="PlayerMessage.cs" />
     <Compile Include="Round.cs" />
     <Compile Include="Quest.cs" />
+    <Compile Include="Rule.cs" />
     <Compile Include="Team.cs" />
     <Compile Include="Vote.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

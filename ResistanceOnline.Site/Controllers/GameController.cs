@@ -32,10 +32,7 @@ namespace ResistanceOnline.Site.Controllers
 			if (_games.Count == 0)
 			{
 				var game = new Game();
-				game.Rule_LancelotsKnowEachOther = true;
-				game.Rule_GoodMustAlwaysVoteSucess = true;
-				game.Rule_IncludeLadyOfTheLake = true;
-				
+
 				_computerPlayers.Add(new TrustBot(game, game.JoinGame("Jordan", Guid.NewGuid())));
 				_computerPlayers.Add(new CheatBot(game, game.JoinGame("Luke", Guid.NewGuid())));
 				_computerPlayers.Add(new CheatBot(game, game.JoinGame("Jeffrey", Guid.NewGuid())));

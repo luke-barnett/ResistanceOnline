@@ -155,7 +155,7 @@ namespace ResistanceOnline.Site.Models
 			}
 
             //build waiting message
-            if (waiting.Count > 0)
+            if (waiting.Count > 0 && GameState != Game.State.GameSetup.ToString())
             {
                 List<string> waitings = new List<string>();
                 foreach (var action in waiting.Where(w=> w.Action != Core.Action.Type.Message).Select(w => w.Action).Distinct())                
@@ -167,7 +167,10 @@ namespace ResistanceOnline.Site.Models
                     }
                     waitings.Add(String.Format("{0} to {1}", players, action.Humanize(LetterCasing.LowerCase)));
                 }
-                WaitingMessage = String.Format("Waiting for {0}.", string.Join(" or ", waitings));
+                if (waitings.Any())
+                {
+                    WaitingMessage = String.Format("Waiting for {0}.", string.Join(" or ", waitings));
+                }
             }
 			
 			Rounds = new List<RoundModel>();

@@ -34,6 +34,8 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
             evilProbability = (double)evilCharactersInGame / (double)(_game.GameSize - 1);
 
+            int correctVotes = 0, votesCounted = 0;
+
             //nothing confirmed, look at quest behaviour
             foreach (var round in _game.Rounds)
             {
@@ -55,6 +57,25 @@ namespace ResistanceOnline.Site.ComputerPlayers
                         evilProbability = roundEvilProbability;
                     }
                 }
+
+                if(round.Teams.Count() < 5) { //ignore last round as everyone votes accept
+                    var state = round.DetermineState();
+                    if (state == Round.State.Succeeded || state == Round.State.Failed)
+                    {
+                        var vote = round.Teams.Last().Votes.FirstOrDefault(v => v.Player == player);
+                        if (vote.Approve == (round.DetermineState() == Round.State.Succeeded))
+                            correctVotes++;
+                        votesCounted++;
+                    }
+                }
+            }
+
+            //if they vote correctly each round they're probably merlin.            
+            //todo handle off by a couple
+            //also check known evils instead of just outcome
+            if (correctVotes == votesCounted && votesCounted > 1)
+            {
+                evilProbability = 0;
             }
 
             return evilProbability;

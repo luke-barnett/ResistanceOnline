@@ -40,12 +40,11 @@ input[type="checkbox"].input-validation-error {
     display: none;
 }
 
-ul.cards li {
+ul.cards > li {
     float:left;
     margin-right:4px;
     list-style-type:none;
-    width:52px;
-    overflow:hidden;
+    width:52px;    
 }
 
 .clear {

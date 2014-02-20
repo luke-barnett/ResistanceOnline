@@ -14,9 +14,9 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 
 			//TODO: map to standard game types for good/evil numbers
 			for (var i = 0; i < numberOfPlayers; i++)
-			{
-				game.AddCharacter(Character.LoyalServantOfArthur);
+			{				
 				game.JoinGame(string.Format("player{0}", i), Guid.NewGuid());
+                game.SetCharacter(i, Character.LoyalServantOfArthur);
 			}
             game.StartGame();
 

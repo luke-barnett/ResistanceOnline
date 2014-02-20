@@ -8,7 +8,7 @@
 		},
 		activate: function (game) {
 			viewModel.gameId(game.GameId());
-			viewModel.characters(game.AllRulesSelectList());
+			viewModel.rules(game.AllRulesSelectList());
 		}
 	};
 

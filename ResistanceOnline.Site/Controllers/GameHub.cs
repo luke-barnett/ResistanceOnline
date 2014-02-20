@@ -54,6 +54,7 @@ namespace ResistanceOnline.Site.Controllers
             {
                 if (CurrentUser != null)
                 {
+                    //todo fix the horrible threading problem which throws a null ref here
                     return CurrentUser.PlayerGuid;
                 }
                 return Guid.Empty;
@@ -154,8 +155,7 @@ namespace ResistanceOnline.Site.Controllers
 		public void AddRule(int gameId, string rule)
 		{
 			var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
-			game.PerformAction(player, new Core.Action { Rule = (Core.Rule)Enum.Parse(typeof(Core.Rule), rule), ActionType = Core.Action.Type.AddRule });
+			game.AddRule((Core.Rule)Enum.Parse(typeof(Core.Rule), rule));
 			OnAfterAction(game);
 
 			Update();

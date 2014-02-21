@@ -2,9 +2,16 @@
 <p>
     {{game().GameSetup}}
 </p>
-
+<div data-bind="visible:  $root.game().GameState() == 'GameSetup'">
+    Click a card to switch their character
+</div>
 <ul class="cards" data-bind="foreach: game().CharactersInGame">
-    <li><img class="card" data-bind="attr: { src: '/Images/' + $data + '.png', title: $data }" alt="{{$data}"  /></li>	
+    <li class="btn-group">
+        <img class="card" data-bind="attr: { src: image, title: name, 'data-toggle': $root.game().GameState() == 'GameSetup' ? 'dropdown' : '' }" alt="{{$data}}" />
+        <ul data-bind="foreach: $root.game().AllCharactersSelectList" class="dropdown-menu" role="menu">
+            <li><a href="#" data-bind="click: $parent.setCharacter.bind($data, $parentContext.$index())">{{Text}}</a></li>
+        </ul>
+    </li>	
 </ul>
 
 <div class="clear"></div>    

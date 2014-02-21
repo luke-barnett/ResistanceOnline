@@ -106,8 +106,6 @@ namespace ResistanceOnline.Core
                         roundTables.Add(new RoundTable(5, 2));
                         roundTables.Add(new RoundTable(5));
                         break;
-                    //default:
-                    //    throw new Exception("No round tables for games with " + GameSize + " players");
                 }
                 return roundTables;
             }
@@ -147,16 +145,26 @@ namespace ResistanceOnline.Core
 
         public void AddCharacter(Character character)
         {
-            //if (AvailableCharacters.Count == Players.Count)
-            //    throw new Exception("All roles added");
-            AvailableCharacters.Add(character);
+            if (DetermineState() != State.GameSetup)
+                throw new Exception("Can only add characters during setup");
 
+            AvailableCharacters.Add(character);
             OnCharacterAddedOrPlayerJoined();
+        }
+
+        public void SetCharacter(int index, Character character)
+        {
+            if (DetermineState() != State.GameSetup)
+                throw new Exception("Can only change characters during setup");
+
+            AvailableCharacters[index] = character;         
         }
 
 
         private void OnCharacterAddedOrPlayerJoined()
         {
+            if (AvailableCharacters.Count < Players.Count)
+                AddCharacter(Character.UnAllocated);
         }
 
         public void StartGame()
@@ -190,8 +198,6 @@ namespace ResistanceOnline.Core
         private void AllocateCharactersToPlayers()
         {
             //on last player, allocate characters
-            if (Players.Count == GameSize)
-            {
                 if (AvailableCharacters.Count != GameSize)
                     throw new Exception("Not Enough Characters for Players");
 
@@ -206,7 +212,6 @@ namespace ResistanceOnline.Core
 
                 OnGameStart();
             }
-        }
 
         private void OnGameStart()
         {
@@ -311,7 +316,7 @@ namespace ResistanceOnline.Core
 
         public State DetermineState()
         {
-            if (AvailableCharacters.Count != Players.Count || Players.Count == 0 || Players.Any(i => i.Character == Character.UnAllocated))
+            if (AvailableCharacters.Count != Players.Count || Players.Count == 0 || Players.Any(i => i.Character == Character.UnAllocated) || AvailableCharacters.Any(i => i == Character.UnAllocated))
                 return State.GameSetup;
 
             if (Rounds.Where(r => r.DetermineState() == Round.State.Failed).Count() >= 3)
@@ -432,9 +437,9 @@ namespace ResistanceOnline.Core
 				case Action.Type.AddRule:
 					AddRule(action.Rule);
 					break;
-                case Action.Type.AddCharacter:
-                    AddCharacter(action.Character);
-                    break;
+                //case Action.Type.AddCharacter:
+                //    AddCharacter(action.Character);
+                //    break;
                 case Action.Type.GuessMerlin:
                     GuessMerlin(player, action.Player);
                     break;

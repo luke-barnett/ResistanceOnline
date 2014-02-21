@@ -1,4 +1,4 @@
-﻿define(['data', 'knockout', 'knockout.punches'], function (data, ko, kop) {
+﻿define(['data', 'knockout', 'knockout.punches', 'bootstrap'], function (data, ko, kop) {
     ko.punches.enableAll();
     var deferred = new $.Deferred();
     data.subscribe(function () { deferred.resolve() });

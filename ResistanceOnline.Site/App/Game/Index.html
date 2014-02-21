@@ -48,11 +48,9 @@
     <div data-bind="foreach: Teams">
 		<div class="quest">
             <div class="setup">
+                <p>{{TeamSummary}}</p>
                 <ul class="cards">
-                    <li>
-                        <img src="/Images/leadertoken.png" title="@team.Leader" />
-                        <div class="playername">{{Leader}}</div>
-                    </li>
+                    
 
                     <!-- ko foreach: TeamMembers -->
                         <li>

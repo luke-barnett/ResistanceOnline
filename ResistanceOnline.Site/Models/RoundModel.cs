@@ -27,9 +27,9 @@ namespace ResistanceOnline.Site.Models
             LadyOfTheLakeUses = game.LadyOfTheLakeUses.Where(u=>u.UsedOnRoundNumber == roundNumber+1).Select(u => new LadyOfTheLakeUseModel(u, player)).ToList();
 
             Teams = new List<TeamModel>();
-            foreach (var quest in round.Teams)
+            foreach (var team in round.Teams)
             {
-                Teams.Add(new TeamModel(quest, round.TotalPlayers));
+                Teams.Add(new TeamModel(team, round.TotalPlayers, round.Teams.IndexOf(team)+1));
             }            
 
             var state = round.DetermineState();

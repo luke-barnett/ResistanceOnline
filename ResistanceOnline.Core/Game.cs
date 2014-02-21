@@ -381,7 +381,6 @@ namespace ResistanceOnline.Core
 
                 case Game.State.GameSetup:
                     var actions = new List<Action.Type>();
-					actions.Add(Action.Type.AddRule);
 					if (Players.Count == AvailableCharacters.Count && Players.Count >= MIN_GAME_SIZE && Players.Count <= MAX_GAME_SIZE)
 					{
 						actions.Add(Action.Type.StartGame);
@@ -401,6 +400,7 @@ namespace ResistanceOnline.Core
 					{
 						actions.Add(Action.Type.AddCharacter);
 					}
+					actions.Add(Action.Type.AddRule);
                     return actions;
 
                 case Game.State.GuessingMerlin:

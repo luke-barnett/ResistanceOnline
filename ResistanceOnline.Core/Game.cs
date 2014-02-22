@@ -403,6 +403,10 @@ namespace ResistanceOnline.Core
                             return new List<Action.Type>() { Action.Type.Message };
                     }
 
+                    //todo use excalibur if rule turned on and has excalibur assigned 
+                    //todo player can pick not to use it
+                    //rule contains IncludeExcalibur and ExcaliburUses.all(!= currentRound)
+
                     //round over but still current
 					if (Rules.Contains(Rule.IncludeLadyOfTheLake) && Rounds.Count >= 2 && HolderOfLadyOfTheLake == player)
                     {

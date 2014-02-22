@@ -53,12 +53,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             get
             {
-                if (CurrentUser != null)
-                {
-                    //todo fix the horrible threading problem which throws a null ref here
-                    return CurrentUser.PlayerGuid;
-                }
-                return Guid.Empty;
+                return CurrentUser.PlayerGuid;
             }
         }
 
@@ -66,10 +61,17 @@ namespace ResistanceOnline.Site.Controllers
         {
             get
             {
-                if (Context.User == null)
-                    return null;
-                var userId = Context.User.Identity.GetUserId();
-                return _dbContext.Users.FirstOrDefault(user => user.Id == userId);
+                UserAccount userAccount = null;
+                if (Context.User != null)
+                {
+                    var userId = Context.User.Identity.GetUserId();
+                    userAccount = _dbContext.Users.FirstOrDefault(user => user.Id == userId);
+                }
+                if (userAccount == null)
+                {
+                    userAccount = new UserAccount { PlayerGuid = Guid.Empty };
+                }
+                return userAccount;
             }
         }
 

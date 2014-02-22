@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Humanizer;
 
 namespace ResistanceOnline.Site.Models
 {
@@ -13,10 +14,11 @@ namespace ResistanceOnline.Site.Models
 		public List<VoteModel> Vote { get; set; }
 		public List<QuestModel> QuestCards { get; set; }
         public List<MessageModel> Messages { get; set; }
-
-        public TeamModel(Core.Team team, int totalPlayers)
+        public string TeamSummary { get; set; }
+        public TeamModel(Core.Team team, int totalPlayers, int teamNumber)
 		{
 			Leader = team.Leader.Name;
+            TeamSummary = string.Format("Team {0}, as proposed by {1}", teamNumber.ToWords(), team.Leader.Name);
             HasExcalibur = team.HasExcalibur.Name;
 			TeamMembers = team.TeamMembers.Select(p => p.Name).ToList();
 			Vote = team.Votes.OrderBy(v=>v.Player.Name).Select(v => new VoteModel(v, team.Votes.Count != totalPlayers)).ToList();

@@ -94,6 +94,12 @@ namespace ResistanceOnline.Site.ComputerPlayers
             }
 
         }
+
+        protected override Player UseExcalibur()
+        {
+            var quest = _game.CurrentRound.CurrentTeam.Quests.FirstOrDefault(i => i.Success != _IAmEvil);
+            return quest == null ? null : quest.Player;
+        }
     }
         
 }

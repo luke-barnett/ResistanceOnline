@@ -18,9 +18,9 @@ namespace ResistanceOnline.Core
             //AddCharacter,
             [Description("Join the game")]
             JoinGame,
-			[Description("Add a game rule")]
-			AddRule,
-			[Description("Add a player to the current team")]
+            [Description("Add a game rule")]
+            AddRule,
+            [Description("Add a player to the current team")]
             AddToTeam,
             [Description("Vote for the current team")]
             VoteForTeam,
@@ -35,7 +35,10 @@ namespace ResistanceOnline.Core
             [Description("Add a computer player")]
             AddBot,
             [Description("Start the game")]
-            StartGame
+            StartGame,
+            [Description("Assign Excalibur to team member")]
+            AssignExcalibur,
+            UseExcalibur
         };
 
         public Type ActionType { get; set; }

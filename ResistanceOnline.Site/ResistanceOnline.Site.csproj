@@ -183,6 +183,10 @@
     <Content Include="App\Widgets\AddToTeam.js" />
     <Content Include="App\Widgets\AddBot.html" />
     <Content Include="App\Widgets\AddBot.js" />
+    <Content Include="App\Widgets\AssignExcalibur.html" />
+    <Content Include="App\Widgets\AssignExcalibur.js" />
+    <Content Include="App\Widgets\UseExcalibur.html" />
+    <Content Include="App\Widgets\UseExcalibur.js" />
     <Content Include="App\Widgets\StartGame.html" />
     <Content Include="App\Widgets\StartGame.js" />
     <Content Include="App\Widgets\Message.html" />
@@ -209,6 +213,7 @@
     <Content Include="Images\allegiance.png" />
     <Content Include="Images\assassin.png" />
     <Content Include="Images\avalon.png" />
+    <Content Include="Images\excaliburtoken.png" />
     <Content Include="Images\unallocated.png" />
     <Content Include="Images\evil-wins.png" />
     <Content Include="Images\evil.png" />
@@ -308,6 +313,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Infrastructure\ChallengeResult.cs" />
+    <Compile Include="Models\ExcaliburUseModel.cs" />
     <Compile Include="Models\LadyOfTheLakeUseModel.cs" />
     <Compile Include="Models\LoginConfirmationViewModel.cs" />
     <Compile Include="Models\MessageModel.cs" />

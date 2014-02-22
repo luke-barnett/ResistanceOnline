@@ -116,6 +116,11 @@ namespace ResistanceOnline.Site.ComputerPlayers
             }
 
         }
+
+        protected override Player UseExcalibur()
+        {
+            return null;
+        }
     }
         
 }

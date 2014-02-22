@@ -28,6 +28,7 @@ namespace ResistanceOnline.Core
             AvailableCharacters = new List<Character>();
 
             LadyOfTheLakeUses = new List<LadyOfTheLakeUse>();
+            ExcaliburUses = new List<ExcaliburUse>();
             LoyaltyDeck = new List<LoyaltyCard> { LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.SwitchAlegiance, LoyaltyCard.SwitchAlegiance };
 
             Random random = new Random();
@@ -50,6 +51,7 @@ namespace ResistanceOnline.Core
         public Player AssassinsGuessAtMerlin { get; set; }
 
         public List<LadyOfTheLakeUse> LadyOfTheLakeUses { get; set; }
+        public List<ExcaliburUse> ExcaliburUses { get; set; }
         public Player HolderOfLadyOfTheLake { get; set; }
         public bool LancelotAllegianceSwitched { get; set; }
         public List<LoyaltyCard> LoyaltyDeck { get; set; }
@@ -229,7 +231,7 @@ namespace ResistanceOnline.Core
                 throw new Exception("round overrun");
 
             var tableaus = RoundTables[Rounds.Count];
-            Rounds.Add(new Round(Players, leader, tableaus.TeamSize, tableaus.RequiredFails));
+            Rounds.Add(new Round(Players, leader, tableaus.TeamSize, tableaus.RequiredFails, Rules));
         }
 
         public Round CurrentRound { get { return Rounds.LastOrDefault(); } }
@@ -237,6 +239,28 @@ namespace ResistanceOnline.Core
         public void AddToTeam(Player player, Player proposedPlayer)
         {
             CurrentRound.AddToTeam(player, proposedPlayer);
+        }
+
+        public void AssignExcalibur(Player player, Player proposedPlayer)
+        {
+            if (!Rules.Contains(Rule.IncludeExcalibur))
+            {
+                throw new Exception("Game does not include excalibur");
+            }
+
+            CurrentRound.AssignExcalibur(player, proposedPlayer);
+        }
+
+        public void UseExcalibur(Player player, Player proposedPlayer)
+        {
+            if (!Rules.Contains(Rule.IncludeExcalibur))
+            {
+                throw new Exception("Game does not include excalibur");
+            }
+
+            var originalMission = CurrentRound.UseExcalibur(player, proposedPlayer);
+            ExcaliburUses.Add(new ExcaliburUse { UsedBy = player, UsedOn = proposedPlayer, OriginalMissionWasSuccess = originalMission, UsedOnRoundNumber = Rounds.Count + 1 });
+            OnEndOfRound(Rounds.Count);
         }
 
         public void VoteForTeam(Player player, bool approve)
@@ -360,6 +384,12 @@ namespace ResistanceOnline.Core
                                 return new List<Action.Type>() { Action.Type.AddToTeam, Action.Type.Message };
                             }
                             return new List<Action.Type>() { Action.Type.Message };
+                        case Round.State.AssigningExcalibur:
+                             if (player != null && quest.Leader.Name == player.Name)
+                            {
+                                return new List<Action.Type>() { Action.Type.AssignExcalibur, Action.Type.Message };
+                            }
+                            return new List<Action.Type>() { Action.Type.Message };
                         case Round.State.Voting:
                             if (player != null && !quest.Votes.Select(v => v.Player.Name).ToList().Contains(player.Name))
                             {
@@ -371,6 +401,12 @@ namespace ResistanceOnline.Core
                                 !quest.Quests.Select(q => q.Player.Name).ToList().Contains(player.Name))
                             {
                                 return new List<Action.Type>() { Action.Type.Message, Action.Type.SubmitQuestCard };
+                            }
+                            return new List<Action.Type>() { Action.Type.Message };
+                        case Round.State.UsingExcalibur:
+                            if (player != null && quest.HasExcalibur == player)
+                            {
+                                return new List<Action.Type>() { Action.Type.UseExcalibur, Action.Type.Message };
                             }
                             return new List<Action.Type>() { Action.Type.Message };
                     }
@@ -443,6 +479,12 @@ namespace ResistanceOnline.Core
                     break;
                 case Action.Type.AddToTeam:
                     AddToTeam(player, action.Player);
+                    break;
+                case Action.Type.AssignExcalibur:
+                    AssignExcalibur(player, action.Player);
+                    break;
+                case Action.Type.UseExcalibur:
+                    UseExcalibur(player, action.Player);
                     break;
                 case Action.Type.SubmitQuestCard:
                     SubmitQuest(player, action.Success);

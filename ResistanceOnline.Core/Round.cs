@@ -15,8 +15,10 @@ namespace ResistanceOnline.Core
         {
             Unstarted,            
             ProposingPlayers,
+            AssigningExcalibur,
             Voting,
             Questing,
+            UsingExcalibur,
             Succeeded,
             Failed,
             FailedAllVotes
@@ -24,8 +26,9 @@ namespace ResistanceOnline.Core
 
         List<Player> _players;
         int _currentPlayer;
+        List<Rule> _rules;
 
-        public Round(List<Player> players, int currentPlayer, int teamSize, int requiredFails)
+        public Round(List<Player> players, int currentPlayer, int teamSize, int requiredFails, List<Rule> rules = null) //todo review whether rules should be passed in
         {
             TotalPlayers = players.Count;
             TeamSize = teamSize;
@@ -36,6 +39,7 @@ namespace ResistanceOnline.Core
 
             _players = players;
             _currentPlayer = currentPlayer;
+            _rules = rules ?? new List<Rule>();
         }
 
         public int TotalPlayers { get; set; }
@@ -50,6 +54,16 @@ namespace ResistanceOnline.Core
         public void AddToTeam(Player player, Player proposedPlayer)
         {
             CurrentTeam.AddToTeam(player, proposedPlayer);
+        }
+
+        public void AssignExcalibur(Player player, Player proposedPlayer)
+        {
+            CurrentTeam.AssignExcalibur(player, proposedPlayer);
+        }
+
+        public bool? UseExcalibur(Player player, Player proposedPlayer)
+        {
+            return CurrentTeam.UseExcalibur(player, proposedPlayer);
         }
 
         public void VoteForTeam(Player player, bool approve)
@@ -83,6 +97,9 @@ namespace ResistanceOnline.Core
             if (CurrentTeam.TeamMembers.Count < TeamSize)
                 return State.ProposingPlayers;
 
+            if (_rules.Contains(Rule.IncludeExcalibur) && CurrentTeam.HasExcalibur == null)
+                return State.AssigningExcalibur;
+
             //voting on proposing
             if (CurrentTeam.Votes.Count < TotalPlayers)
                 return State.Voting;
@@ -91,13 +108,15 @@ namespace ResistanceOnline.Core
             if (CurrentTeam.Quests.Count < TeamSize)
                 return State.Questing;
 
+            if (CurrentTeam.HasExcalibur != null && !CurrentTeam.ExcaliburUsed)
+                return State.UsingExcalibur;
+
             //finished
             var fails = CurrentTeam.Quests.Where(c => !c.Success).Count();
             if (fails >= RequiredFails)
                 return State.Failed;
 
-            return State.Succeeded;
-           
+            return State.Succeeded;           
         }
 
     }

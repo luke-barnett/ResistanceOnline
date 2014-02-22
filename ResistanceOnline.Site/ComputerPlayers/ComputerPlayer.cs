@@ -112,6 +112,12 @@ namespace ResistanceOnline.Site.ComputerPlayers
                 return;
             }
 
+            if (availableActions.Contains(ResistanceOnline.Core.Action.Type.AssignExcalibur))
+            {
+                _game.PerformAction(_player, new ResistanceOnline.Core.Action { ActionType = ResistanceOnline.Core.Action.Type.AssignExcalibur, Player = AssignExcalibur() });
+                return;
+            }
+
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.SubmitQuestCard))
             {
                 _game.PerformAction(_player, new ResistanceOnline.Core.Action { ActionType = ResistanceOnline.Core.Action.Type.SubmitQuestCard, Success = Quest() });
@@ -143,5 +149,10 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
         protected abstract bool TeamVote();
 
+        //todo implement for each bot
+        protected virtual Player AssignExcalibur()
+        {
+            return _game.CurrentRound.CurrentTeam.TeamMembers.RandomOrDefault(p => p != _player);            
+        }
     }
 }

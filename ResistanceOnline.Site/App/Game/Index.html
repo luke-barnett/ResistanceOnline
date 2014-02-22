@@ -58,8 +58,13 @@
                 <h4>{{$index() + 1}}</h4>
                 <ul class="cards">                    
                     <li>                        
-                        <img src="/Images/leadertoken.png" title="@team.Leader" />
+                        <img src="/Images/leadertoken.png" title="{{Leader}}" />
                         <div class="playername">{{Leader}}</div>
+                    </li>
+
+                    <li data-bind="visible: HasExcalibur">                        
+                        <img src="/Images/excaliburtoken.png" title="{{HasExcalibur}}" />
+                        <div class="playername">{{HasExcalibur}}</div>
                     </li>
 
                     <!-- ko foreach: TeamMembers -->

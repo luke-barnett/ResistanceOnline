@@ -52,6 +52,11 @@ namespace ResistanceOnline.Core
             CurrentTeam.AddToTeam(player, proposedPlayer);
         }
 
+        public void AssignExcalibur(Player player, Player proposedPlayer)
+        {
+            CurrentTeam.AssignExcalibur(player, proposedPlayer);
+        }
+
         public void VoteForTeam(Player player, bool approve)
         {
             CurrentTeam.VoteForTeam(player, approve);
@@ -96,8 +101,7 @@ namespace ResistanceOnline.Core
             if (fails >= RequiredFails)
                 return State.Failed;
 
-            return State.Succeeded;
-           
+            return State.Succeeded;           
         }
 
     }

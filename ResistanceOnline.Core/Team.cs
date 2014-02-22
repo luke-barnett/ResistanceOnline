@@ -30,6 +30,20 @@ namespace ResistanceOnline.Core
             TeamMembers.Add(proposedPlayer);
         }
 
+        public void AssignExcalibur(Player player, Player proposedPlayer)
+        {
+            if (player != Leader)
+                throw new Exception("Hax. Player is not the leader of this team");
+
+            if (!TeamMembers.Contains(proposedPlayer))
+                throw new Exception("Player is not on team..");
+
+            if (proposedPlayer != Leader)
+                throw new Exception("Leader cannot assigne excalibur to themself");
+
+            HasExcalibur = proposedPlayer;
+        }
+
         public void VoteForTeam(Player player, bool approve)
         {
             if (Votes.Select(v=>v.Player).ToList().Contains(player))
@@ -47,6 +61,7 @@ namespace ResistanceOnline.Core
         }
 
         public Player Leader { get; set; }
+        public Player HasExcalibur { get; set; }
         public List<Player> TeamMembers { get; set; }
         public List<Vote> Votes { get; set; }
         public List<Quest> Quests { get; set; }
@@ -54,3 +69,4 @@ namespace ResistanceOnline.Core
         public List<PlayerMessage> Messages { get; set; }
     }
 }
+

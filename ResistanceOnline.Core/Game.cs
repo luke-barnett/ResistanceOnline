@@ -240,6 +240,11 @@ namespace ResistanceOnline.Core
             CurrentRound.AddToTeam(player, proposedPlayer);
         }
 
+        public void AssignExcalibur(Player player, Player proposedPlayer)
+        {
+            CurrentRound.AssignExcalibur(player, proposedPlayer);
+        }
+
         public void VoteForTeam(Player player, bool approve)
         {
             CurrentRound.VoteForTeam(player, approve);
@@ -449,6 +454,9 @@ namespace ResistanceOnline.Core
                     break;
                 case Action.Type.AddToTeam:
                     AddToTeam(player, action.Player);
+                    break;
+                case Action.Type.AssignExcalibur:
+                    AssignExcalibur(player, action.Player);
                     break;
                 case Action.Type.SubmitQuestCard:
                     SubmitQuest(player, action.Success);

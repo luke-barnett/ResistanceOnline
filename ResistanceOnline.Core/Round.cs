@@ -15,8 +15,10 @@ namespace ResistanceOnline.Core
         {
             Unstarted,            
             ProposingPlayers,
+            AssigningExcalibur,
             Voting,
             Questing,
+            UsingExcalibur,
             Succeeded,
             Failed,
             FailedAllVotes
@@ -24,8 +26,9 @@ namespace ResistanceOnline.Core
 
         List<Player> _players;
         int _currentPlayer;
+        List<Rule> _rules;
 
-        public Round(List<Player> players, int currentPlayer, int teamSize, int requiredFails)
+        public Round(List<Player> players, int currentPlayer, int teamSize, int requiredFails, List<Rule> rules = null) //todo review whether rules should be passed in
         {
             TotalPlayers = players.Count;
             TeamSize = teamSize;
@@ -36,6 +39,7 @@ namespace ResistanceOnline.Core
 
             _players = players;
             _currentPlayer = currentPlayer;
+            _rules = rules ?? new List<Rule>();
         }
 
         public int TotalPlayers { get; set; }
@@ -57,7 +61,7 @@ namespace ResistanceOnline.Core
             CurrentTeam.AssignExcalibur(player, proposedPlayer);
         }
 
-        public bool UseExcalibur(Player player, Player proposedPlayer)
+        public bool? UseExcalibur(Player player, Player proposedPlayer)
         {
             return CurrentTeam.UseExcalibur(player, proposedPlayer);
         }
@@ -93,7 +97,8 @@ namespace ResistanceOnline.Core
             if (CurrentTeam.TeamMembers.Count < TeamSize)
                 return State.ProposingPlayers;
 
-            //todo assign excalibur state? (need access to rules object)
+            if (_rules.Contains(Rule.IncludeExcalibur) && CurrentTeam.HasExcalibur == null)
+                return State.AssigningExcalibur;
 
             //voting on proposing
             if (CurrentTeam.Votes.Count < TotalPlayers)
@@ -103,7 +108,8 @@ namespace ResistanceOnline.Core
             if (CurrentTeam.Quests.Count < TeamSize)
                 return State.Questing;
 
-            //todo use excalibur state?
+            if (CurrentTeam.HasExcalibur != null && !CurrentTeam.ExcaliburUsed)
+                return State.UsingExcalibur;
 
             //finished
             var fails = CurrentTeam.Quests.Where(c => !c.Success).Count();

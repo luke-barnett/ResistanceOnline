@@ -9,7 +9,7 @@ namespace ResistanceOnline.Core
     {
         public Player UsedBy { get; set; }
         public Player UsedOn { get; set; }
-        public bool OriginalMissionWasSuccess { get; set; }
+        public bool? OriginalMissionWasSuccess { get; set; }
         public int UsedOnRoundNumber { get; set; }
     }
 }

@@ -156,18 +156,12 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
         protected abstract bool TeamVote();
 
+        protected abstract Player UseExcalibur();
+
         //todo implement for each bot
         protected virtual Player AssignExcalibur()
         {
-            return _game.CurrentRound.CurrentTeam.TeamMembers.RandomOrDefault(p => p != _player);            
-        }
-
-
-        //todo implement for each bot
-        protected virtual Player UseExcalibur()
-        {
-            //don't use excalibur currently
-            return null;
-        }
+            return _game.CurrentRound.CurrentTeam.TeamMembers.RandomOrDefault(p => p.Name != _player.Name);            
+        }        
     }
 }

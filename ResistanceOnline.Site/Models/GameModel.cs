@@ -35,6 +35,8 @@ namespace ResistanceOnline.Site.Models
         public SelectList LadyOfTheLakePlayerSelectList { get; set; }
         public SelectList GuessMerlinPlayersSelectList { get; set; }
         public SelectList AddToTeamPlayersSelectList { get; set; }
+        public SelectList UseExcaliburSelectList { get; set; }
+        public SelectList AssignExcaliburSelectList { get; set; }
 
 		public List<string> Actions { get; set; }
 
@@ -123,6 +125,12 @@ namespace ResistanceOnline.Site.Models
 
             //can use on anyone who hasn't had it
             LadyOfTheLakePlayerSelectList = new SelectList(game.Players.Where(p => p != player).Except(game.LadyOfTheLakeUses.Select(u => u.UsedBy)).Select(p => p.Name));
+
+            if (game.CurrentRound != null && game.CurrentRound.CurrentTeam != null)
+            {
+                UseExcaliburSelectList = new SelectList(game.CurrentRound.CurrentTeam.TeamMembers.Where(p => p != game.CurrentRound.CurrentTeam.Leader).Select(p => p.Name));
+                AssignExcaliburSelectList = new SelectList(game.CurrentRound.CurrentTeam.TeamMembers.Select(p => p.Name));
+            }
 
             //can put anyone on a team who isn't already on it
             if (game.CurrentRound != null)

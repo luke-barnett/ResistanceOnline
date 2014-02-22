@@ -246,6 +246,8 @@ namespace ResistanceOnline.Site.Controllers
             var player = game.Players.First(p => p.Guid == PlayerGuid);
             var proposedPlayer = game.Players.First(p => p.Name == proposedPlayerName);
             game.AssignExcalibur(player, proposedPlayer);
+            OnAfterAction(game);
+            Update();
         }
 
         public void UseExcalibur(int gameId, string proposedPlayerName)
@@ -254,6 +256,8 @@ namespace ResistanceOnline.Site.Controllers
             var player = game.Players.First(p => p.Guid == PlayerGuid);
             var proposedPlayer = game.Players.First(p => p.Name == proposedPlayerName);
             game.UseExcalibur(player, proposedPlayer);
+            OnAfterAction(game);
+            Update();
         }
 
         public void AddComputerPlayer(int gameId, string bot, string name)

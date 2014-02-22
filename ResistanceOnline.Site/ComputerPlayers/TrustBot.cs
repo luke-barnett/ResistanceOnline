@@ -167,6 +167,19 @@ namespace ResistanceOnline.Site.ComputerPlayers
             return (new Random().Next(100) < trust);
         }
 
+
+        protected override Player UseExcalibur()
+        {
+            var teamMembers = _game.CurrentRound.CurrentTeam.TeamMembers;
+
+            foreach(var player in teamMembers) {
+                if(ProbabilityOfEvil(player) == (_IAmEvil ? 0 : 100)) {
+                    return player;
+                }
+            }
+
+            return null;
+        }
     }
 
 }

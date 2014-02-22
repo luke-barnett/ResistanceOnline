@@ -231,7 +231,7 @@ namespace ResistanceOnline.Core
                 throw new Exception("round overrun");
 
             var tableaus = RoundTables[Rounds.Count];
-            Rounds.Add(new Round(Players, leader, tableaus.TeamSize, tableaus.RequiredFails));
+            Rounds.Add(new Round(Players, leader, tableaus.TeamSize, tableaus.RequiredFails, Rules));
         }
 
         public Round CurrentRound { get { return Rounds.LastOrDefault(); } }
@@ -258,11 +258,9 @@ namespace ResistanceOnline.Core
                 throw new Exception("Game does not include excalibur");
             }
 
-            if (proposedPlayer != null)
-            {
-                var originalMission = CurrentRound.UseExcalibur(player, proposedPlayer);
-                ExcaliburUses.Add(new ExcaliburUse { UsedBy = player, UsedOn = proposedPlayer, OriginalMissionWasSuccess = originalMission, UsedOnRoundNumber = Rounds.Count + 1 });
-            }
+            var originalMission = CurrentRound.UseExcalibur(player, proposedPlayer);
+            ExcaliburUses.Add(new ExcaliburUse { UsedBy = player, UsedOn = proposedPlayer, OriginalMissionWasSuccess = originalMission, UsedOnRoundNumber = Rounds.Count + 1 });
+            OnEndOfRound(Rounds.Count);
         }
 
         public void VoteForTeam(Player player, bool approve)
@@ -384,7 +382,12 @@ namespace ResistanceOnline.Core
                             if (player != null && quest.Leader.Name == player.Name)
                             {
                                 return new List<Action.Type>() { Action.Type.AddToTeam, Action.Type.Message };
-                                //todo assign excalibur if rule turned on and team assigned (need another round state?)
+                            }
+                            return new List<Action.Type>() { Action.Type.Message };
+                        case Round.State.AssigningExcalibur:
+                             if (player != null && quest.Leader.Name == player.Name)
+                            {
+                                return new List<Action.Type>() { Action.Type.AssignExcalibur, Action.Type.Message };
                             }
                             return new List<Action.Type>() { Action.Type.Message };
                         case Round.State.Voting:
@@ -400,11 +403,13 @@ namespace ResistanceOnline.Core
                                 return new List<Action.Type>() { Action.Type.Message, Action.Type.SubmitQuestCard };
                             }
                             return new List<Action.Type>() { Action.Type.Message };
+                        case Round.State.UsingExcalibur:
+                            if (player != null && quest.HasExcalibur == player)
+                            {
+                                return new List<Action.Type>() { Action.Type.UseExcalibur, Action.Type.Message };
+                            }
+                            return new List<Action.Type>() { Action.Type.Message };
                     }
-
-                    //todo use excalibur if rule turned on and has excalibur assigned 
-                    //todo player can pick not to use it
-                    //rule contains IncludeExcalibur and ExcaliburUses.all(!= currentRound)
 
                     //round over but still current
 					if (Rules.Contains(Rule.IncludeLadyOfTheLake) && Rounds.Count >= 2 && HolderOfLadyOfTheLake == player)

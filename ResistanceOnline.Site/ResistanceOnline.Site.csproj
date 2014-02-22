@@ -183,6 +183,10 @@
     <Content Include="App\Widgets\AddToTeam.js" />
     <Content Include="App\Widgets\AddBot.html" />
     <Content Include="App\Widgets\AddBot.js" />
+    <Content Include="App\Widgets\AssignExcalibur.html" />
+    <Content Include="App\Widgets\AssignExcalibur.js" />
+    <Content Include="App\Widgets\UseExcalibur.html" />
+    <Content Include="App\Widgets\UseExcalibur.js" />
     <Content Include="App\Widgets\StartGame.html" />
     <Content Include="App\Widgets\StartGame.js" />
     <Content Include="App\Widgets\Message.html" />

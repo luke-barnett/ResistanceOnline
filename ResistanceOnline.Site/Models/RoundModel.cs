@@ -15,6 +15,7 @@ namespace ResistanceOnline.Site.Models
         public string Title { get { return String.Format("Round {0}", _roundNumber.ToWords()); } }
         public string Summary { get { return String.Format("This is a {0} player round and requires {1}", TeamSize.ToWords(), "fail".ToQuantity(FailsRequired, ShowQuantityAs.Words)); } }
         public List<LadyOfTheLakeUseModel> LadyOfTheLakeUses { get; set; }
+        public List<ExcaliburUseModel> ExcaliburUses { get; set; }
         public string LoyaltyCard { get; set; }
 
 
@@ -25,6 +26,7 @@ namespace ResistanceOnline.Site.Models
             _roundNumber = roundNumber;
 
             LadyOfTheLakeUses = game.LadyOfTheLakeUses.Where(u=>u.UsedOnRoundNumber == roundNumber+1).Select(u => new LadyOfTheLakeUseModel(u, player)).ToList();
+            ExcaliburUses = game.ExcaliburUses.Where(u => u.UsedOnRoundNumber == roundNumber + 1).Select(u => new ExcaliburUseModel(u, player)).ToList();
 
             Teams = new List<TeamModel>();
             foreach (var quest in round.Teams)

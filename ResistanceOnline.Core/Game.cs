@@ -28,6 +28,7 @@ namespace ResistanceOnline.Core
             AvailableCharacters = new List<Character>();
 
             LadyOfTheLakeUses = new List<LadyOfTheLakeUse>();
+            ExcaliburUses = new List<ExcaliburUse>();
             LoyaltyDeck = new List<LoyaltyCard> { LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.SwitchAlegiance, LoyaltyCard.SwitchAlegiance };
 
             Random random = new Random();
@@ -50,6 +51,7 @@ namespace ResistanceOnline.Core
         public Player AssassinsGuessAtMerlin { get; set; }
 
         public List<LadyOfTheLakeUse> LadyOfTheLakeUses { get; set; }
+        public List<ExcaliburUse> ExcaliburUses { get; set; }
         public Player HolderOfLadyOfTheLake { get; set; }
         public bool LancelotAllegianceSwitched { get; set; }
         public List<LoyaltyCard> LoyaltyDeck { get; set; }
@@ -257,8 +259,10 @@ namespace ResistanceOnline.Core
                 throw new Exception("Game does not include excalibur");
             }
 
-            //todo record use and result
-            CurrentRound.UseExcalibur(player, proposedPlayer);
+            //todo record use and result, display result to player (similar to lady of the lake)
+            var originalMission = CurrentRound.UseExcalibur(player, proposedPlayer);
+            //todo check it was valid use first
+            ExcaliburUses.Add(new ExcaliburUse { UsedBy = player, UsedOn = proposedPlayer, OriginalMissionWasSuccess = originalMission, UsedOnRoundNumber = Rounds.Count + 1 });
         }
 
         public void VoteForTeam(Player player, bool approve)
@@ -380,6 +384,7 @@ namespace ResistanceOnline.Core
                             if (player != null && quest.Leader.Name == player.Name)
                             {
                                 return new List<Action.Type>() { Action.Type.AddToTeam, Action.Type.Message };
+                                //todo assign excalibur if rule turned on and team assigned (need another round state?)
                             }
                             return new List<Action.Type>() { Action.Type.Message };
                         case Round.State.Voting:

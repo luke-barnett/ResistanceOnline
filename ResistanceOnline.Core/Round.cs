@@ -57,9 +57,9 @@ namespace ResistanceOnline.Core
             CurrentTeam.AssignExcalibur(player, proposedPlayer);
         }
 
-        public void UseExcalibur(Player player, Player proposedPlayer)
+        public bool UseExcalibur(Player player, Player proposedPlayer)
         {
-            CurrentTeam.UseExcalibur(player, proposedPlayer);
+            return CurrentTeam.UseExcalibur(player, proposedPlayer);
         }
 
         public void VoteForTeam(Player player, bool approve)
@@ -93,7 +93,7 @@ namespace ResistanceOnline.Core
             if (CurrentTeam.TeamMembers.Count < TeamSize)
                 return State.ProposingPlayers;
 
-            //todo assign excalibur (need access to rules object)
+            //todo assign excalibur state? (need access to rules object)
 
             //voting on proposing
             if (CurrentTeam.Votes.Count < TotalPlayers)
@@ -103,7 +103,7 @@ namespace ResistanceOnline.Core
             if (CurrentTeam.Quests.Count < TeamSize)
                 return State.Questing;
 
-            //todo use excalibur
+            //todo use excalibur state?
 
             //finished
             var fails = CurrentTeam.Quests.Where(c => !c.Success).Count();

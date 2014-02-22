@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Action.cs" />
     <Compile Include="Character.cs" />
+    <Compile Include="ExcaliburUse.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Knowledge.cs" />
     <Compile Include="LadyOfTheLakeUse.cs" />

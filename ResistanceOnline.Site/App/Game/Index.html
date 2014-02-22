@@ -116,6 +116,20 @@
     </div>
     <div class="clear"></div>     
 
+    <div class="excalibur">
+        <ul class="cards" data-bind="foreach: ExcaliburUses">
+            <li>
+                <img src="/images/excaliburtoken.png" />
+                <div class="playername">{{UsedBy}}</div>
+            </li>
+            <li>
+                <img class="card" data-bind="attr: { src: '/images/' + Result() + '.png' }" />
+                <div class="playername">{{UsedOn}}</div>
+            </li>
+        </ul>
+    </div>
+    <div class="clear"></div>     
+
     <p data-bind="visible: LoyaltyCard!=null">
         {{LoyaltyCard}}
     </p>

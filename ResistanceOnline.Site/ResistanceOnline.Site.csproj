@@ -310,6 +310,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Infrastructure\ChallengeResult.cs" />
     <Compile Include="ListExtensions.cs" />
+    <Compile Include="Models\ExcaliburUseModel.cs" />
     <Compile Include="Models\LadyOfTheLakeUseModel.cs" />
     <Compile Include="Models\LoginConfirmationViewModel.cs" />
     <Compile Include="Models\MessageModel.cs" />

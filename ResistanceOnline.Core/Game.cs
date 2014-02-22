@@ -31,7 +31,7 @@ namespace ResistanceOnline.Core
             LoyaltyDeck = new List<LoyaltyCard> { LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.SwitchAlegiance, LoyaltyCard.SwitchAlegiance };
 
             Random random = new Random();
-            LoyaltyDeck = LoyaltyDeck.OrderBy(l => random.Next()).ToList();
+            LoyaltyDeck = LoyaltyDeck.Shuffle().ToList();
 
             //standard rules
 			Rules = new List<Rule>()
@@ -183,8 +183,7 @@ namespace ResistanceOnline.Core
 
         public Guid JoinGame(string playerName, Guid playerGuid)
         {
-            while (Players.Select(p => p.Name).Contains(playerName))
-                playerName = playerName + "2";
+            playerName = playerName.Uniquify(Players.Select(p => p.Name));
 
             Players.Add(new Player() { Name = playerName, Guid = playerGuid });
 
@@ -401,10 +400,6 @@ namespace ResistanceOnline.Core
 						actions.Add(Action.Type.AddBot);
 					}
 
-					if (AvailableCharacters.Count < MAX_GAME_SIZE)
-					{
-						actions.Add(Action.Type.AddCharacter);
-					}
 					actions.Add(Action.Type.AddRule);
                     return actions;
 

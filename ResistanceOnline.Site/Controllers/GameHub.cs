@@ -244,7 +244,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == PlayerGuid);
-            var proposedPlayer = game.Players.First(p => p.Name == proposedPlayerName));
+            var proposedPlayer = game.Players.First(p => p.Name == proposedPlayerName);
             game.AssignExcalibur(player, proposedPlayer);
         }
 
@@ -252,7 +252,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == PlayerGuid);
-            var proposedPlayer = game.Players.First(p => p.Name == proposedPlayerName));
+            var proposedPlayer = game.Players.First(p => p.Name == proposedPlayerName);
             game.UseExcalibur(player, proposedPlayer);
         }
 

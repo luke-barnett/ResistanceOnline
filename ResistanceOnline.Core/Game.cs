@@ -259,10 +259,11 @@ namespace ResistanceOnline.Core
                 throw new Exception("Game does not include excalibur");
             }
 
-            //todo record use and result, display result to player (similar to lady of the lake)
-            var originalMission = CurrentRound.UseExcalibur(player, proposedPlayer);
-            //todo check it was valid use first
-            ExcaliburUses.Add(new ExcaliburUse { UsedBy = player, UsedOn = proposedPlayer, OriginalMissionWasSuccess = originalMission, UsedOnRoundNumber = Rounds.Count + 1 });
+            if (proposedPlayer != null)
+            {
+                var originalMission = CurrentRound.UseExcalibur(player, proposedPlayer);
+                ExcaliburUses.Add(new ExcaliburUse { UsedBy = player, UsedOn = proposedPlayer, OriginalMissionWasSuccess = originalMission, UsedOnRoundNumber = Rounds.Count + 1 });
+            }
         }
 
         public void VoteForTeam(Player player, bool approve)
@@ -478,6 +479,9 @@ namespace ResistanceOnline.Core
                     break;
                 case Action.Type.AssignExcalibur:
                     AssignExcalibur(player, action.Player);
+                    break;
+                case Action.Type.UseExcalibur:
+                    UseExcalibur(player, action.Player);
                     break;
                 case Action.Type.SubmitQuestCard:
                     SubmitQuest(player, action.Success);

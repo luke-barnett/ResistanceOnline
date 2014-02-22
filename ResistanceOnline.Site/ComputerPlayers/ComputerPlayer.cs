@@ -118,6 +118,13 @@ namespace ResistanceOnline.Site.ComputerPlayers
                 return;
             }
 
+
+            if (availableActions.Contains(ResistanceOnline.Core.Action.Type.UseExcalibur))
+            {
+                _game.PerformAction(_player, new ResistanceOnline.Core.Action { ActionType = ResistanceOnline.Core.Action.Type.UseExcalibur, Player = UseExcalibur() });
+                return;
+            }
+
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.SubmitQuestCard))
             {
                 _game.PerformAction(_player, new ResistanceOnline.Core.Action { ActionType = ResistanceOnline.Core.Action.Type.SubmitQuestCard, Success = Quest() });
@@ -153,6 +160,14 @@ namespace ResistanceOnline.Site.ComputerPlayers
         protected virtual Player AssignExcalibur()
         {
             return _game.CurrentRound.CurrentTeam.TeamMembers.RandomOrDefault(p => p != _player);            
+        }
+
+
+        //todo implement for each bot
+        protected virtual Player UseExcalibur()
+        {
+            //don't use excalibur currently
+            return null;
         }
     }
 }

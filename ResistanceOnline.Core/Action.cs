@@ -37,7 +37,8 @@ namespace ResistanceOnline.Core
             [Description("Start the game")]
             StartGame,
             [Description("Assign Excalibur to team member")]
-            AssignExcalibur
+            AssignExcalibur,
+            UseExcalibur
         };
 
         public Type ActionType { get; set; }

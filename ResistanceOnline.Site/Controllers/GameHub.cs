@@ -240,6 +240,21 @@ namespace ResistanceOnline.Site.Controllers
             Update();
         }
 
+        public void AssignExcalibur(int gameId, string proposedPlayerName)
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == PlayerGuid);
+            var proposedPlayer = game.Players.First(p => p.Name == proposedPlayerName));
+            game.AssignExcalibur(player, proposedPlayer);
+        }
+
+        public void UseExcalibur(int gameId, string proposedPlayerName)
+        {
+            var game = GetGame(gameId);
+            var player = game.Players.First(p => p.Guid == PlayerGuid);
+            var proposedPlayer = game.Players.First(p => p.Name == proposedPlayerName));
+            game.UseExcalibur(player, proposedPlayer);
+        }
 
         public void AddComputerPlayer(int gameId, string bot, string name)
         {

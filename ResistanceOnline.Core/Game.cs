@@ -242,7 +242,23 @@ namespace ResistanceOnline.Core
 
         public void AssignExcalibur(Player player, Player proposedPlayer)
         {
+            if (!Rules.Contains(Rule.IncludeExcalibur))
+            {
+                throw new Exception("Game does not include excalibur");
+            }
+
             CurrentRound.AssignExcalibur(player, proposedPlayer);
+        }
+
+        public void UseExcalibur(Player player, Player proposedPlayer)
+        {
+            if (!Rules.Contains(Rule.IncludeExcalibur))
+            {
+                throw new Exception("Game does not include excalibur");
+            }
+
+            //todo record use and result
+            CurrentRound.UseExcalibur(player, proposedPlayer);
         }
 
         public void VoteForTeam(Player player, bool approve)

@@ -44,6 +44,18 @@ namespace ResistanceOnline.Core
             HasExcalibur = proposedPlayer;
         }
 
+        public void UseExcalibur(Player player, Player proposedPlayer)
+        {
+            if (player != HasExcalibur)
+                throw new Exception("Hax. Player does not have excalibur");
+
+            if (!TeamMembers.Contains(proposedPlayer))
+                throw new Exception("Player is not on team..");
+
+            var quest = Quests.SingleOrDefault(p => p.Player == proposedPlayer);
+            quest.Success = !quest.Success;
+        }
+
         public void VoteForTeam(Player player, bool approve)
         {
             if (Votes.Select(v=>v.Player).ToList().Contains(player))

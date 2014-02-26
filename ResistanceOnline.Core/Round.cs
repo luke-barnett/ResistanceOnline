@@ -52,6 +52,7 @@ namespace ResistanceOnline.Core
             Rules = rules ?? new List<Rule>();
             Teams = new List<Team>();
             NextTeam(leader);
+            RoundState = State.InProgress;
         }
 
         public List<Action.Type> AvailableActions(Player player)

@@ -138,7 +138,21 @@ namespace ResistanceOnline.Site.Models
                 AddToTeamPlayersSelectList = new SelectList(game.Players.Where(p => !game.CurrentRound.CurrentTeam.TeamMembers.Select(t => t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
             }
 
-			Actions = game.AvailableActions(player).OrderBy(x=>x != Core.Action.Type.Message).Select(i => i.ToString()).ToList();
+			Actions = game.AvailableActions(player).Select(i => i.ToString()).ToList();
+
+            if (game.GameState == Game.State.Setup)
+            {
+                if (game.Players.Count < 10)
+                {
+                    Actions.Add(Core.Action.Type.AddBot.ToString());
+                    if (player == null)
+                    {
+                        Actions.Add(Core.Action.Type.JoinGame.ToString());
+                    }
+                }
+                Actions.Add(Core.Action.Type.AddRule.ToString());
+                Actions.Add(Core.Action.Type.StartGame.ToString());
+            }            
 
 			PlayerInfo = new List<PlayerInfoModel>();
 			var waiting = new List<WaitingActionsModel>();

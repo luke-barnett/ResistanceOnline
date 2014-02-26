@@ -41,7 +41,6 @@ namespace ResistanceOnline.Site.Controllers
                 game.SetCharacter(1, Character.Assassin);
                 game.SetCharacter(2, Character.Percival);
                 game.SetCharacter(3, Character.Morgana);
-                game.SetCharacter(4, Character.Morgana);
 
                 _games.Add(game);
                 game.GameId = _games.IndexOf(game);

@@ -70,13 +70,13 @@ namespace ResistanceOnline.Core
                     }
                     break;
                 case State.VotingForTeam:
-                    if (!Votes.Select(v => v.Player).Contains(player))
+                    if (Votes.Where(v=>!v.Approve.HasValue).Select(v => v.Player).Contains(player))
                     {
                         actions.Add(Action.Type.VoteForTeam);
                     }
                     break;
                 case State.Questing:
-                    if (TeamMembers.Contains(player))
+                    if (Quests.Where(q => !q.Success.HasValue).Select(q => q.Player).Contains(player))
                     {
                         actions.Add(Action.Type.SubmitQuestCard);
                     }
@@ -159,10 +159,13 @@ namespace ResistanceOnline.Core
 
         public void VoteForTeam(Player player, bool approve)
         {
-            if (Votes.Select(v=>v.Player).ToList().Contains(player))
-                throw new Exception("Player has already voted..");
+            var vote = Votes.FirstOrDefault(v => v.Player == player);
+            if (vote == null)
+                throw new Exception("Player should not be voting");
+            if (vote.Approve.HasValue)
+                throw new Exception("Player has already voted");
 
-            Votes.Add(new Vote { Player = player, Approve = approve });
+            vote.Approve = approve;
 
             //on the last vote, if it fails, create the next quest
             if (Votes.Any(v => !v.Approve.HasValue))

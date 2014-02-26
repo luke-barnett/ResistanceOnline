@@ -11,14 +11,12 @@ namespace ResistanceOnline.Site.Models
         public string UsedBy { get; set; }
         public string UsedOn { get; set; }
         public string Result { get; set; }
-        public int UsedOnRoundNumber { get; set; }
 
         public ExcaliburUseModel(ExcaliburUse use, Player player)
         {
-            UsedBy = use.UsedBy.Name;
-            UsedOn = use.UsedOn != null ? use.UsedOn.Name : "No One";
-            UsedOnRoundNumber = use.UsedOnRoundNumber;
-            if (player == use.UsedBy)
+            UsedBy = use.Holder.Name;
+            UsedOn = use.UsedOn != null ? use.UsedOn.Player.Name : "No One";
+            if (player == use.Holder)
             {
                 Result = use.OriginalMissionWasSuccess.HasValue ? (use.OriginalMissionWasSuccess.Value ? "evil" : "good") : "";
             }

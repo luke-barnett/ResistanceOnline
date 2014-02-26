@@ -41,7 +41,7 @@ namespace ResistanceOnline.Site.Controllers
                 game.SetCharacter(1, Character.Assassin);
                 game.SetCharacter(2, Character.Percival);
                 game.SetCharacter(3, Character.Morgana);
-                game.AddCharacter(Character.Merlin);
+                game.SetCharacter(4, Character.Morgana);
 
                 _games.Add(game);
                 game.GameId = _games.IndexOf(game);
@@ -105,8 +105,8 @@ namespace ResistanceOnline.Site.Controllers
 
         private void OnAfterAction(Game game)
         {
-            var state = game.DetermineState();
-            if (state == Core.Game.State.Playing || state == Core.Game.State.GuessingMerlin)
+            var state = game.GameState;
+            if (state == Core.Game.State.Playing)
             {
                 var computersPlayersInGame = _computerPlayers.Where(c => game.Players.Select(p => p.Guid).Contains(c.PlayerGuid));
                 while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.PlayerGuid)).Any(a => a != Core.Action.Type.Message)))
@@ -228,7 +228,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             var game = GetGame(gameId);
             var player = game.Players.First(p => p.Guid == PlayerGuid);
-            game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.Message, Message = message });
+            game.Message(player, message);
             OnAfterAction(game);
 
             Update();

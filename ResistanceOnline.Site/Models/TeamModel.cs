@@ -9,7 +9,7 @@ namespace ResistanceOnline.Site.Models
 	public class TeamModel
 	{
 		public string Leader { get; set; }
-        public string HasExcalibur { get; set; }
+        public ExcaliburUseModel Excalibur { get; set; }
 		public List<string> TeamMembers { get; set; }
 		public List<VoteModel> Vote { get; set; }
 		public List<QuestModel> QuestCards { get; set; }
@@ -19,10 +19,13 @@ namespace ResistanceOnline.Site.Models
 		{
 			Leader = team.Leader.Name;
             TeamSummary = string.Format("Team {0}, as proposed by {1}", teamNumber.ToWords(), team.Leader.Name);
-            HasExcalibur = team.HasExcalibur != null ? team.HasExcalibur.Name : string.Empty;
+            if (team.Excalibur != null)
+            {
+                Excalibur = new ExcaliburUseModel(team.Excalibur, team.Excalibur.Holder);
+            }
 			TeamMembers = team.TeamMembers.Select(p => p.Name).ToList();
 			Vote = team.Votes.OrderBy(v=>v.Player.Name).Select(v => new VoteModel(v, team.Votes.Count != totalPlayers)).ToList();
-			QuestCards = team.Quests.OrderBy(q=> q.Success).Select(q => new QuestModel(q.Success, team.Quests.Count != TeamMembers.Count)).ToList();
+			QuestCards = team.Quests.Where(q=>q.Success.HasValue).OrderBy(q=> q.Success).Select(q => new QuestModel(q.Success.Value, team.Quests.Count != TeamMembers.Count)).ToList();
             Messages = team.Messages.Select(m => new MessageModel(m.Player.Name, m.Message)).ToList();
 		}
 	}

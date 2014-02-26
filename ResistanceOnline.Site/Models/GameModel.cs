@@ -22,7 +22,7 @@ namespace ResistanceOnline.Site.Models
             get
             {
 
-                return (GameState == Game.State.GoodPrevails.ToString() || GameState == Game.State.MerlinDies.ToString() || GameState == Game.State.EvilTriumphs.ToString());
+                return GameState == Game.State.Finished.ToString();
             }
         }
 		
@@ -90,7 +90,7 @@ namespace ResistanceOnline.Site.Models
             RoundTables = game.RoundTables.Select(t=>String.Format("Round {0} has {1} and requires {2}", (game.RoundTables.IndexOf(t) + 1).ToWords(), "player".ToQuantity(t.TeamSize, ShowQuantityAs.Words), "fail".ToQuantity(t.RequiredFails, ShowQuantityAs.Words))).ToList();
 
             LoyaltyCardsDeltInAdvance = new List<string>();
-            if (game.DetermineState() != Game.State.GameSetup && game.Rules.Contains(Rule.LoyaltyCardsDeltInAdvance) && game.ContainsLancelot())
+            if (game.GameState != Game.State.Setup && game.Rules.Contains(Rule.LoyaltyCardsDeltInAdvance) && game.ContainsLancelot())
             {
                 for (int i = 0; i < 5; i++)
                 {
@@ -103,14 +103,13 @@ namespace ResistanceOnline.Site.Models
 
             PlayerName = player == null ? "Spectator" : player.Name;
 
-            AssassinsGuessAtMerlin = game.AssassinsGuessAtMerlin;
-			GameState = game.DetermineState().ToString();
+            AssassinsGuessAtMerlin = game.MerlinGuesses.Select(m=>m.Guess).FirstOrDefault();
+			GameState = game.GameState.ToString();
 			CharactersInGame = game.AvailableCharacters.Select(i => i.ToString()).ToList();
 		
             AllCharactersSelectList =
 				Enum.GetValues(typeof(Character))
 					.Cast<Character>()
-					.Where(c => c != Character.UnAllocated)
 					.Select(c => new SelectListItem { Text = c.Humanize(LetterCasing.Sentence), Value = c.ToString() })
 					.ToList();
 
@@ -124,7 +123,8 @@ namespace ResistanceOnline.Site.Models
             GuessMerlinPlayersSelectList = new SelectList(game.Players.Where(p=>p!=player).Select(p => p.Name));
 
             //can use on anyone who hasn't had it
-            LadyOfTheLakePlayerSelectList = new SelectList(game.Players.Where(p => p != player).Except(game.LadyOfTheLakeUses.Select(u => u.UsedBy)).Select(p => p.Name));
+            var ladyOfTheLakeHistory = game.Rounds.Where(r=>r.LadyOfTheLake!=null).Select(r => r.LadyOfTheLake.Holder);
+            LadyOfTheLakePlayerSelectList = new SelectList(game.Players.Where(p => p != player).Except(ladyOfTheLakeHistory).Select(p => p.Name));
 
             if (game.CurrentRound != null && game.CurrentRound.CurrentTeam != null)
             {
@@ -151,7 +151,7 @@ namespace ResistanceOnline.Site.Models
 				};
 
 				//always know own character, or all characters if game is over
-                if ((p == player || GameState == Game.State.EvilTriumphs.ToString() || GameState == Game.State.GoodPrevails.ToString() || GameState == Game.State.MerlinDies.ToString()) && p.Character != Character.UnAllocated)
+                if (p == player || GameState == Game.State.Finished.ToString())
                 {
                     playerInfo.CharacterCard = p.Character;
                     playerInfo.Knowledge = p.Character.ToString();
@@ -163,7 +163,7 @@ namespace ResistanceOnline.Site.Models
 			}
 
             //build waiting message
-            if (waiting.Count > 0 && GameState != Game.State.GameSetup.ToString())
+            if (waiting.Count > 0 && GameState != Game.State.Setup.ToString())
             {
                 List<string> waitings = new List<string>();
                 foreach (var action in waiting.Where(w=> w.Action != Core.Action.Type.Message).Select(w => w.Action).Distinct())                

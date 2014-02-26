@@ -42,7 +42,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
                 var onTeam = round.Teams.Last().TeamMembers.Contains(player);
                 if (onTeam)
                 {
-                    var fails = round.Teams.Last().Quests.Count(q => !q.Success);
+                    var fails = round.Teams.Last().Quests.Count(q => !q.Success.Value);
                     var size = round.Teams.Last().TeamMembers.Count();
 
                     if (round.Teams.Last().TeamMembers.Contains(_player))
@@ -58,12 +58,11 @@ namespace ResistanceOnline.Site.ComputerPlayers
                     }
                 }
 
-                if(round.Teams.Count() < 5) { //ignore last round as everyone votes accept
-                    var state = round.DetermineState();
-                    if (state == Round.State.Succeeded || state == Round.State.Failed)
+                if(round.Teams.Count() < 5) { //ignore last round as everyone votes accept                    
+                    if (round.RoundState == Round.State.Finished)
                     {
                         var vote = round.Teams.Last().Votes.FirstOrDefault(v => v.Player == player);
-                        if (vote.Approve == (round.DetermineState() == Round.State.Succeeded))
+                        if (vote.Approve == round.IsSuccess.Value)
                             correctVotes++;
                         votesCounted++;
                     }
@@ -85,7 +84,8 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
         protected override Core.Player LadyOfTheLakeTarget()
         {
-            var eligiblePlayers = _game.Players.Where(p => p.Guid != PlayerGuid).Except(_game.LadyOfTheLakeUses.Select(u => u.UsedBy));
+            var ladyOfTheLakeHistory = _game.Rounds.Where(r => r.LadyOfTheLake != null).Select(r => r.LadyOfTheLake.Holder);
+            var eligiblePlayers = _game.Players.Where(p => p.Guid != PlayerGuid).Except(ladyOfTheLakeHistory);
 
             //use it on the person you know the least about
             return eligiblePlayers.Select(p => new { Player = p, Confidence = Math.Abs(ProbabilityOfEvil(p) - 0.5) }).OrderBy(p => p.Confidence).Select(p => p.Player).First();

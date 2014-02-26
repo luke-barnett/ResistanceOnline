@@ -11,16 +11,14 @@ namespace ResistanceOnline.Site.Models
         public string UsedBy { get; set; }
         public string UsedOn { get; set; }
         public string Result { get; set; }
-        public int UsedOnRoundNumber { get; set; }
 
         public LadyOfTheLakeUseModel(LadyOfTheLakeUse use, Player player)
         {
-            UsedBy = use.UsedBy.Name;
-            UsedOn = use.UsedOn.Name;
-            UsedOnRoundNumber = use.UsedOnRoundNumber;
-            if (player == use.UsedBy)
+            UsedBy = use.Holder.Name;
+            UsedOn = use.Target.Name;
+            if (player == use.Holder)
             {
-                Result = use.ResultWasEvil ? "evil" : "good";
+                Result = use.IsEvil ? "evil" : "good";
             }
             else
             {

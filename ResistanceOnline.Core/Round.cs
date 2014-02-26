@@ -13,43 +13,64 @@ namespace ResistanceOnline.Core
     {
         public enum State
         {
-            Unstarted,            
-            ProposingPlayers,
-            AssigningExcalibur,
-            Voting,
-            Questing,
-            UsingExcalibur,
-            Succeeded,
-            Failed,
-            FailedAllVotes
+            Unstarted,
+            InProgress,
+            FailedAllVotes,
+            Finished,
+            LadyOfTheLake
         }
 
-        List<Player> _players;
-        int _currentPlayer;
-        List<Rule> _rules;
+        public int TeamSize { get; set; }
+        public int RequiredFails { get; set; }
+        public List<Team> Teams { get; set; }
+        public Team CurrentTeam { get { return Teams.Last(); } }
+        public LadyOfTheLakeUse LadyOfTheLake { get; set; }
+        public bool LancelotAllegianceSwitched { get; set; }
+        public State RoundState { get; set; }
+        public List<Player> Players { get; set; }
+        public List<Rule> Rules { get; set; }
 
-        public Round(List<Player> players, int currentPlayer, int teamSize, int requiredFails, List<Rule> rules = null) //todo review whether rules should be passed in
+        public event EventHandler Finished;
+        private void OnFinished(bool isSuccess)
         {
-            TotalPlayers = players.Count;
+            if (Finished != null)
+                Finished(this, EventArgs.Empty);
+        }
+
+        public Round(List<Player> players, Player leader, Player ladyOfTheLakeHolder, int teamSize, int requiredFails, List<Rule> rules, bool lancelotAllegianceSwitched)
+        {
+            RoundState = State.Unstarted;
             TeamSize = teamSize;
             RequiredFails = requiredFails;
 
-            Teams = new List<Team>();
-            Teams.Add(new Team(players[currentPlayer]));
+            if (ladyOfTheLakeHolder != null)
+            {
+                LadyOfTheLake = new LadyOfTheLakeUse { Holder = ladyOfTheLakeHolder };
+            }
 
-            _players = players;
-            _currentPlayer = currentPlayer;
-            _rules = rules ?? new List<Rule>();
+            Players = players;            
+            Rules = rules ?? new List<Rule>();
+            Teams = new List<Team>();
+            NextTeam(leader);
         }
 
-        public int TotalPlayers { get; set; }
-        public int TeamSize { get; set; }
-        public int RequiredFails { get; set; }
-        public int NextPlayer { get { return (_currentPlayer + 1) % TotalPlayers; } }
+        public List<Action.Type> AvailableActions(Player player)
+        {
+            //lady of the lake
+            switch (RoundState)
+            {
+                case State.InProgress:
+                    return CurrentTeam.AvailableActions(player);
+                case State.LadyOfTheLake:
+                    if (Rules.Contains(Rule.IncludeLadyOfTheLake) && LadyOfTheLake != null && LadyOfTheLake.Holder == player && LadyOfTheLake.Target == null)
+                    {
+                        return new List<Action.Type>() { Action.Type.UseTheLadyOfTheLake };
+                    }
+                    break;
+            }
 
-        public Team CurrentTeam { get { return Teams.Last(); } }
-
-        public List<Team> Teams { get; set; }
+            return new List<Action.Type>();            
+        }
 
         public void AddToTeam(Player player, Player proposedPlayer)
         {
@@ -61,25 +82,14 @@ namespace ResistanceOnline.Core
             CurrentTeam.AssignExcalibur(player, proposedPlayer);
         }
 
-        public bool? UseExcalibur(Player player, Player proposedPlayer)
+        public void UseExcalibur(Player player, Player proposedPlayer)
         {
-            return CurrentTeam.UseExcalibur(player, proposedPlayer);
+            CurrentTeam.UseExcalibur(player, proposedPlayer);            
         }
 
         public void VoteForTeam(Player player, bool approve)
         {
             CurrentTeam.VoteForTeam(player, approve);
-
-            //on the last vote, if it fails, create the next quest
-            if (CurrentTeam.Votes.Count == TotalPlayers)
-            {
-                var rejects = CurrentTeam.Votes.Where(v => !v.Approve).Count();
-                if (rejects >= Math.Ceiling(TotalPlayers / 2.0))
-                {
-                    _currentPlayer = NextPlayer;
-                    Teams.Add(new Team(_players[_currentPlayer]));
-                }
-            }
         }
 
         public void SubmitQuest(Player player, bool success)
@@ -87,37 +97,82 @@ namespace ResistanceOnline.Core
             CurrentTeam.SubmitQuest(player, success);
         }
 
-        public State DetermineState()
+        private void NextTeam(Player player)
         {
-            //no more than 5 quest votes per round
-            if (Teams.Count > 5)
-                return State.FailedAllVotes;
-            
-            //proposing
-            if (CurrentTeam.TeamMembers.Count < TeamSize)
-                return State.ProposingPlayers;
-
-            if (_rules.Contains(Rule.IncludeExcalibur) && CurrentTeam.HasExcalibur == null)
-                return State.AssigningExcalibur;
-
-            //voting on proposing
-            if (CurrentTeam.Votes.Count < TotalPlayers)
-                return State.Voting;
-
-            //questing
-            if (CurrentTeam.Quests.Count < TeamSize)
-                return State.Questing;
-
-            if (CurrentTeam.HasExcalibur != null && !CurrentTeam.ExcaliburUsed)
-                return State.UsingExcalibur;
-
-            //finished
-            var fails = CurrentTeam.Quests.Where(c => !c.Success).Count();
-            if (fails >= RequiredFails)
-                return State.Failed;
-
-            return State.Succeeded;           
+            var team = new Team(player, Players, TeamSize, RequiredFails, Rules);
+            team.Finished += Team_Finished;
+            Teams.Add(team);
         }
 
+        private void Team_Finished(object sender, EventArgs e)
+        {
+            if (CurrentTeam.TeamState == Team.State.VoteFailed)
+            {
+                if (Teams.Count == 5)
+                {
+                    RoundState = State.FailedAllVotes;
+                    OnFinished(false);
+                }
+                else
+                {
+                    NextTeam(Players.Next(CurrentTeam.Leader));
+                }
+            }
+
+            if (CurrentTeam.TeamState == Team.State.Finished)
+            {
+                RoundState = State.Finished;
+                OnFinished(IsSuccess.Value);
+            }
+        }
+
+        public bool? IsSuccess
+        {
+            get
+            {
+                return CurrentTeam.IsSuccess;
+            }
+        }
+
+        internal void UseLadyOfTheLake(Player player, Player target)
+        {
+            if (RoundState != State.LadyOfTheLake)
+                throw new Exception("wrong state for this action");
+
+            if (LadyOfTheLake!=null && LadyOfTheLake.Holder != player)
+                throw new Exception("Hax. Player does not have lady of the lake.");
+
+            LadyOfTheLake.Target = target;
+            LadyOfTheLake.IsEvil = IsCharacterEvil(target.Character, LancelotAllegianceSwitched);
+
+            RoundState = State.Finished;
+            OnFinished(IsSuccess.Value);
+        }
+
+        internal bool IsCharacterEvil(Character character, bool lancelotAllegianceSwitched)
+        {
+            switch (character)
+            {
+                case Core.Character.Assassin:
+                case Core.Character.MinionOfMordred:
+                case Core.Character.Mordred:
+                case Core.Character.Morgana:
+                case Core.Character.Oberon:
+                    return true;
+                case Core.Character.Lancelot:
+                    if (lancelotAllegianceSwitched)
+                    {
+                        return true;
+                    }
+                    break;
+                case Core.Character.EvilLancelot:
+                    if (!lancelotAllegianceSwitched)
+                    {
+                        return true;
+                    }
+                    break;
+            }
+            return false;
+        }
     }
 }

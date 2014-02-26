@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="Action.cs" />
     <Compile Include="Character.cs" />
+    <Compile Include="MerlinGuess.cs" />
     <Compile Include="ExcaliburUse.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Game.cs" />

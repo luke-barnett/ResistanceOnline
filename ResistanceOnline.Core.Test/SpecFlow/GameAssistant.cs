@@ -138,18 +138,13 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 
 			if (successfullMerlinPick)
 			{
-				game.PerformAction(assasin, new Action { ActionType = Action.Type.GuessMerlin, Player = game.Players.First(player => player.Character == Character.Merlin) });
+				game.GuessMerlin(assasin, game.Players.First(player => player.Character == Character.Merlin));
 			}
 			else
 			{
-				game.PerformAction(assasin,
-					new Action
-					{
-						ActionType = Action.Type.GuessMerlin,
-						Player = game.Players
-							.Where(player => player.Character == Character.LoyalServantOfArthur || player.Character == Character.Percival)
-							.First(player => player.Character != Character.Merlin)
-					});
+                game.GuessMerlin(assasin, game.Players
+                    .Where(player => player.Character == Character.LoyalServantOfArthur || player.Character == Character.Percival)
+                    .First(player => player.Character != Character.Merlin));
 			}
 		}
 

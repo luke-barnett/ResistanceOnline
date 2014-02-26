@@ -13,26 +13,34 @@ namespace ResistanceOnline.Core
 
         public enum State
         {
-            GameSetup,
+            Setup,
             Playing,
-            EvilTriumphs,
-            GoodPrevails,
             GuessingMerlin,
-            MerlinDies
+            Finished,
         }
+
+        public State GameState { get; set; }
+        public int GameId { get; set; }
+        public List<Character> AvailableCharacters { get; set; }
+        public List<PlayerMessage> Messages { get; set; }
+        public List<Player> Players { get; set; }
+        public List<Round> Rounds { get; set; }
+        public int QuestIndicator { get; set; }
+        public List<MerlinGuess> MerlinGuesses { get; set; }
+        public Player HolderOfLadyOfTheLake { get; set; }
+        public bool LancelotAllegianceSwitched { get; set; }
+        public List<LoyaltyCard> LoyaltyDeck { get; set; }
+        public List<Rule> Rules { get; set; }
+        public int GameSize { get { return Players.Count; } }
 
         public Game()
         {
+            GameState = State.Setup;
             Players = new List<Player>();
             Rounds = new List<Round>();
             AvailableCharacters = new List<Character>();
-
-            LadyOfTheLakeUses = new List<LadyOfTheLakeUse>();
-            ExcaliburUses = new List<ExcaliburUse>();
-            LoyaltyDeck = new List<LoyaltyCard> { LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.SwitchAlegiance, LoyaltyCard.SwitchAlegiance };
-
-            Random random = new Random();
-            LoyaltyDeck = LoyaltyDeck.Shuffle().ToList();
+            LoyaltyDeck = new List<LoyaltyCard> { LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.SwitchAlegiance, LoyaltyCard.SwitchAlegiance }.Shuffle().ToList();
+            MerlinGuesses = new List<MerlinGuess>();
 
             //standard rules
 			Rules = new List<Rule>()
@@ -41,24 +49,7 @@ namespace ResistanceOnline.Core
 			};
         }
 
-        public int GameId { get; set; }
-        public List<Character> AvailableCharacters { get; set; }
-        public List<PlayerMessage> Messages { get; set; }
 
-        public List<Player> Players { get; set; }
-        public List<Round> Rounds { get; set; }
-        public int QuestIndicator { get; set; }
-        public Player AssassinsGuessAtMerlin { get; set; }
-
-        public List<LadyOfTheLakeUse> LadyOfTheLakeUses { get; set; }
-        public List<ExcaliburUse> ExcaliburUses { get; set; }
-        public Player HolderOfLadyOfTheLake { get; set; }
-        public bool LancelotAllegianceSwitched { get; set; }
-        public List<LoyaltyCard> LoyaltyDeck { get; set; }
-
-		public List<Rule> Rules { get; set; }  
-
-        public int GameSize { get { return Players.Count; } }
         public List<RoundTable> RoundTables
         {
             get
@@ -115,72 +106,50 @@ namespace ResistanceOnline.Core
 
         public void UseLadyOfTheLake(Player player, Player target)
         {
-            if (HolderOfLadyOfTheLake != player)
-                throw new Exception("Hax. Player does not have lady of the lake.");
-
-			LadyOfTheLakeUses.Add(new LadyOfTheLakeUse { UsedBy = player, UsedOn = target, ResultWasEvil = IsCharacterEvil(target.Character), UsedOnRoundNumber = Rounds.Count + 1 });
-
-            OnLadyOfTheLakeUsed();
+            HolderOfLadyOfTheLake = target;
+            CurrentRound.UseLadyOfTheLake(player, target);
         }
 
         public void GuessMerlin(Player player, Player guess)
         {
-            if (player.Character != Character.Assassin)
-                throw new Exception("Hax. Player is not assassin.");
+            if (GameState != State.GuessingMerlin)
+            {
+                throw new Exception("Hax. You shouldn't be guessing merlin at this stage");
+            }
 
-            if (AssassinsGuessAtMerlin != null)
+            var merlinGuess = MerlinGuesses.FirstOrDefault(g => g.Assassin == player);
+
+            if (merlinGuess == null)
+            {
+                throw new Exception("Hax. Player is not assassin.");
+            }
+
+            if (merlinGuess.Guess != null)
                 throw new Exception("Hax. Assassin has already guessed.");
 
-            AssassinsGuessAtMerlin = guess;
-
-            OnMerlinGuessedAt();
-        }
-
-        private void OnMerlinGuessedAt()
-        {
-        }
-
-        private void OnAfterAction()
-        {
-
-        }
-
-        public void AddCharacter(Character character)
-        {
-            if (DetermineState() != State.GameSetup)
-                throw new Exception("Can only add characters during setup");
-
-            AvailableCharacters.Add(character);
-            OnCharacterAddedOrPlayerJoined();
+            merlinGuess.Guess = guess;
         }
 
         public void SetCharacter(int index, Character character)
         {
-            if (DetermineState() != State.GameSetup)
+            if (GameState != State.Setup)
                 throw new Exception("Can only change characters during setup");
 
             AvailableCharacters[index] = character;         
         }
 
-
-        private void OnCharacterAddedOrPlayerJoined()
-        {
-            if (AvailableCharacters.Count < Players.Count)
-                AddCharacter(Character.UnAllocated);
-        }
-
         public void StartGame()
         {
+            if (GameState != State.Setup)
+                throw new Exception("Can only start game during setup");
+
             //check that game hasn't already started
             if (Rounds.Count > 0)
             {
                 return;
             }
-            //check if game ready to start
-            if (AvailableCharacters.Count == GameSize)
-            {
-                AllocateCharactersToPlayers();
-            }
+
+            AllocateCharactersToPlayers();            
         }
 
         public Guid JoinGame(string playerName, Guid playerGuid)
@@ -189,52 +158,42 @@ namespace ResistanceOnline.Core
 
             Players.Add(new Player() { Name = playerName, Guid = playerGuid });
 
-            OnCharacterAddedOrPlayerJoined();
-
-            OnAfterAction();
+            var evilCount = AvailableCharacters.Count(c=> IsCharacterEvil(c));
+            if (evilCount < (AvailableCharacters.Count / 3.0))
+            {
+                AvailableCharacters.Add(Character.MinionOfMordred);
+            }
+            else
+            {
+                AvailableCharacters.Add(Character.LoyalServantOfArthur);
+            }            
 
             return playerGuid;
         }
 
         private void AllocateCharactersToPlayers()
         {
-            //on last player, allocate characters
-                if (AvailableCharacters.Count != GameSize)
-                    throw new Exception("Not Enough Characters for Players");
+            if (AvailableCharacters.Count != GameSize)
+                throw new Exception("Not Enough Characters for Players");
 
-                var characterCards = AvailableCharacters.ToList();
-                Random random = new Random();
-                foreach (var player in Players)
-                {
-                    var index = random.Next(characterCards.Count);
-                    player.Character = characterCards[index];
-                    characterCards.RemoveAt(index);
-                }
-
-                OnGameStart();
-            }
-
-        private void OnGameStart()
-        {
-            //create first round
-            var leader = new Random().Next(GameSize);
-            if (Rules.Contains(Rule.IncludeLadyOfTheLake))
+            var characterCards = AvailableCharacters.ToList();
+            Random random = new Random();
+            foreach (var player in Players)
             {
-                HolderOfLadyOfTheLake = Players[(leader + GameSize - 1) % GameSize];
+                var index = random.Next(characterCards.Count);
+                player.Character = characterCards[index];
+                characterCards.RemoveAt(index);
             }
-            CreateRound(leader);
+
+            GameState = State.Playing;
+            var HolderOfLadyOfTheLake = Players.Random();
+            var leader = Players.Next(HolderOfLadyOfTheLake);
+
+            //create first round
+            NextRound(leader);
         }
 
-        private void CreateRound(int leader)
-        {
-            if (Rounds.Count > RoundTables.Count)
-                throw new Exception("round overrun");
-
-            var tableaus = RoundTables[Rounds.Count];
-            Rounds.Add(new Round(Players, leader, tableaus.TeamSize, tableaus.RequiredFails, Rules));
-        }
-
-        public Round CurrentRound { get { return Rounds.LastOrDefault(); } }
+        public Round CurrentRound { get { return Rounds.LastOrDefault(r=>r.RoundState != Round.State.Finished); } }
 
         public void AddToTeam(Player player, Player proposedPlayer)
         {
@@ -258,9 +217,7 @@ namespace ResistanceOnline.Core
                 throw new Exception("Game does not include excalibur");
             }
 
-            var originalMission = CurrentRound.UseExcalibur(player, proposedPlayer);
-            ExcaliburUses.Add(new ExcaliburUse { UsedBy = player, UsedOn = proposedPlayer, OriginalMissionWasSuccess = originalMission, UsedOnRoundNumber = Rounds.Count + 1 });
-            OnEndOfRound(Rounds.Count);
+            CurrentRound.UseExcalibur(player, proposedPlayer);
         }
 
         public void VoteForTeam(Player player, bool approve)
@@ -282,228 +239,62 @@ namespace ResistanceOnline.Core
                 }
             }
             CurrentRound.SubmitQuest(player, success);
-
-            if (CurrentRound.CurrentTeam.Quests.Count == CurrentRound.TeamSize)
-            {
-                OnLastQuestCard();
-            }
         }
 
-        private void OnLastQuestCard()
+        private void NextRound(Player leader)
         {
-            //on last quest submit, create the next round
-            var roundState = CurrentRound.DetermineState();
-            if (roundState == Round.State.Succeeded || roundState == Round.State.Failed)
-            {
-                OnEndOfRound(Rounds.Count);
-            }
+            var roundTable = RoundTables[Rounds.Count];
+            var round = new Round(Players, leader, HolderOfLadyOfTheLake, roundTable.TeamSize, roundTable.RequiredFails, Rules, LancelotAllegianceSwitched);
+            round.Finished += Round_Finished;
+            Rounds.Add(round);
         }
 
-        private void OnEndOfRound(int roundNumber)
+        void Round_Finished(object sender, EventArgs e)
         {
             //3 failed missions, don't bother going any further
-            if (Rounds.Where(r => r.DetermineState() == Round.State.Failed).Count() >= 3)
-                return;
-
-            //3 successful missions, don't bother going any further
-            if (Rounds.Where(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
-                return;
-
-            if (roundNumber >= 2 && Rules.Contains(Rule.IncludeLadyOfTheLake))
+            if (Rounds.Count(r => !r.IsSuccess.Value) >= 3)
             {
-                //wait for lady of the lake to be used
+                GameState = State.Finished;
                 return;
             }
 
-            OnStartNextRound(roundNumber + 1);
-        }
+            //3 successful missions, don't bother going any further
+            if (Rounds.Count(r => r.IsSuccess.Value) >= 3)
+            {
+                if (MerlinGuesses.Count > 0)
+                {
+                    GameState = State.GuessingMerlin;
+                }
+                else
+                {
+                    GameState = State.Finished;
+                }
+                return;
+            }
 
-        private void OnLadyOfTheLakeUsed()
-        {
-            HolderOfLadyOfTheLake = LadyOfTheLakeUses.Last().UsedOn;
-            OnStartNextRound(Rounds.Count + 1);
-        }
-
-        private void OnStartNextRound(int roundNumber)
-        {
-            //create the next round
-            CreateRound(CurrentRound.NextPlayer);
-
-            var loyaltyCard = GetLoyaltyCard(roundNumber);
+            //loyalty cards            
+            var loyaltyCard = GetLoyaltyCard(Rounds.Count);
             if (loyaltyCard == LoyaltyCard.SwitchAlegiance)
             {
                 LancelotAllegianceSwitched = !LancelotAllegianceSwitched;
             }
         }
 
-
-        public State DetermineState()
-        {
-            if (AvailableCharacters.Count != Players.Count || Players.Count == 0 || Players.Any(i => i.Character == Character.UnAllocated) || AvailableCharacters.Any(i => i == Character.UnAllocated))
-                return State.GameSetup;
-
-            if (Rounds.Where(r => r.DetermineState() == Round.State.Failed).Count() >= 3)
-                return State.EvilTriumphs;
-
-            if (Rounds.Where(r => r.DetermineState() == Round.State.Succeeded).Count() >= 3)
-            {
-				if (Rules.Contains(Rule.IncludeLadyOfTheLake) && LadyOfTheLakeUses.Count < Rounds.Count - 2)
-                    return State.Playing;
-
-                if (AssassinsGuessAtMerlin == null && Players.Any(p => p.Character == Character.Merlin) && Players.Any(p => p.Character == Character.Assassin))
-                    return State.GuessingMerlin;
-
-                if (AssassinsGuessAtMerlin != null && AssassinsGuessAtMerlin.Character == Character.Merlin)
-                    return State.MerlinDies;
-
-                return State.GoodPrevails;
-            }
-
-            return State.Playing;
-        }
-
-        /// <summary>
-        /// this is the available actions a player has given who they are and the state of the game
-        /// this should show a list of buttons on the webpage or something
-        /// </summary>
-        /// <param name="player"></param>
-        /// <returns></returns>
         public List<Action.Type> AvailableActions(Player player)
         {
-            var gameState = DetermineState();
-            switch (gameState)
+            switch (GameState)
             {
                 case Game.State.Playing:
-                    var roundState = CurrentRound.DetermineState();
-                    var quest = CurrentRound.CurrentTeam;
-                    switch (roundState)
-                    {
-                        case Round.State.ProposingPlayers:
-                            if (player != null && quest.Leader.Name == player.Name)
-                            {
-                                return new List<Action.Type>() { Action.Type.AddToTeam, Action.Type.Message };
-                            }
-                            return new List<Action.Type>() { Action.Type.Message };
-                        case Round.State.AssigningExcalibur:
-                             if (player != null && quest.Leader.Name == player.Name)
-                            {
-                                return new List<Action.Type>() { Action.Type.AssignExcalibur, Action.Type.Message };
-                            }
-                            return new List<Action.Type>() { Action.Type.Message };
-                        case Round.State.Voting:
-                            if (player != null && !quest.Votes.Select(v => v.Player.Name).ToList().Contains(player.Name))
-                            {
-                                return new List<Action.Type>() { Action.Type.VoteForTeam, Action.Type.Message };
-                            }
-                            return new List<Action.Type>() { Action.Type.Message };
-                        case Round.State.Questing:
-                            if (player != null && quest.TeamMembers.Select(v => v.Name).ToList().Contains(player.Name) &&
-                                !quest.Quests.Select(q => q.Player.Name).ToList().Contains(player.Name))
-                            {
-                                return new List<Action.Type>() { Action.Type.Message, Action.Type.SubmitQuestCard };
-                            }
-                            return new List<Action.Type>() { Action.Type.Message };
-                        case Round.State.UsingExcalibur:
-                            if (player != null && quest.HasExcalibur == player)
-                            {
-                                return new List<Action.Type>() { Action.Type.UseExcalibur, Action.Type.Message };
-                            }
-                            return new List<Action.Type>() { Action.Type.Message };
-                    }
-
-                    //round over but still current
-					if (Rules.Contains(Rule.IncludeLadyOfTheLake) && Rounds.Count >= 2 && HolderOfLadyOfTheLake == player)
-                    {
-                        return new List<Action.Type>() { Action.Type.UseTheLadyOfTheLake, Action.Type.Message };
-                    }
-
-                    return new List<Action.Type>();
-
-                case Game.State.GameSetup:
-                    var actions = new List<Action.Type>();
-					if (Players.Count == AvailableCharacters.Count && Players.Count >= MIN_GAME_SIZE && Players.Count <= MAX_GAME_SIZE)
-					{
-						actions.Add(Action.Type.StartGame);
-					}
-
-					if (player == null && Players.Count < MAX_GAME_SIZE)
-					{
-						actions.Add(Action.Type.JoinGame);
-					}
-
-					if (Players.Count < MAX_GAME_SIZE)
-					{
-						actions.Add(Action.Type.AddBot);
-					}
-
-					actions.Add(Action.Type.AddRule);
-                    return actions;
+                    return CurrentRound.AvailableActions(player);
 
                 case Game.State.GuessingMerlin:
                     if (player != null && player.Character == Character.Assassin)
                         return new List<Action.Type>() { Action.Type.GuessMerlin, Action.Type.Message };
                     return new List<Action.Type>() { Action.Type.Message };
-
-                case Game.State.EvilTriumphs:
-                case Game.State.GoodPrevails:
-                case Game.State.MerlinDies:
-                    return new List<Action.Type>() { Action.Type.Message };
             }
             return new List<Action.Type>();
 
-        }
-
-        /// <summary>
-        /// once a player performs an action, this should update the game state appropriately
-        /// </summary>
-        /// <param name="player"></param>
-        /// <param name="action"></param>
-        public void PerformAction(Player player, Action action)
-        {
-            if (!AvailableActions(player).Contains(action.ActionType))
-                throw new Exception(String.Format("Hax. Player {0} can't perform action {1}", player.Name, action));
-
-            switch (action.ActionType)
-            {
-				case Action.Type.AddRule:
-					AddRule(action.Rule);
-					break;
-                //case Action.Type.AddCharacter:
-                //    AddCharacter(action.Character);
-                //    break;
-                case Action.Type.GuessMerlin:
-                    GuessMerlin(player, action.Player);
-                    break;
-                case Action.Type.JoinGame:
-                    JoinGame(action.Name, Guid.NewGuid());
-                    break;
-                case Action.Type.AddToTeam:
-                    AddToTeam(player, action.Player);
-                    break;
-                case Action.Type.AssignExcalibur:
-                    AssignExcalibur(player, action.Player);
-                    break;
-                case Action.Type.UseExcalibur:
-                    UseExcalibur(player, action.Player);
-                    break;
-                case Action.Type.SubmitQuestCard:
-                    SubmitQuest(player, action.Success);
-                    break;
-                case Action.Type.VoteForTeam:
-                    VoteForTeam(player, action.Accept);
-                    break;
-                case Action.Type.UseTheLadyOfTheLake:
-                    UseLadyOfTheLake(player, action.Player);
-                    break;
-                case Action.Type.Message:
-                    Message(player, action.Message);
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-            OnAfterAction();
-        }
+        }        
 
 		public void AddRule(Rule rule)
 		{
@@ -518,42 +309,17 @@ namespace ResistanceOnline.Core
 			}
 		}
 
-        private void Message(Player player, string message)
+        public void Message(Player player, string message)
         {
             CurrentRound.CurrentTeam.Messages.Add(new PlayerMessage { Player = player, Message = message });
-        }
-
-        public bool IsCharacterEvil(Character character)
-        {
-            switch (character)
-            {
-                case Core.Character.Assassin:
-                case Core.Character.MinionOfMordred:
-                case Core.Character.Mordred:
-                case Core.Character.Morgana:
-                case Core.Character.Oberon:
-                    return true;
-                case Core.Character.Lancelot:
-                    if (LancelotAllegianceSwitched)
-                    {
-                        return true;
-                    }
-                    break;
-                case Core.Character.EvilLancelot:
-                    if (!LancelotAllegianceSwitched)
-                    {
-                        return true;
-                    }
-                    break;
-            }
-            return false;
-        }
+        }        
 
         public Knowledge PlayerKnowledge(Player myself, Player someoneelse)
         {
             if (myself == null)
                 return Knowledge.Player;
 
+            //lancelots can know each other
 			if (Rules.Contains(Rule.LancelotsKnowEachOther))
             {
                 if ((myself.Character == Character.Lancelot || myself.Character == Character.EvilLancelot) && (someoneelse.Character == Character.Lancelot))
@@ -566,43 +332,12 @@ namespace ResistanceOnline.Core
                 }
             }
 
-            var ladyofthelake = LadyOfTheLakeUses.FirstOrDefault(u => u.UsedBy == myself && u.UsedOn == someoneelse);
-            if (ladyofthelake != null)
-            {
-                return IsCharacterEvil(ladyofthelake.UsedOn.Character) ? Knowledge.Evil : Knowledge.Good;
-            }
-
-            if (DetectEvil(myself, someoneelse))
-            {
-                return Knowledge.Evil;
-            }
-
-            if (DetectMagic(myself, someoneelse))
-            {
-                return Knowledge.Magical;
-            }
-
-            return Knowledge.Player;
-        }
-
-
-        /// <summary>
-        /// does myself know someoneelse is evil. e.g. they are both minions, or myself is merlin
-        /// </summary>
-        /// <param name="playerSelf"></param>
-        /// <param name="playerTarget"></param>
-        /// <returns></returns>
-        public static bool DetectEvil(Player myself, Player someoneelse)
-        {
-            if (myself == null)
-                return false;
-
             //minions know each other (except oberon)
             if (myself.Character == Character.Assassin || myself.Character == Character.Morgana || myself.Character == Character.MinionOfMordred || myself.Character == Character.Mordred)
             {
                 if (someoneelse.Character == Character.Assassin || someoneelse.Character == Character.Morgana || someoneelse.Character == Character.MinionOfMordred || someoneelse.Character == Character.Mordred || someoneelse.Character == Character.EvilLancelot)
                 {
-                    return true;
+                    return Knowledge.Evil;
                 }
             }
 
@@ -611,33 +346,20 @@ namespace ResistanceOnline.Core
             {
                 if (someoneelse.Character == Character.Assassin || someoneelse.Character == Character.Morgana || someoneelse.Character == Character.MinionOfMordred || someoneelse.Character == Character.Oberon)
                 {
-                    return true;
+                    return Knowledge.Evil;
                 }
             }
 
-            return false;
-        }
-
-        /// <summary>
-        /// does myself know someoneelse is merlin (or morcana), e.g. myself is percival
-        /// </summary>
-        /// <param name="playerSelf"></param>
-        /// <param name="playerTarget"></param>
-        /// <returns></returns>
-        public static bool DetectMagic(Player myself, Player someoneelse)
-        {
-            if (myself == null)
-                return false;
-
+            //percy knows merlin and morgana
             if (myself.Character == Character.Percival)
             {
                 if (someoneelse.Character == Character.Merlin || someoneelse.Character == Character.Morgana)
                 {
-                    return true;
+                    return Knowledge.Magical;
                 }
             }
 
-            return false;
+            return Knowledge.Player;
         }
 
         public bool ContainsLancelot()
@@ -652,6 +374,21 @@ namespace ResistanceOnline.Core
             if (!ContainsLancelot())
                 return null;
             return LoyaltyDeck[roundNumber - 1];
+        }
+
+        public bool IsCharacterEvil(Character character)
+        {
+            switch (character)
+            {
+                case Core.Character.Assassin:
+                case Core.Character.MinionOfMordred:
+                case Core.Character.Mordred:
+                case Core.Character.Morgana:
+                case Core.Character.Oberon:
+                case Core.Character.EvilLancelot:
+                    return true;
+            }
+            return false;
         }
     }
 }

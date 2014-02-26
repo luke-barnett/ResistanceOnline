@@ -14,10 +14,9 @@ namespace ResistanceOnline.Site.Models
         private int _roundNumber;
         public string Title { get { return String.Format("Round {0}", _roundNumber.ToWords()); } }
         public string Summary { get { return String.Format("This is a {0} player round and requires {1}", TeamSize.ToWords(), "fail".ToQuantity(FailsRequired, ShowQuantityAs.Words)); } }
-        public List<LadyOfTheLakeUseModel> LadyOfTheLakeUses { get; set; }
-        public List<ExcaliburUseModel> ExcaliburUses { get; set; }
+        public LadyOfTheLakeUseModel LadyOfTheLake { get; set; }
         public string LoyaltyCard { get; set; }
-
+        public string Outcome { get; set; }
 
         public RoundModel(Core.Round round, int roundNumber, Core.Game game, Core.Player player)
         {
@@ -25,20 +24,21 @@ namespace ResistanceOnline.Site.Models
             FailsRequired = round.RequiredFails;
             _roundNumber = roundNumber;
 
-            LadyOfTheLakeUses = game.LadyOfTheLakeUses.Where(u=>u.UsedOnRoundNumber == roundNumber+1).Select(u => new LadyOfTheLakeUseModel(u, player)).ToList();
-            ExcaliburUses = game.ExcaliburUses.Where(u => u.UsedOnRoundNumber == roundNumber + 1).Select(u => new ExcaliburUseModel(u, player)).ToList();
-
+            if (round.LadyOfTheLake!=null) 
+            {
+                LadyOfTheLake = new LadyOfTheLakeUseModel(round.LadyOfTheLake, round.LadyOfTheLake.Target);
+            }
+            
             Teams = new List<TeamModel>();
             foreach (var team in round.Teams)
             {
-                Teams.Add(new TeamModel(team, round.TotalPlayers, round.Teams.IndexOf(team)+1));
-            }            
+                Teams.Add(new TeamModel(team, round.Players.Count, round.Teams.IndexOf(team)+1));
+            }
 
-            var state = round.DetermineState();
-            if (state == Core.Round.State.Failed || state == Core.Round.State.FailedAllVotes)
-                Outcome = "evil-wins";
-            if (state == Core.Round.State.Succeeded)
-                Outcome = "good-wins";
+            if (round.RoundState == Core.Round.State.Finished)
+            {
+                Outcome = round.IsSuccess.Value ? "good-wins" : "evil-wins";
+            }
 
             var loyaltyCard = game.GetLoyaltyCard(roundNumber);
             if (loyaltyCard.HasValue && round != game.CurrentRound)
@@ -48,6 +48,5 @@ namespace ResistanceOnline.Site.Models
 
         }
 
-        public string Outcome { get; set; }
     }
 }

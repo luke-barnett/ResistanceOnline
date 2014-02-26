@@ -15,12 +15,8 @@ namespace ResistanceOnline.Site.ComputerPlayers
         
         protected override Core.Player LadyOfTheLakeTarget()
         {
-            if (_game.LadyOfTheLakeUses.Count == 0)
-            {
-                return _game.Players.First(p => p != _player);
-            }
-
-            return _game.LadyOfTheLakeUses.Select(u => u.UsedBy).Where(p => p != _player).First();
+            var ladyOfTheLakeHistory = _game.Rounds.Where(r => r.LadyOfTheLake != null).Select(r => r.LadyOfTheLake.Holder);
+            return _game.Players.Where(p => p != _player).Except(ladyOfTheLakeHistory).Random();
         }
 
         protected override Core.Player GuessMerlin()

@@ -23,7 +23,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
         public void Say(string message)
         {
-            _game.PerformAction(_player, new Core.Action { ActionType = Core.Action.Type.Message, Message = message });
+            _game.Message(_player, message);
         }
 
         private List<string> _goodThingsToSay = new List<string>() 
@@ -108,41 +108,41 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.VoteForTeam))
             {
-                _game.PerformAction(_player, new ResistanceOnline.Core.Action { ActionType = ResistanceOnline.Core.Action.Type.VoteForTeam, Accept = TeamVote() });
+                _game.VoteForTeam(_player, TeamVote());
                 return;
             }
 
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.AssignExcalibur))
             {
-                _game.PerformAction(_player, new ResistanceOnline.Core.Action { ActionType = ResistanceOnline.Core.Action.Type.AssignExcalibur, Player = AssignExcalibur() });
+                _game.AssignExcalibur(_player, AssignExcalibur());
                 return;
             }
 
 
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.UseExcalibur))
             {
-                _game.PerformAction(_player, new ResistanceOnline.Core.Action { ActionType = ResistanceOnline.Core.Action.Type.UseExcalibur, Player = UseExcalibur() });
+                _game.UseExcalibur(_player, UseExcalibur());
                 return;
             }
 
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.SubmitQuestCard))
             {
-                _game.PerformAction(_player, new ResistanceOnline.Core.Action { ActionType = ResistanceOnline.Core.Action.Type.SubmitQuestCard, Success = Quest() });
+                _game.SubmitQuest(_player, Quest());
             }
 
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.AddToTeam))
             {
-                _game.PerformAction(_player, new ResistanceOnline.Core.Action { ActionType = ResistanceOnline.Core.Action.Type.AddToTeam, Player = ChooseTeamPlayer() });
+                _game.AddToTeam(_player, ChooseTeamPlayer());
             }
 
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.GuessMerlin))
             {
-                _game.PerformAction(_player, new ResistanceOnline.Core.Action { ActionType = ResistanceOnline.Core.Action.Type.GuessMerlin, Player = GuessMerlin() });
+                _game.GuessMerlin(_player, GuessMerlin());
             }
 
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.UseTheLadyOfTheLake))
             {
-                _game.PerformAction(_player, new ResistanceOnline.Core.Action { ActionType = ResistanceOnline.Core.Action.Type.UseTheLadyOfTheLake, Player = LadyOfTheLakeTarget() });
+                _game.UseLadyOfTheLake(_player, LadyOfTheLakeTarget());
             }
         }
 

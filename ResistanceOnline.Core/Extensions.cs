@@ -42,6 +42,18 @@ namespace ResistanceOnline.Core
         }
 
         /// <summary>
+        /// returns the next element in the list with rotating back to the start as appropriate
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
+        /// <param name="current"></param>
+        /// <returns></returns>
+        public static T Next<T>(this List<T> list, T current)
+        {
+            return list[(list.IndexOf(current) +1) % list.Count];
+        }
+
+        /// <summary>
         /// shuffles the list randomly
         /// </summary>
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> list)

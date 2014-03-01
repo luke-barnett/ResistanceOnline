@@ -22,7 +22,7 @@ namespace ResistanceOnline.Site.Models
             get
             {
 
-                return GameState == Game.State.Finished.ToString();
+                return GameState == Game.State.EternalChaos.ToString() || GameState == Game.State.EvilTriumphs.ToString() || GameState == Game.State.GoodPrevails.ToString();
             }
         }
 		
@@ -103,7 +103,7 @@ namespace ResistanceOnline.Site.Models
 
             PlayerName = player == null ? "Spectator" : player.Name;
 
-            AssassinsGuessAtMerlin = game.MerlinGuesses.Select(m=>m.Guess).FirstOrDefault();
+            AssassinsGuessAtMerlin = game.AssassinsGuessAtMerlin;
 			GameState = game.GameState.ToString();
 			CharactersInGame = game.AvailableCharacters.Select(i => i.ToString()).ToList();
 		
@@ -165,7 +165,7 @@ namespace ResistanceOnline.Site.Models
 				};
 
 				//always know own character, or all characters if game is over
-                if (p == player || GameState == Game.State.Finished.ToString())
+                if (p == player || GameOver)
                 {
                     playerInfo.CharacterCard = p.Character;
                     playerInfo.Knowledge = p.Character.ToString();

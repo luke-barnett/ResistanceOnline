@@ -26,7 +26,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
             double evilProbability = 0;
 
-            var evilCharactersInGame = _game.AvailableCharacters.Count(c => _game.IsCharacterEvil(c));
+            var evilCharactersInGame = _game.AvailableCharacters.Count(c => _game.IsCharacterEvil(c, false));
             if (_IAmEvil)
             {
                 evilCharactersInGame--;
@@ -42,7 +42,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
                 var onTeam = round.Teams.Last().TeamMembers.Contains(player);
                 if (onTeam)
                 {
-                    var fails = round.Teams.Last().Quests.Count(q => !q.Success.Value);
+                    var fails = round.Teams.Last().Quests.Count(q => !q.Success);
                     var size = round.Teams.Last().TeamMembers.Count();
 
                     if (round.Teams.Last().TeamMembers.Contains(_player))
@@ -58,8 +58,8 @@ namespace ResistanceOnline.Site.ComputerPlayers
                     }
                 }
 
-                if(round.Teams.Count() < 5) { //ignore last round as everyone votes accept                    
-                    if (round.RoundState == Round.State.Finished)
+                if(round.Teams.Count() < 5) { //ignore last round as everyone votes accept            
+                    if (round.CurrentTeam.Votes.Count == _game.GameSize)
                     {
                         var vote = round.Teams.Last().Votes.FirstOrDefault(v => v.Player == player);
                         if (vote.Approve == round.IsSuccess.Value)

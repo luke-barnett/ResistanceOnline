@@ -45,7 +45,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
             }
 
             //if I'm good, only put good on
-            player = playersNotOnTeam.RandomOrDefault(p=> !_game.IsCharacterEvil(p.Character));
+            player = playersNotOnTeam.RandomOrDefault(p=> !_game.IsCharacterEvil(p.Character, false));
             //failing that we need to put someone evil on the mission :(
             if (player == null)
             {
@@ -66,7 +66,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
         protected override bool TeamVote()
         {
-            var evilCount = _game.CurrentRound.CurrentTeam.TeamMembers.Count(p => _game.IsCharacterEvil(p.Character));
+            var evilCount = _game.CurrentRound.CurrentTeam.TeamMembers.Count(p => _game.IsCharacterEvil(p.Character, false));
 
             if (_IAmEvil)
             {

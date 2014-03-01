@@ -100,7 +100,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
         public void DoSomething() 
         {
-            _IAmEvil = _game.IsCharacterEvil(_player.Character);
+            _IAmEvil = _game.IsCharacterEvil(_player.Character, false);
 
             var availableActions = _game.AvailableActions(_player);
             if (availableActions.Count() == 0)

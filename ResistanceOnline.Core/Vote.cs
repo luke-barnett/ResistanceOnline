@@ -8,6 +8,6 @@ namespace ResistanceOnline.Core
     public class Vote
     {
         public Player Player { get; set; }
-        public bool? Approve { get; set; }
+        public bool Approve { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace ResistanceOnline.Site.Models
             }
 			TeamMembers = team.TeamMembers.Select(p => p.Name).ToList();
 			Vote = team.Votes.OrderBy(v=>v.Player.Name).Select(v => new VoteModel(v, team.Votes.Count != totalPlayers)).ToList();
-			QuestCards = team.Quests.Where(q=>q.Success.HasValue).OrderBy(q=> q.Success).Select(q => new QuestModel(q.Success.Value, team.Quests.Count != TeamMembers.Count)).ToList();
+			QuestCards = team.Quests.OrderBy(q=> q.Success).Select(q => new QuestModel(q.Success, team.Quests.Count != TeamMembers.Count)).ToList();
             Messages = team.Messages.Select(m => new MessageModel(m.Player.Name, m.Message)).ToList();
 		}
 	}

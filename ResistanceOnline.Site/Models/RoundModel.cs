@@ -35,7 +35,7 @@ namespace ResistanceOnline.Site.Models
                 Teams.Add(new TeamModel(team, round.Players.Count, round.Teams.IndexOf(team)+1));
             }
 
-            if (round.RoundState == Core.Round.State.Finished)
+            if (round.IsSuccess.HasValue)
             {
                 Outcome = round.IsSuccess.Value ? "good-wins" : "evil-wins";
             }

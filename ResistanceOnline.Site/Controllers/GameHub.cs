@@ -105,7 +105,7 @@ namespace ResistanceOnline.Site.Controllers
         private void OnAfterAction(Game game)
         {
             var state = game.GameState;
-            if (state == Core.Game.State.Playing)
+            if (state != Core.Game.State.Setup)
             {
                 var computersPlayersInGame = _computerPlayers.Where(c => game.Players.Select(p => p.Guid).Contains(c.PlayerGuid));
                 while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.PlayerGuid)).Any(a => a != Core.Action.Type.Message)))

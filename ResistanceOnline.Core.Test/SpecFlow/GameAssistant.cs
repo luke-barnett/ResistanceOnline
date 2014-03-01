@@ -35,10 +35,10 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 		{
 			var game = ContextAccess.Game;
 			var leader = game.CurrentRound.CurrentTeam.Leader;
-			game.CurrentRound.AddToTeam(leader, leader);
+			game.AddToTeam(leader, leader);
 			foreach (var player in game.Players.Where(player => player != leader).Take(game.CurrentRound.TeamSize - 1))
 			{
-				game.CurrentRound.AddToTeam(leader, player);
+				game.AddToTeam(leader, player);
 			}
 		}
 
@@ -54,16 +54,16 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 
 		internal void VoteForTeam(int numberOfPlayersForTeam)
 		{
-			var round = ContextAccess.Game.CurrentRound;
+			var game = ContextAccess.Game;
 
 			foreach (var player in ContextAccess.Game.Players.Take(numberOfPlayersForTeam))
 			{
-				round.VoteForTeam(player, true);
+				game.VoteForTeam(player, true);
 			}
 
 			foreach (var player in ContextAccess.Game.Players.Skip(numberOfPlayersForTeam))
 			{
-				round.VoteForTeam(player, false);
+                game.VoteForTeam(player, false);
 			}
 		}
 

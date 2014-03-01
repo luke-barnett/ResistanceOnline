@@ -118,7 +118,7 @@ namespace ResistanceOnline.Core
                 throw new Exception("Hax. You shouldn't be guessing merlin at this stage");
             }
 
-            if (player.Character!=Character.Merlin)
+            if (player.Character != Character.Assassin)
             {
                 throw new Exception("Hax. Player is not assassin.");
             }

@@ -14,68 +14,39 @@ namespace ResistanceOnline.Core
     {
         public enum Type
         {
-            //[Description("Add a character card")]
-            //AddCharacter,
-            [Description("Join the game")]
-            JoinGame,
-            [Description("Add a game rule")]
-            AddRule,
             [Description("Add a player to the current team")]
             AddToTeam,
-            [Description("Vote for the current team")]
-            VoteForTeam,
-            [Description("Quest")]
-            SubmitQuestCard,
+            [Description("Approve the current team")]
+            VoteApprove,
+            [Description("Reject the current team")]
+            VoteReject,
+            [Description("Succeed the quest")]
+            SucceedQuest,
+            [Description("Fail the quest")]
+            FailQuest,
             [Description("Try to assassinate Merlin")]
             GuessMerlin,
-            [Description("Use the lady of the lake")]
+            [Description("Use the Lady of the Lake")]
             UseTheLadyOfTheLake,
-            [Description("Send a message")]
-            Message,
-            [Description("Add a computer player")]
-            AddBot,
-            [Description("Start the game")]
-            StartGame,
             [Description("Assign Excalibur to team member")]
             AssignExcalibur,
+            [Description("Use Excalibur on a quest card")]
             UseExcalibur
         };
 
+        public int GameId { get; set; }
+        public Player SourcePlayer { get; set; }
+
         public Type ActionType { get; set; }
+        public Player TargetPlayer { get; set; }
 
-        /// <summary>
-        /// only useful for proposing quests
-        /// </summary>
-        public Player Player { get; set; }
+        public Action(int gameId, Player sourcePlayer, Type actionType, Player targetPlayer=null)
+        {
+            GameId = gameId;
+            SourcePlayer = sourcePlayer;
+            ActionType = actionType;
+            TargetPlayer = targetPlayer;
+        }
 
-        /// <summary>
-        /// only useful for Joining games
-        /// </summary>
-        public String Name { get; set; }
-
-        /// <summary>
-        /// only usefule for sending messages
-        /// </summary>
-        public string Message { get; set; }
-
-        /// <summary>
-        ///  only useful for Voting on quests
-        /// </summary>
-        public bool Accept { get; set; }
-
-        /// <summary>
-        /// only useful for submitting quest cards
-        /// </summary>
-        public bool Success { get; set; }
-
-        /// <summary>
-        /// only useful for adding characters to the game before in starts
-        /// </summary>
-        public Character Character { get; set; }
-
-		/// <summary>
-		/// only useful for adding game rules
-		/// </summary>
-		public Rule Rule { get; set; }
     }
 }

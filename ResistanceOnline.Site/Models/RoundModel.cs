@@ -40,7 +40,7 @@ namespace ResistanceOnline.Site.Models
                 Outcome = round.IsSuccess.Value ? "good-wins" : "evil-wins";
             }
 
-            var loyaltyCard = game.GetLoyaltyCard(roundNumber);
+            var loyaltyCard = game.Setup.GetLoyaltyCard(roundNumber);
             if (loyaltyCard.HasValue && round != game.CurrentRound)
             {
                 LoyaltyCard = string.Format("Lancelot loyalty card: {0}", loyaltyCard.Value.Humanize());

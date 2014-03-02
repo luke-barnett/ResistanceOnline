@@ -11,6 +11,7 @@ using Microsoft.Owin.Security;
 using System.Web.Mvc;
 using ResistanceOnline.Database.Entities;
 using ResistanceOnline.Site.ComputerPlayers;
+using Action = ResistanceOnline.Core.Action;
 
 
 namespace ResistanceOnline.Site.Controllers
@@ -27,23 +28,23 @@ namespace ResistanceOnline.Site.Controllers
             if (_games.Count == 0)
             {
                 var game = new Game();
-				game.Rules.Clear();
-				game.Rules.Add(Rule.LancelotsKnowEachOther);
-				game.Rules.Add(Rule.GoodMustAlwaysVoteSucess);
-				game.Rules.Add(Rule.IncludeLadyOfTheLake);
+                game.Setup.Rules.Clear();
+                game.Setup.Rules.Add(Rule.LancelotsKnowEachOther);
+                game.Setup.Rules.Add(Rule.GoodMustAlwaysVoteSucess);
+                game.Setup.Rules.Add(Rule.IncludeLadyOfTheLake);
                 
-				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Jordan\"", Guid.NewGuid())));
-				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Luke\"", Guid.NewGuid())));
-				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Jeffrey\"", Guid.NewGuid())));
-				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Jayvin\"", Guid.NewGuid())));
+				_computerPlayers.Add(new TrustBot(game, game.Setup.JoinGame("\"Jordan\"", Guid.NewGuid())));
+                _computerPlayers.Add(new TrustBot(game, game.Setup.JoinGame("\"Luke\"", Guid.NewGuid())));
+                _computerPlayers.Add(new TrustBot(game, game.Setup.JoinGame("\"Jeffrey\"", Guid.NewGuid())));
+                _computerPlayers.Add(new TrustBot(game, game.Setup.JoinGame("\"Jayvin\"", Guid.NewGuid())));
 
-                game.SetCharacter(0, Character.LoyalServantOfArthur);
-                game.SetCharacter(1, Character.Assassin);
-                game.SetCharacter(2, Character.Percival);
-                game.SetCharacter(3, Character.Morgana);
+                game.Setup.SetCharacter(0, Character.LoyalServantOfArthur);
+                game.Setup.SetCharacter(1, Character.Assassin);
+                game.Setup.SetCharacter(2, Character.Percival);
+                game.Setup.SetCharacter(3, Character.Morgana);
 
                 _games.Add(game);
-                game.GameId = _games.IndexOf(game);
+                game.Setup.GameId = _games.IndexOf(game);
             }
         }
 
@@ -107,8 +108,8 @@ namespace ResistanceOnline.Site.Controllers
             var state = game.GameState;
             if (state != Core.Game.State.Setup)
             {
-                var computersPlayersInGame = _computerPlayers.Where(c => game.Players.Select(p => p.Guid).Contains(c.PlayerGuid));
-                while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.PlayerGuid)).Any(a => a != Core.Action.Type.Message)))
+                var computersPlayersInGame = _computerPlayers.Where(c => game.Setup.Players.Select(p => p.Guid).Contains(c.PlayerGuid));
+                while (computersPlayersInGame.Any(c => game.AvailableActions(game.Setup.Players.First(p => p.Guid == c.PlayerGuid)).Any()))
                 {
                     foreach (var computerPlayer in computersPlayersInGame)
                     {
@@ -138,7 +139,7 @@ namespace ResistanceOnline.Site.Controllers
             //todo - something with the database :)
             var game = new Game();
             _games.Add(game);
-            game.GameId = _games.IndexOf(game);
+            game.Setup.GameId = _games.IndexOf(game);
 
             Update();
 
@@ -148,7 +149,7 @@ namespace ResistanceOnline.Site.Controllers
         public void SetCharacter(int gameId, int index, string character)
         {
             var game = GetGame(gameId);
-            game.SetCharacter(index, (Character)Enum.Parse(typeof(Character), character));
+            game.Setup.SetCharacter(index, (Character)Enum.Parse(typeof(Character), character));
             OnAfterAction(game);
 
             Update();
@@ -157,7 +158,7 @@ namespace ResistanceOnline.Site.Controllers
 		public void AddRule(int gameId, string rule)
 		{
 			var game = GetGame(gameId);
-			game.AddRule((Core.Rule)Enum.Parse(typeof(Core.Rule), rule));
+            game.Setup.AddRule((Core.Rule)Enum.Parse(typeof(Core.Rule), rule));
 			OnAfterAction(game);
 
 			Update();
@@ -166,8 +167,8 @@ namespace ResistanceOnline.Site.Controllers
         public void AddToTeam(int gameId, string person)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
-            game.AddToTeam(player, game.Players.First(p => p.Name == person));
+            var player = game.Setup.Players.First(p => p.Guid == PlayerGuid);
+            game.DoAction(gameId, player, Action.Type.AddToTeam, game.Setup.Players.First(p => p.Name == person));
             OnAfterAction(game);
 
             Update();
@@ -176,8 +177,8 @@ namespace ResistanceOnline.Site.Controllers
         public void SubmitQuestCard(int gameId, bool success)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
-            game.SubmitQuest(player, success);
+            var player = game.Setup.Players.First(p => p.Guid == PlayerGuid);
+            game.DoAction(gameId, player, success ? Action.Type.SucceedQuest : Action.Type.FailQuest);
             OnAfterAction(game);
 
             Update();
@@ -186,8 +187,8 @@ namespace ResistanceOnline.Site.Controllers
         public void VoteForTeam(int gameId, bool approve)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
-            game.VoteForTeam(player, approve);
+            var player = game.Setup.Players.First(p => p.Guid == PlayerGuid);
+            game.DoAction(gameId, player, approve ? Action.Type.VoteApprove : Action.Type.VoteReject);
             OnAfterAction(game);
 
             Update();
@@ -196,7 +197,7 @@ namespace ResistanceOnline.Site.Controllers
         public void JoinGame(int gameId)
         {
             var game = GetGame(gameId);
-            game.JoinGame(CurrentUser.UserName, PlayerGuid);
+            game.Setup.JoinGame(CurrentUser.UserName, PlayerGuid);
             OnAfterAction(game);
 
             Update();
@@ -205,8 +206,8 @@ namespace ResistanceOnline.Site.Controllers
         public void GuessMerlin(int gameId, string guess)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
-            game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
+            var player = game.Setup.Players.First(p => p.Guid == PlayerGuid);
+            game.DoAction(gameId, player, Action.Type.GuessMerlin, game.Setup.Players.First(p => p.Name == guess));
             OnAfterAction(game);
 
             Update();
@@ -215,8 +216,8 @@ namespace ResistanceOnline.Site.Controllers
         public void LadyOfTheLake(int gameId, string target)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
-            game.UseLadyOfTheLake(player, game.Players.First(p => p.Name == target));
+            var player = game.Setup.Players.First(p => p.Guid == PlayerGuid);
+            game.DoAction(gameId, player, Action.Type.UseTheLadyOfTheLake, game.Setup.Players.First(p => p.Name == target));
             OnAfterAction(game);
 
             Update();
@@ -226,7 +227,7 @@ namespace ResistanceOnline.Site.Controllers
         public void Message(int gameId, string message)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
+            var player = game.Setup.Players.First(p => p.Guid == PlayerGuid);
             game.Message(player, message);
             OnAfterAction(game);
 
@@ -244,9 +245,9 @@ namespace ResistanceOnline.Site.Controllers
         public void AssignExcalibur(int gameId, string proposedPlayerName)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
-            var proposedPlayer = game.Players.First(p => p.Name == proposedPlayerName);
-            game.AssignExcalibur(player, proposedPlayer);
+            var player = game.Setup.Players.First(p => p.Guid == PlayerGuid);
+            var proposedPlayer = game.Setup.Players.First(p => p.Name == proposedPlayerName);
+            game.DoAction(gameId, player, Action.Type.AssignExcalibur, game.Setup.Players.First(p => p.Name == proposedPlayerName));
             OnAfterAction(game);
             Update();
         }
@@ -254,9 +255,9 @@ namespace ResistanceOnline.Site.Controllers
         public void UseExcalibur(int gameId, string proposedPlayerName)
         {
             var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
-            var proposedPlayer = game.Players.First(p => p.Name == proposedPlayerName);
-            game.UseExcalibur(player, proposedPlayer);
+            var player = game.Setup.Players.First(p => p.Guid == PlayerGuid);
+            var proposedPlayer = game.Setup.Players.First(p => p.Name == proposedPlayerName);
+            game.DoAction(gameId, player, Action.Type.UseExcalibur, game.Setup.Players.First(p => p.Name == proposedPlayerName));
             OnAfterAction(game);
             Update();
         }
@@ -267,14 +268,14 @@ namespace ResistanceOnline.Site.Controllers
             switch (bot)
             {
                 case "trustbot":
-                    _computerPlayers.Add(new ComputerPlayers.TrustBot(game, game.JoinGame(name, Guid.NewGuid())));
+                    _computerPlayers.Add(new ComputerPlayers.TrustBot(game, game.Setup.JoinGame(name, Guid.NewGuid())));
                     break;
                 case "cheatbot":
-                    _computerPlayers.Add(new ComputerPlayers.CheatBot(game, game.JoinGame(name, Guid.NewGuid())));
+                    _computerPlayers.Add(new ComputerPlayers.CheatBot(game, game.Setup.JoinGame(name, Guid.NewGuid())));
                     break;
                 case "simplebot":
                 default:
-                    _computerPlayers.Add(new ComputerPlayers.SimpleBot(game, game.JoinGame(name, Guid.NewGuid())));
+                    _computerPlayers.Add(new ComputerPlayers.SimpleBot(game, game.Setup.JoinGame(name, Guid.NewGuid())));
                     break;
             }
             OnAfterAction(game);

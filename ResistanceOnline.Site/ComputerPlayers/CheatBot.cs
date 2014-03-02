@@ -16,13 +16,13 @@ namespace ResistanceOnline.Site.ComputerPlayers
         protected override Core.Player LadyOfTheLakeTarget()
         {
             var ladyOfTheLakeHistory = _game.Rounds.Where(r => r.LadyOfTheLake != null).Select(r => r.LadyOfTheLake.Holder);
-            return _game.Players.Where(p => p != _player).Except(ladyOfTheLakeHistory).Random();
+            return _game.Setup.Players.Where(p => p != _player).Except(ladyOfTheLakeHistory).Random();
         }
 
         protected override Core.Player GuessMerlin()
         {
             Say("Hahaha, I saw who merlin was at the beginning of the game!");
-            return _game.Players.FirstOrDefault(p=> p.Character == Character.Merlin);
+            return _game.Setup.Players.FirstOrDefault(p => p.Character == Character.Merlin);
         }
 
         protected override Core.Player ChooseTeamPlayer()
@@ -33,7 +33,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
                 return _player;
             }
 
-            var playersNotOnTeam = _game.Players.Where(p => p != _player).Except(_game.CurrentRound.CurrentTeam.TeamMembers);
+            var playersNotOnTeam = _game.Setup.Players.Where(p => p != _player).Except(_game.CurrentRound.CurrentTeam.TeamMembers);
             Player player = null;
 
             //if I'm evil, put anyone else on
@@ -45,7 +45,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
             }
 
             //if I'm good, only put good on
-            player = playersNotOnTeam.RandomOrDefault(p=> !_game.IsCharacterEvil(p.Character, false));
+            player = playersNotOnTeam.RandomOrDefault(p => !_game.Setup.IsCharacterEvil(p.Character, false));
             //failing that we need to put someone evil on the mission :(
             if (player == null)
             {
@@ -66,7 +66,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
         protected override bool TeamVote()
         {
-            var evilCount = _game.CurrentRound.CurrentTeam.TeamMembers.Count(p => _game.IsCharacterEvil(p.Character, false));
+            var evilCount = _game.CurrentRound.CurrentTeam.TeamMembers.Count(p => _game.Setup.IsCharacterEvil(p.Character, false));
 
             if (_IAmEvil)
             {

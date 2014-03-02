@@ -37,13 +37,13 @@ namespace ResistanceOnline.Site.ComputerPlayers
         protected override Core.Player LadyOfTheLakeTarget()
         {
             var ladyOfTheLakeHistory = _game.Rounds.Where(r => r.LadyOfTheLake != null).Select(r => r.LadyOfTheLake.Holder);
-            return _game.Players.Where(p => p != _player).Except(ladyOfTheLakeHistory).Random();
+            return _game.Setup.Players.Where(p => p != _player).Except(ladyOfTheLakeHistory).Random();
         }
 
         protected override Core.Player GuessMerlin()
         {
             Say("I'm just going to guess anyone I know isn't evil..");
-            return _game.Players.RandomOrDefault(p => p != _player && IKnowTheyAreEvil(p, _game) == false);
+            return _game.Setup.Players.RandomOrDefault(p => p != _player && IKnowTheyAreEvil(p, _game) == false);
         }
 
         protected override Core.Player ChooseTeamPlayer()
@@ -54,7 +54,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
                 return _player;
             }
 
-            var playersNotOnTeam = _game.Players.Where(p => p != _player).Except(_game.CurrentRound.CurrentTeam.TeamMembers);
+            var playersNotOnTeam = _game.Setup.Players.Where(p => p != _player).Except(_game.CurrentRound.CurrentTeam.TeamMembers);
             Player player = null;
 
             //if I'm evil, put anyone else on

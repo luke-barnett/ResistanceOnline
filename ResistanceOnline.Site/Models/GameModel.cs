@@ -80,32 +80,32 @@ namespace ResistanceOnline.Site.Models
 
 		public GameModel(Game game, Guid? playerGuid)
 		{
-			GameId = game.GameId;
+            GameId = game.Setup.GameId;
 			PlayerGuid = playerGuid;
-            GameSize = game.GameSize;
-            PlayersMissing = game.GameSize - game.Players.Count;
-            AssassinIsInTheGame = game.Players.Select(p => p.Character).Contains(Character.Assassin);
-			Rules = game.Rules.Select(r => r.Humanize()).ToList();
+            GameSize = game.Setup.GameSize;
+            PlayersMissing = game.Setup.GameSize - game.Setup.Players.Count;
+            AssassinIsInTheGame = game.Setup.Players.Select(p => p.Character).Contains(Character.Assassin);
+            Rules = game.Setup.Rules.Select(r => r.Humanize()).ToList();
 
-            RoundTables = game.RoundTables.Select(t=>String.Format("Round {0} has {1} and requires {2}", (game.RoundTables.IndexOf(t) + 1).ToWords(), "player".ToQuantity(t.TeamSize, ShowQuantityAs.Words), "fail".ToQuantity(t.RequiredFails, ShowQuantityAs.Words))).ToList();
+            RoundTables = game.Setup.RoundTables.Select(t=>String.Format("Round {0} has {1} and requires {2}", (game.Setup.RoundTables.IndexOf(t) + 1).ToWords(), "player".ToQuantity(t.TeamSize, ShowQuantityAs.Words), "fail".ToQuantity(t.RequiredFails, ShowQuantityAs.Words))).ToList();
 
             LoyaltyCardsDeltInAdvance = new List<string>();
-            if (game.GameState != Game.State.Setup && game.Rules.Contains(Rule.LoyaltyCardsDeltInAdvance) && game.ContainsLancelot())
+            if (game.GameState != Game.State.Setup && game.Setup.Rules.Contains(Rule.LoyaltyCardsDeltInAdvance) && game.Setup.ContainsLancelot())
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    LoyaltyCardsDeltInAdvance.Add(string.Format("Round {0} - {1}", (i+1).ToWords(), game.LoyaltyDeck[i].Humanize()));
+                    LoyaltyCardsDeltInAdvance.Add(string.Format("Round {0} - {1}", (i + 1).ToWords(), game.Setup.LoyaltyDeck[i].Humanize()));
                 }
             }
 
-			var player = game.Players.FirstOrDefault(p => p.Guid == playerGuid);
+            var player = game.Setup.Players.FirstOrDefault(p => p.Guid == playerGuid);
 			IsSpectator = player == null;
 
             PlayerName = player == null ? "Spectator" : player.Name;
 
             AssassinsGuessAtMerlin = game.AssassinsGuessAtMerlin;
 			GameState = game.GameState.ToString();
-			CharactersInGame = game.AvailableCharacters.Select(i => i.ToString()).ToList();
+            CharactersInGame = game.Setup.AvailableCharacters.Select(i => i.ToString()).ToList();
 		
             AllCharactersSelectList =
 				Enum.GetValues(typeof(Character))
@@ -120,11 +120,11 @@ namespace ResistanceOnline.Site.Models
 					.ToList();
 
             //can guess anyone but self
-            GuessMerlinPlayersSelectList = new SelectList(game.Players.Where(p=>p!=player).Select(p => p.Name));
+            GuessMerlinPlayersSelectList = new SelectList(game.Setup.Players.Where(p => p != player).Select(p => p.Name));
 
             //can use on anyone who hasn't had it
             var ladyOfTheLakeHistory = game.Rounds.Where(r=>r.LadyOfTheLake!=null).Select(r => r.LadyOfTheLake.Holder);
-            LadyOfTheLakePlayerSelectList = new SelectList(game.Players.Where(p => p != player).Except(ladyOfTheLakeHistory).Select(p => p.Name));
+            LadyOfTheLakePlayerSelectList = new SelectList(game.Setup.Players.Where(p => p != player).Except(ladyOfTheLakeHistory).Select(p => p.Name));
 
             if (game.CurrentRound != null && game.CurrentRound.CurrentTeam != null)
             {
@@ -135,28 +135,14 @@ namespace ResistanceOnline.Site.Models
             //can put anyone on a team who isn't already on it
             if (game.CurrentRound != null)
             {
-                AddToTeamPlayersSelectList = new SelectList(game.Players.Where(p => !game.CurrentRound.CurrentTeam.TeamMembers.Select(t => t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
+                AddToTeamPlayersSelectList = new SelectList(game.Setup.Players.Where(p => !game.CurrentRound.CurrentTeam.TeamMembers.Select(t => t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
             }
 
-			Actions = game.AvailableActions(player).Select(i => i.ToString()).ToList();
-
-            if (game.GameState == Game.State.Setup)
-            {
-                if (game.Players.Count < 10)
-                {
-                    Actions.Add(Core.Action.Type.AddBot.ToString());
-                    if (player == null)
-                    {
-                        Actions.Add(Core.Action.Type.JoinGame.ToString());
-                    }
-                }
-                Actions.Add(Core.Action.Type.AddRule.ToString());
-                Actions.Add(Core.Action.Type.StartGame.ToString());
-            }            
+			Actions = game.AvailableActions(player).Select(i => i.ToString()).ToList();         
 
 			PlayerInfo = new List<PlayerInfoModel>();
 			var waiting = new List<WaitingActionsModel>();
-			foreach (var p in game.Players)
+            foreach (var p in game.Setup.Players)
 			{
 				var playerInfo = new PlayerInfoModel 
 				{ 
@@ -180,7 +166,7 @@ namespace ResistanceOnline.Site.Models
             if (waiting.Count > 0 && GameState != Game.State.Setup.ToString())
             {
                 List<string> waitings = new List<string>();
-                foreach (var action in waiting.Where(w=> w.Action != Core.Action.Type.Message).Select(w => w.Action).Distinct())                
+                foreach (var action in waiting.Select(w => w.Action).Distinct())                
                 {
                     var players = "someone";
                     if (waiting.Count(w => w.Action == action) < GameSize)

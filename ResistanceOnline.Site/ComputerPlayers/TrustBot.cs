@@ -26,13 +26,13 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
             double evilProbability = 0;
 
-            var evilCharactersInGame = _game.AvailableCharacters.Count(c => _game.IsCharacterEvil(c, false));
+            var evilCharactersInGame = _game.Setup.AvailableCharacters.Count(c => _game.Setup.IsCharacterEvil(c, false));
             if (_IAmEvil)
             {
                 evilCharactersInGame--;
             }
 
-            evilProbability = (double)evilCharactersInGame / (double)(_game.GameSize - 1);
+            evilProbability = (double)evilCharactersInGame / (double)(_game.Setup.GameSize - 1);
 
             int correctVotes = 0, votesCounted = 0;
 
@@ -59,7 +59,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
                 }
 
                 if(round.Teams.Count() < 5) { //ignore last round as everyone votes accept            
-                    if (round.CurrentTeam.Votes.Count == _game.GameSize)
+                    if (round.CurrentTeam.Votes.Count == _game.Setup.GameSize)
                     {
                         var vote = round.Teams.Last().Votes.FirstOrDefault(v => v.Player == player);
                         if (vote.Approve == round.IsSuccess.Value)
@@ -85,7 +85,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
         protected override Core.Player LadyOfTheLakeTarget()
         {
             var ladyOfTheLakeHistory = _game.Rounds.Where(r => r.LadyOfTheLake != null).Select(r => r.LadyOfTheLake.Holder);
-            var eligiblePlayers = _game.Players.Where(p => p.Guid != PlayerGuid).Except(ladyOfTheLakeHistory);
+            var eligiblePlayers = _game.Setup.Players.Where(p => p.Guid != PlayerGuid).Except(ladyOfTheLakeHistory);
 
             //use it on the person you know the least about
             return eligiblePlayers.Select(p => new { Player = p, Confidence = Math.Abs(ProbabilityOfEvil(p) - 0.5) }).OrderBy(p => p.Confidence).Select(p => p.Player).First();
@@ -95,7 +95,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
         protected override Core.Player GuessMerlin()
         {
             //suspect the most good person
-            return _game.Players.Where(p => p.Guid != PlayerGuid).Select(p => new { Player = p, ProbabilityOfEvil = ProbabilityOfEvil(p) }).OrderBy(p => p.ProbabilityOfEvil).Select(p => p.Player).First();
+            return _game.Setup.Players.Where(p => p.Guid != PlayerGuid).Select(p => new { Player = p, ProbabilityOfEvil = ProbabilityOfEvil(p) }).OrderBy(p => p.ProbabilityOfEvil).Select(p => p.Player).First();
         }
 
         protected override Core.Player ChooseTeamPlayer()
@@ -106,7 +106,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
                 return _player;
             }
 
-            var playersNotOnTeam = _game.Players.Where(p => p != _player).Except(_game.CurrentRound.CurrentTeam.TeamMembers);
+            var playersNotOnTeam = _game.Setup.Players.Where(p => p != _player).Except(_game.CurrentRound.CurrentTeam.TeamMembers);
 
             //if I'm evil, put anyone else on
             Player player = null;

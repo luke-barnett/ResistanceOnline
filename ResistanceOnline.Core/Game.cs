@@ -141,7 +141,7 @@ namespace ResistanceOnline.Core
 
 
         public Round CurrentRound { get { return Rounds.LastOrDefault(); } }
-        public Team CurrentTeam { get { return CurrentRound.CurrentTeam; } }      
+        public Team CurrentTeam { get { return CurrentRound == null ? null : CurrentRound.CurrentTeam; } }   // todo - use the fancy "?." operator :)   
 
 
         void NextRound(Player leader)

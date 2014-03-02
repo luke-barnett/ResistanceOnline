@@ -138,7 +138,7 @@ namespace ResistanceOnline.Site.Controllers
             return base.OnConnected();
         }
 
-        public Game CreateGame(int players)
+        public Game CreateGame()
         {
             //todo - something with the database :)
             var gameSetup = new GameSetup();

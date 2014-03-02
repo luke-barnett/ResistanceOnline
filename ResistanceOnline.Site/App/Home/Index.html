@@ -5,6 +5,11 @@
 			<span data-bind="text: GameSize() + ' player(s)'"></span>			
 			<span>{{GameState}}</span>
 			<a data-bind="attr: { href: '#/game/' + $index() }">Spectate Game</a>
+            <form role="form" data-bind="submit: $parent.joinGame, visible: GameState() == 'Setup'">
+                <input type="hidden" name="gameid" data-bind="value: GameId()" />
+                <input class="btn btn-default" type="submit" value="Join Game" />
+            </form>            
+            <a data-bind="attr: { href: '#/setup/' + $index() }, visible: GameState() == 'Setup'">Setup</a>
             <span>{{WaitingMessage}}</span>
 		</li>
 	</ol>

@@ -25,26 +25,27 @@ namespace ResistanceOnline.Site.Controllers
             _dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
 
             //create a default game to make development easier
-            if (_games.Count == 0)
+            if (_gameSetups.Count == 0)
             {
-                var game = new Game();
-                game.Setup.Rules.Clear();
-                game.Setup.Rules.Add(Rule.LancelotsKnowEachOther);
-                game.Setup.Rules.Add(Rule.GoodMustAlwaysVoteSucess);
-                game.Setup.Rules.Add(Rule.IncludeLadyOfTheLake);
+                var setup = new GameSetup();
+                var game = new Game(setup);
+                setup.Rules.Clear();
+                setup.Rules.Add(Rule.LancelotsKnowEachOther);
+                setup.Rules.Add(Rule.GoodMustAlwaysVoteSucess);
+                setup.Rules.Add(Rule.IncludeLadyOfTheLake);
                 
-				_computerPlayers.Add(new TrustBot(game, game.Setup.JoinGame("\"Jordan\"", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game, game.Setup.JoinGame("\"Luke\"", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game, game.Setup.JoinGame("\"Jeffrey\"", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game, game.Setup.JoinGame("\"Jayvin\"", Guid.NewGuid())));
+				_computerPlayers.Add(new TrustBot(game, setup.JoinGame("\"Jordan\"", Guid.NewGuid())));
+                _computerPlayers.Add(new TrustBot(game, setup.JoinGame("\"Luke\"", Guid.NewGuid())));
+                _computerPlayers.Add(new TrustBot(game, setup.JoinGame("\"Jeffrey\"", Guid.NewGuid())));
+                _computerPlayers.Add(new TrustBot(game, setup.JoinGame("\"Jayvin\"", Guid.NewGuid())));
 
-                game.Setup.SetCharacter(0, Character.LoyalServantOfArthur);
-                game.Setup.SetCharacter(1, Character.Assassin);
-                game.Setup.SetCharacter(2, Character.Percival);
-                game.Setup.SetCharacter(3, Character.Morgana);
+                setup.SetCharacter(0, Character.Merlin);
+                setup.SetCharacter(1, Character.Assassin);
+                setup.SetCharacter(2, Character.Percival);
+                setup.SetCharacter(3, Character.Morgana);
 
-                _games.Add(game);
-                game.Setup.GameId = _games.IndexOf(game);
+                _gameSetups.Add(setup);
+                setup.GameId = _gameSetups.IndexOf(setup);
             }
         }
 
@@ -76,7 +77,8 @@ namespace ResistanceOnline.Site.Controllers
         }
 
 
-        static List<Game> _games = new List<Game>();
+        static List<GameSetup> _gameSetups = new List<GameSetup>();
+        static List<Action> _actions = new List<Action>();
         static List<ComputerPlayer> _computerPlayers = new List<ComputerPlayer>();
         static Dictionary<Guid, List<string>> _userConnections = new Dictionary<Guid, List<string>>();
 
@@ -84,17 +86,19 @@ namespace ResistanceOnline.Site.Controllers
         private Game GetGame(int? gameId)
         {
             //todo - something to do with databases
-            if (gameId.HasValue == false || gameId.Value >= _games.Count)
+            if (gameId.HasValue == false || gameId.Value >= _gameSetups.Count)
                 return null;
 
-            return _games[gameId.Value];
+            var game = new Game(_gameSetups[gameId.Value]);
+            game.DoActions(_actions.Where(a => a.GameId == gameId).ToList());
+            return game;
         }
 
         private void Update()
         {
             foreach (var guid in _userConnections.Keys)
             {
-                var games = _games.Select(g => new GameModel(g, guid));
+                var games = _gameSetups.Select(g => new GameModel(GetGame(g.GameId), guid));
 
                 foreach (var connection in _userConnections[guid])
                 {
@@ -137,13 +141,13 @@ namespace ResistanceOnline.Site.Controllers
         public Game CreateGame(int players)
         {
             //todo - something with the database :)
-            var game = new Game();
-            _games.Add(game);
-            game.Setup.GameId = _games.IndexOf(game);
+            var gameSetup = new GameSetup();
+            _gameSetups.Add(gameSetup);
+            gameSetup.GameId = _gameSetups.IndexOf(gameSetup);
 
             Update();
 
-            return game;
+            return new Game(gameSetup);
         }
 
         public void SetCharacter(int gameId, int index, string character)

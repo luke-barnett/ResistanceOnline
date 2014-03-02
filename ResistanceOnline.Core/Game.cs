@@ -33,12 +33,12 @@ namespace ResistanceOnline.Core
         public bool LancelotAllegianceSwitched { get; set; }
         public Player AssassinsGuessAtMerlin { get; set; }
 
-        public Game()
+        public Game(GameSetup setup)
         {
             GameState = State.Setup;
             Rounds = new List<Round>();
 
-            Setup = new GameSetup();
+            Setup = setup;
         }
 
         public void DoActions(List<Action> actions)

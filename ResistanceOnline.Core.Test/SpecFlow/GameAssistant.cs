@@ -8,7 +8,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 	{
 		internal void CreateStandardGame(int numberOfPlayers)
 		{
-			var game = new Game();
+			var game = new Game(new GameSetup());
 
 			game.Setup.Rules.Remove(Rule.IncludeLadyOfTheLake);
 

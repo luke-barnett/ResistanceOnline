@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using Humanizer;
+using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using ResistanceOnline.Core;
 using ResistanceOnline.Database;
@@ -20,5 +21,39 @@ namespace ResistanceOnline.Site.Controllers
 		{
 			return View();
 		}
+
+        private GameSetup GetGameSetup(int gameId)
+        {
+            return GameHub.GameSetups.Single(s => s.GameId == gameId);
+        }
+
+        public ActionResult Setup(int gameId)
+        {
+            var setup = GetGameSetup(gameId);
+
+            ViewBag.AllCharactersSelectList =
+                Enum.GetValues(typeof(Character))
+                    .Cast<Character>()
+                    .Select(c => new SelectListItem { Text = c.Humanize(LetterCasing.Sentence), Value = c.ToString() })
+                    .ToList();
+
+            ViewBag.AllRulesSelectList =
+                Enum.GetValues(typeof(Rule))
+                    .Cast<Rule>()
+                    .Select(r => new SelectListItem { Text = r.Humanize(LetterCasing.Sentence), Value = r.ToString() })
+                    .ToList();
+
+            return View(setup);
+        }
+
+        public ActionResult UpdateSetup(int gameId)
+        {
+            var setup = GetGameSetup(gameId);
+
+            //Request.Params["Rule"]
+
+
+            return View("Setup", setup);
+        }
 	}
 }

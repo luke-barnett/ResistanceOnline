@@ -9,7 +9,7 @@
                 <input type="hidden" name="gameid" data-bind="value: GameId()" />
                 <input class="btn btn-default" type="submit" value="Join Game" />
             </form>            
-            <a data-bind="attr: { href: '#/setup/' + $index() }, visible: GameState() == 'Setup'">Setup</a>
+            <a data-bind="attr: { href: '/setup/' + $index() }, visible: GameState() == 'Setup'">Setup</a>
             <span>{{WaitingMessage}}</span>
 		</li>
 	</ol>

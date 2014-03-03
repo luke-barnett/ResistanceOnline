@@ -286,6 +286,7 @@
     <Content Include="Scripts\jquery-2.1.0.min.map" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\LoginConfirmation.cshtml" />
+    <Content Include="Views\Game\Setup.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -338,6 +339,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Setup\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ResistanceOnline.Core\ResistanceOnline.Core.csproj">

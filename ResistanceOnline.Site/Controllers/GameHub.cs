@@ -25,7 +25,7 @@ namespace ResistanceOnline.Site.Controllers
             _dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
 
             //create a default game to make development easier
-            if (_gameSetups.Count == 0)
+            if (GameSetups.Count == 0)
             {
                 var setup = new GameSetup();
                 var game = new Game(setup);
@@ -44,8 +44,8 @@ namespace ResistanceOnline.Site.Controllers
                 setup.SetCharacter(2, Character.Percival);
                 setup.SetCharacter(3, Character.Morgana);
 
-                _gameSetups.Add(setup);
-                setup.GameId = _gameSetups.IndexOf(setup);
+                GameSetups.Add(setup);
+                setup.GameId = GameSetups.IndexOf(setup);
             }
         }
 
@@ -77,7 +77,7 @@ namespace ResistanceOnline.Site.Controllers
         }
 
 
-        static List<GameSetup> _gameSetups = new List<GameSetup>();
+        public static List<GameSetup> GameSetups = new List<GameSetup>();
         static List<Action> _actions = new List<Action>();
         static List<ComputerPlayer> _computerPlayers = new List<ComputerPlayer>();
         static Dictionary<Guid, List<string>> _userConnections = new Dictionary<Guid, List<string>>();
@@ -86,10 +86,10 @@ namespace ResistanceOnline.Site.Controllers
         private Game GetGame(int? gameId)
         {
             //todo - something to do with databases
-            if (gameId.HasValue == false || gameId.Value >= _gameSetups.Count)
+            if (gameId.HasValue == false || gameId.Value >= GameSetups.Count)
                 return null;
 
-            var game = new Game(_gameSetups[gameId.Value]);
+            var game = new Game(GameSetups[gameId.Value]);
             game.DoActions(_actions.Where(a => a.GameId == gameId).ToList());
             return game;
         }
@@ -98,7 +98,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             foreach (var guid in _userConnections.Keys)
             {
-                var games = _gameSetups.Select(g => new GameModel(GetGame(g.GameId), guid));
+                var games = GameSetups.Select(g => new GameModel(GetGame(g.GameId), guid));
 
                 foreach (var connection in _userConnections[guid])
                 {
@@ -142,8 +142,8 @@ namespace ResistanceOnline.Site.Controllers
         {
             //todo - something with the database :)
             var gameSetup = new GameSetup();
-            _gameSetups.Add(gameSetup);
-            gameSetup.GameId = _gameSetups.IndexOf(gameSetup);
+            GameSetups.Add(gameSetup);
+            gameSetup.GameId = GameSetups.IndexOf(gameSetup);
 
             Update();
 

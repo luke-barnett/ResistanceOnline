@@ -15,7 +15,7 @@ namespace ResistanceOnline.Site.Models
         public LadyOfTheLakeUseModel(LadyOfTheLakeUse use, Player player)
         {
             UsedBy = use.Holder.Name;
-            UsedOn = use.Target.Name;
+            UsedOn = use.Target == null ? string.Empty : use.Target.Name;
             if (player == use.Holder)
             {
                 Result = use.IsEvil ? "evil" : "good";

@@ -99,8 +99,9 @@ namespace ResistanceOnline.Site.ComputerPlayers
             Say(_teamIsNotOk.Random());
         }
 
-        public void DoSomething() 
+        public void DoSomething(Game game) 
         {
+            _game = game;
             _IAmEvil = _game.Setup.IsCharacterEvil(_player.Character, false);
 
             var availableActions = _game.AvailableActions(_player);

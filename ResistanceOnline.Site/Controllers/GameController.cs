@@ -50,8 +50,25 @@ namespace ResistanceOnline.Site.Controllers
         {
             var setup = GetGameSetup(gameId);
 
-            //Request.Params["Rule"]
+            for (var i = 0; i < setup.AvailableCharacters.Count; i++)
+            {
+                setup.AvailableCharacters[i] = (Character)Enum.Parse(typeof(Character), Request.Params["Character-" + i]);
+            }
 
+            setup.Rules.Clear();
+            foreach (var rule in Enum.GetValues(typeof(ResistanceOnline.Core.Rule)).Cast<ResistanceOnline.Core.Rule>())
+            {
+                if (!String.IsNullOrWhiteSpace(Request.Params[rule.ToString()]))
+                {
+                    setup.Rules.Add(rule);
+                }
+            }
+
+            for (var i = 0; i < setup.RoundTables.Count; i++)
+            {
+                setup.RoundTables[i].TeamSize = int.Parse(Request.Params["roundsize-" + i]);
+                setup.RoundTables[i].RequiredFails = int.Parse(Request.Params["roundfails-" + i]);
+            }
 
             return View("Setup", setup);
         }

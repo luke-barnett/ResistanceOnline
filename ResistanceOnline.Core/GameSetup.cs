@@ -17,6 +17,7 @@ namespace ResistanceOnline.Core
         public Player InitialHolderOfLadyOfTheLake { get; set; }
         public Player InitialLeader { get; set; }
         public List<RoundTable> RoundTables;
+        public bool GameStarted { get; set; }
 
         public GameSetup()
         {
@@ -180,6 +181,7 @@ namespace ResistanceOnline.Core
             }
             return false;
         }
+
 
     }
 }

@@ -14,6 +14,8 @@ namespace ResistanceOnline.Core
     {
         public enum Type
         {
+            [Description("Starts the game with the current setup and players")]
+            StartGame,
             [Description("Add a player to the current team")]
             AddToTeam,
             [Description("Approve the current team")]
@@ -31,22 +33,42 @@ namespace ResistanceOnline.Core
             [Description("Assign Excalibur to team member")]
             AssignExcalibur,
             [Description("Use Excalibur on a quest card")]
-            UseExcalibur
+            UseExcalibur,
+            Message
         };
 
         public int GameId { get; set; }
         public Player SourcePlayer { get; set; }
 
         public Type ActionType { get; set; }
-        public Player TargetPlayer { get; set; }
 
-        public Action(int gameId, Player sourcePlayer, Type actionType, Player targetPlayer=null)
+        public Action(int gameId, Player sourcePlayer, Type actionType)
         {
             GameId = gameId;
             SourcePlayer = sourcePlayer;
             ActionType = actionType;
+        }
+       
+    }
+
+    public class PlayerAction : Action
+    {
+        public Player TargetPlayer { get; set; }
+        public PlayerAction(int gameId, Player sourcePlayer, Type actionType, Player targetPlayer)
+            : base(gameId, sourcePlayer, actionType)
+        {
             TargetPlayer = targetPlayer;
         }
-
     }
+
+    public class TextAction : Action
+    {
+        public string Text { get; set; }
+        public TextAction(int gameId, Player sourcePlayer, Type actionType, string text)
+            : base(gameId, sourcePlayer, actionType)
+        {
+            Text = text;
+        }
+    }
+
 }

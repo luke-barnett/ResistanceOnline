@@ -339,7 +339,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Setup\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ResistanceOnline.Core\ResistanceOnline.Core.csproj">

@@ -19,7 +19,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
                 game.Setup.SetCharacter(i, Character.LoyalServantOfArthur);
 			}
             game.Setup.Rules.Clear();
-            game.StartGame();
+            game.DoAction(new Action(0,null,Action.Type.StartGame));
 
 			ContextAccess.Game = game;
 		}

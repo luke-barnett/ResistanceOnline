@@ -18,7 +18,7 @@ namespace ResistanceOnline.Site.Models
         public string LoyaltyCard { get; set; }
         public string Outcome { get; set; }
 
-        public RoundModel(Core.Round round, int roundNumber, Core.Game game, Core.Player player)
+        public RoundModel(Core.Round round, int roundNumber, Core.GamePlay game, Core.Player player)
         {
             TeamSize = round.TeamSize;
             FailsRequired = round.RequiredFails;
@@ -40,7 +40,7 @@ namespace ResistanceOnline.Site.Models
                 Outcome = round.IsSuccess.Value ? "good-wins" : "evil-wins";
             }
 
-            var loyaltyCard = game.Setup.GetLoyaltyCard(roundNumber);
+            var loyaltyCard = game.Game.GetLoyaltyCard(roundNumber);
             if (loyaltyCard.HasValue && round != game.CurrentRound)
             {
                 LoyaltyCard = string.Format("Lancelot loyalty card: {0}", loyaltyCard.Value.Humanize());

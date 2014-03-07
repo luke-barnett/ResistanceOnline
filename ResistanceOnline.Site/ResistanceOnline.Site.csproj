@@ -177,14 +177,12 @@
     <Content Include="App\main.js" />
     <Content Include="App\shell.html" />
     <Content Include="App\shell.js" />
-    <Content Include="App\Widgets\AddRule.html" />
-    <Content Include="App\Widgets\AddRule.js" />
     <Content Include="App\Widgets\AddToTeam.html" />
     <Content Include="App\Widgets\AddToTeam.js" />
-    <Content Include="App\Widgets\AddBot.html" />
-    <Content Include="App\Widgets\AddBot.js" />
     <Content Include="App\Widgets\AssignExcalibur.html" />
     <Content Include="App\Widgets\AssignExcalibur.js" />
+    <Content Include="App\Widgets\FailQuest.html" />
+    <Content Include="App\Widgets\FailQuest.js" />
     <Content Include="App\Widgets\UseExcalibur.html" />
     <Content Include="App\Widgets\UseExcalibur.js" />
     <Content Include="App\Widgets\StartGame.html" />
@@ -197,10 +195,12 @@
     <Content Include="App\Widgets\GuessMerlin.js" />
     <Content Include="App\Widgets\JoinGame.html" />
     <Content Include="App\Widgets\JoinGame.js" />
-    <Content Include="App\Widgets\SubmitQuestCard.html" />
-    <Content Include="App\Widgets\SubmitQuestCard.js" />
-    <Content Include="App\Widgets\VoteForTeam.html" />
-    <Content Include="App\Widgets\VoteForTeam.js" />
+    <Content Include="App\Widgets\SucceedQuest.html" />
+    <Content Include="App\Widgets\SucceedQuest.js" />
+    <Content Include="App\Widgets\VoteReject.js" />
+    <Content Include="App\Widgets\VoteReject.html" />
+    <Content Include="App\Widgets\VoteApprove.html" />
+    <Content Include="App\Widgets\VoteApprove.js" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -315,6 +315,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Infrastructure\ChallengeResult.cs" />
     <Compile Include="Models\ExcaliburUseModel.cs" />
+    <Compile Include="Models\GameModel.cs" />
     <Compile Include="Models\LadyOfTheLakeUseModel.cs" />
     <Compile Include="Models\LoginConfirmationViewModel.cs" />
     <Compile Include="Models\MessageModel.cs" />
@@ -328,7 +329,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\GameModel.cs" />
+    <Compile Include="Models\GamePlayModel.cs" />
     <Compile Include="Models\PlayerInfoModel.cs" />
     <Compile Include="Models\QuestModel.cs" />
     <Compile Include="Models\TeamModel.cs" />

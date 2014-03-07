@@ -9,15 +9,15 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 {
 	public static class ContextAccess
 	{
-		public static Game Game
+		public static GamePlay GamePlay
 		{
 			get
 			{
-				return ScenarioContext.Current.Get<Game>("Game");
+                return ScenarioContext.Current.Get<GamePlay>("GamePlay");
 			}
 			set
 			{
-				ScenarioContext.Current["Game"] = value;
+                ScenarioContext.Current["GamePlay"] = value;
 			}
 		}
 	}

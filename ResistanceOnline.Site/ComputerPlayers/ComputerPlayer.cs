@@ -11,20 +11,21 @@ namespace ResistanceOnline.Site.ComputerPlayers
     public abstract class ComputerPlayer
     {
         protected bool _IAmEvil;
-        protected Game _game;
+        protected GamePlay _gameplay;
         protected Player _player;
         public Guid PlayerGuid { get; private set; }
+        private List<string> _thingsIWantToSay = new List<string>();
         
-        public ComputerPlayer(Game game, Guid playerGuid)
+        public ComputerPlayer(GamePlay gameplay, Guid playerGuid)
         {
             PlayerGuid = playerGuid;
-            _player = game.Setup.Players.First(p => p.Guid == playerGuid);
-            _game = game;
+            _player = gameplay.Game.Players.First(p => p.Guid == playerGuid);
+            _gameplay = gameplay;
         }
 
         public void Say(string message)
         {
-            _game.Message(_player, message);
+            _thingsIWantToSay.Add(message);
         }
 
         private List<string> _goodThingsToSay = new List<string>() 
@@ -99,53 +100,60 @@ namespace ResistanceOnline.Site.ComputerPlayers
             Say(_teamIsNotOk.Random());
         }
 
-        public void DoSomething(Game game) 
+        public Action DoSomething(GamePlay gameplay) 
         {
-            _game = game;
-            _IAmEvil = _game.Setup.IsCharacterEvil(_player.Character, false);
+            _gameplay = gameplay;
+            _IAmEvil = _gameplay.Game.IsCharacterEvil(_player.Character, false);
 
-            var availableActions = _game.AvailableActions(_player);
-            if (availableActions.Count() == 0)
-                return;
+            var availableActions = _gameplay.AvailableActions(_player);
+            if (availableActions.Count == 0)
+                return null;
+
+            if (availableActions.Contains(ResistanceOnline.Core.Action.Type.Message) && _thingsIWantToSay.Count > 0)
+            {
+                var message = _thingsIWantToSay[0];
+                _thingsIWantToSay.RemoveAt(0);
+
+                return new Action(_player, Action.Type.Message, text:message);
+            }
 
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.VoteApprove))
             {
-                _game.DoAction(_game.Setup.GameId, _player, TeamVote() ? Action.Type.VoteApprove : Action.Type.VoteReject);
-                return;
+                return new Action(_player, TeamVote() ? Action.Type.VoteApprove : Action.Type.VoteReject);
             }
 
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.AssignExcalibur))
             {
-                _game.DoAction(_game.Setup.GameId, _player, Action.Type.AssignExcalibur, AssignExcalibur());
-                return;
+                return new Action(_player, Action.Type.AssignExcalibur, AssignExcalibur());
             }
 
 
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.UseExcalibur))
             {
-                _game.DoAction(_game.Setup.GameId, _player, Action.Type.UseExcalibur, UseExcalibur());
-                return;
+                return new Action(_player, Action.Type.UseExcalibur, UseExcalibur());
             }
 
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.FailQuest) || availableActions.Contains(ResistanceOnline.Core.Action.Type.SucceedQuest))
             {
-                _game.DoAction(_game.Setup.GameId, _player, Quest() ? Action.Type.SucceedQuest : Action.Type.FailQuest);
+                return new Action(_player, Quest() ? Action.Type.SucceedQuest : Action.Type.FailQuest);
             }
 
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.AddToTeam))
             {
-                _game.DoAction(_game.Setup.GameId, _player, Action.Type.AddToTeam, ChooseTeamPlayer());
+                return new Action(_player, Action.Type.AddToTeam, ChooseTeamPlayer());
             }
 
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.GuessMerlin))
             {
-                _game.DoAction(_game.Setup.GameId, _player, Action.Type.GuessMerlin, GuessMerlin());
+                return new Action(_player, Action.Type.GuessMerlin, GuessMerlin());
             }
 
             if (availableActions.Contains(ResistanceOnline.Core.Action.Type.UseTheLadyOfTheLake))
             {
-                _game.DoAction(_game.Setup.GameId, _player, Action.Type.UseTheLadyOfTheLake, LadyOfTheLakeTarget());
+                return new Action(_player, Action.Type.UseTheLadyOfTheLake, LadyOfTheLakeTarget());
             }
+
+            return null;
         }
 
         protected abstract Player LadyOfTheLakeTarget();
@@ -163,7 +171,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
         //todo implement for each bot
         protected virtual Player AssignExcalibur()
         {
-            return _game.CurrentRound.CurrentTeam.TeamMembers.RandomOrDefault(p => p.Name != _player.Name);            
+            return _gameplay.CurrentRound.CurrentTeam.TeamMembers.RandomOrDefault(p => p.Name != _player.Name);            
         }        
     }
 }

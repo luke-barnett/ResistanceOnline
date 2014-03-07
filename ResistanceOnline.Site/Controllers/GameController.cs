@@ -22,7 +22,7 @@ namespace ResistanceOnline.Site.Controllers
 			return View();
 		}
 
-        private GameSetup GetGameSetup(int gameId)
+        private Game GetGameSetup(int gameId)
         {
             return GameHub.GameSetups.Single(s => s.GameId == gameId);
         }

@@ -161,19 +161,10 @@ namespace ResistanceOnline.Site.Models
 			}
 
             //build waiting message
-            List<string> waitings = new List<string>();
-            foreach (var action in waiting.Where(a=>a.Action != Core.Action.Type.Message).Select(w => w.Action).Distinct())                
-            {
-                var players = "someone";
-                if (waiting.Count(w => w.Action == action) < GameSize)
-                {
-                    players = Useful.CommaQuibbling(waiting.Where(w => w.Action == action).Select(w => w.Name).ToList());
-                }
-                waitings.Add(String.Format("{0} to {1}", players, action.Humanize(LetterCasing.LowerCase)));
-            }
+            var waitings = waiting.Where(a=>a.Action != Core.Action.Type.Message).Select(w => w.Name).Distinct().ToList();
             if (waitings.Any())
             {
-                WaitingMessage = String.Format("Waiting for {0}.", string.Join(" or ", waitings));
+                WaitingMessage = String.Format("Waiting for {0}.", Useful.CommaQuibbling(waitings));
             }
 			
 			Rounds = new List<RoundModel>();

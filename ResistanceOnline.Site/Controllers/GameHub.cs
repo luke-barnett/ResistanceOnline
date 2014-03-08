@@ -25,27 +25,26 @@ namespace ResistanceOnline.Site.Controllers
             _dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
 
             //create a default game to make development easier
-            if (GameSetups.Count == 0)
+            if (Games.Count == 0)
             {
-                var setup = new Game();
-                var game = new GamePlay(setup);
-                setup.Rules.Clear();
-                setup.Rules.Add(Rule.LancelotsKnowEachOther);
-                setup.Rules.Add(Rule.GoodMustAlwaysVoteSucess);
-                setup.Rules.Add(Rule.IncludeLadyOfTheLake);
+                var game = new Game();
+                game.Rules.Clear();
+                game.Rules.Add(Rule.LancelotsKnowEachOther);
+                game.Rules.Add(Rule.GoodMustAlwaysVoteSucess);
+                game.Rules.Add(Rule.IncludeLadyOfTheLake);
                 
-				_computerPlayers.Add(new TrustBot(game, setup.JoinGame("\"Jordan\"", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game, setup.JoinGame("\"Luke\"", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game, setup.JoinGame("\"Jeffrey\"", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game, setup.JoinGame("\"Jayvin\"", Guid.NewGuid())));
+				_computerPlayers.Add(new TrustBot(game.JoinGame("\"Jordan\"", Guid.NewGuid())));
+                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Luke\"", Guid.NewGuid())));
+                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Jeffrey\"", Guid.NewGuid())));
+                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Jayvin\"", Guid.NewGuid())));
 
-                setup.AvailableCharacters[0] = Character.Merlin;
-                setup.AvailableCharacters[1] = Character.Assassin;
-                setup.AvailableCharacters[2] = Character.Percival;
-                setup.AvailableCharacters[3] = Character.Morgana;
+                game.AvailableCharacters[0] = Character.Merlin;
+                game.AvailableCharacters[1] = Character.Assassin;
+                game.AvailableCharacters[2] = Character.Percival;
+                game.AvailableCharacters[3] = Character.Morgana;
 
-                GameSetups.Add(setup);
-                setup.GameId = GameSetups.IndexOf(setup);
+                Games.Add(game);
+                game.GameId = Games.IndexOf(game);
             }
         }
 
@@ -77,7 +76,7 @@ namespace ResistanceOnline.Site.Controllers
         }
 
 
-        public static List<Game> GameSetups = new List<Game>();
+        public static List<Game> Games = new List<Game>();
         static List<Action> _actions = new List<Action>();
         static List<ComputerPlayer> _computerPlayers = new List<ComputerPlayer>();
         static Dictionary<Guid, List<string>> _userConnections = new Dictionary<Guid, List<string>>();
@@ -89,22 +88,22 @@ namespace ResistanceOnline.Site.Controllers
             _actions.Add(action);
         }
 
-        private GamePlay GetGame(int? gameId)
+        private GamePlay GetGamePlay(int? gameId)
         {
             //todo - something to do with databases
-            if (gameId.HasValue == false || gameId.Value >= GameSetups.Count)
+            if (gameId.HasValue == false || gameId.Value >= Games.Count)
                 return null;
 
-            var game = new GamePlay(GameSetups[gameId.Value]);
-            game.DoActions(_actions.Where(a => a.GameId == gameId).ToList());
-            return game;
+            var gameplay = new GamePlay(Games[gameId.Value]);
+            gameplay.DoActions(_actions.Where(a => a.GameId == gameId).ToList());
+            return gameplay;
         }
 
         private void Update()
         {
             foreach (var guid in _userConnections.Keys)
             {
-                var games = GameSetups.Select(g => new GamePlayModel(GetGame(g.GameId), guid));
+                var games = Games.Select(g => new GamePlayModel(GetGamePlay(g.GameId), guid));
 
                 foreach (var connection in _userConnections[guid])
                 {
@@ -150,8 +149,8 @@ namespace ResistanceOnline.Site.Controllers
         {
             //todo - something with the database :)
             var gameSetup = new Game();
-            GameSetups.Add(gameSetup);
-            gameSetup.GameId = GameSetups.IndexOf(gameSetup);
+            Games.Add(gameSetup);
+            gameSetup.GameId = Games.IndexOf(gameSetup);
 
             Update();
 
@@ -166,8 +165,12 @@ namespace ResistanceOnline.Site.Controllers
 
         private void DoAction(int gameId, Action.Type actionType, string targetPlayerName = null, string text = null)
         {
-            var game = GetGame(gameId);
-            var owner = game.Game.Players.First(p => p.Guid == PlayerGuid);
+            var game = GetGamePlay(gameId);
+            var owner = game.Game.Players.FirstOrDefault(p => p.Guid == PlayerGuid);
+            if (owner == null)
+            {
+                throw new UnauthorizedAccessException("Player needs to learn to play their own games");
+            }
             var targetPlayer = game.Game.Players.FirstOrDefault(p => p.Name == targetPlayerName);
             var action = new Action(owner, actionType, targetPlayer, text);
             game.DoAction(action);
@@ -196,14 +199,6 @@ namespace ResistanceOnline.Site.Controllers
         public void VoteReject(int gameId)
         {
             DoAction(gameId, Action.Type.VoteReject);
-            Update();
-        }
-
-        public void JoinGame(int gameId)
-        {
-            var game = GetGame(gameId);
-            game.Game.JoinGame(CurrentUser.UserName, PlayerGuid);
-            OnAfterAction(game);
             Update();
         }
 

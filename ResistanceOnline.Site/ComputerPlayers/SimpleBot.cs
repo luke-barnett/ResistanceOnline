@@ -9,7 +9,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
 {
     public class SimpleBot : ComputerPlayer
     {
-        public SimpleBot(GamePlay game, Guid playerGuid) : base(game,playerGuid) {  }
+        public SimpleBot(Guid playerGuid) : base(playerGuid) {  }
 
         private int CountEvil(List<Player> list, GamePlay gameplay)
         {

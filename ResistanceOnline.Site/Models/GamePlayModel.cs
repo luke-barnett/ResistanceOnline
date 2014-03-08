@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using Humanizer;
 using System.Text;
+using ResistanceOnline.Site.Infrastructure;
 
 namespace ResistanceOnline.Site.Models
 {
@@ -54,14 +55,6 @@ namespace ResistanceOnline.Site.Models
 		public bool IsSpectator { get; set; }
 
         public int GameSize { get; set; }
-
-        public string PlayerCountSummary
-        {
-            get
-            {
-                return "player".ToQuantity(GameSize, ShowQuantityAs.Words);
-            }
-        }
 
         public string GameSetup
         {
@@ -174,7 +167,7 @@ namespace ResistanceOnline.Site.Models
                 var players = "someone";
                 if (waiting.Count(w => w.Action == action) < GameSize)
                 {
-                    players = CommaQuibbling(waiting.Where(w => w.Action == action).Select(w => w.Name).ToList());
+                    players = Useful.CommaQuibbling(waiting.Where(w => w.Action == action).Select(w => w.Name).ToList());
                 }
                 waitings.Add(String.Format("{0} to {1}", players, action.Humanize(LetterCasing.LowerCase)));
             }
@@ -191,16 +184,6 @@ namespace ResistanceOnline.Site.Models
 		}
 
         public string PlayerName { get; set; }
-
-        public string CommaQuibbling(IEnumerable<string> items)
-        {
-            var itemArray = items.ToArray();
-
-            var commaSeparated = String.Join(", ", itemArray, 0, Math.Max(itemArray.Length - 1, 0));
-            if (commaSeparated.Length > 0) commaSeparated += " and ";
-
-            return commaSeparated + itemArray.LastOrDefault();
-        }
 
         public Player AssassinsGuessAtMerlin { get; set; }
         public bool AssassinIsInTheGame { get; set; }

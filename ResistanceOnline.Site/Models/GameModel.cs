@@ -3,21 +3,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Humanizer;
 
 namespace ResistanceOnline.Site.Models
 {
     public class GameModel
     {
-        public string Players { get; set; }
+        public List<string> Players { get; set; }
         public int GameId { get; set; }
         public List<Character> AvailableCharacters { get; set; }
         public List<Rule> Rules { get; set; }
         public List<RoundTable> RoundTables;
         public string State { get; set; }
 
+        public string PlayerCountSummary
+        {
+            get
+            {
+                return "player".ToQuantity(Players.Count, ShowQuantityAs.Words);
+            }
+        }
+
         public GameModel(Game game)
         {
-            Players = game.Players.Select(p=>p.Name).ToString();
+            Players = game.Players.Select(p=>p.Name).ToList();
             GameId = game.GameId;
             AvailableCharacters = game.AvailableCharacters;
             Rules = game.Rules;

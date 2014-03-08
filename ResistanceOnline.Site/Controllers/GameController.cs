@@ -22,14 +22,14 @@ namespace ResistanceOnline.Site.Controllers
 			return View();
 		}
 
-        private Game GetGameSetup(int gameId)
+        private Game GetGame(int gameId)
         {
-            return GameHub.GameSetups.Single(s => s.GameId == gameId);
+            return GameHub.Games.Single(s => s.GameId == gameId);
         }
 
-        public ActionResult Setup(int gameId)
+        public ActionResult Game(int gameId)
         {
-            var setup = GetGameSetup(gameId);
+            var game = GetGame(gameId);
 
             ViewBag.AllCharactersSelectList =
                 Enum.GetValues(typeof(Character))
@@ -43,34 +43,88 @@ namespace ResistanceOnline.Site.Controllers
                     .Select(r => new SelectListItem { Text = r.Humanize(LetterCasing.Sentence), Value = r.ToString() })
                     .ToList();
 
-            return View(setup);
-        }
-
-        public ActionResult UpdateSetup(int gameId)
-        {
-            var setup = GetGameSetup(gameId);
-
-            for (var i = 0; i < setup.AvailableCharacters.Count; i++)
+            var userId = User.Identity.GetUserId();
+            using (var context = new Database.ResistanceOnlineDbContext())
             {
-                setup.AvailableCharacters[i] = (Character)Enum.Parse(typeof(Character), Request.Params["Character-" + i]);
+                var userAccount = context.Users.FirstOrDefault(user => user.Id == userId);
+
+                if (userAccount != null && !game.Players.Select(p => p.Guid).Contains(userAccount.PlayerGuid))
+                {
+                    ViewBag.IsPlayer = false;
+                }
+                else
+                {
+                    ViewBag.IsPlayer = true;
+                }
             }
 
-            setup.Rules.Clear();
+            return View(new GameModel(game));
+        }
+
+        [HttpPost]
+        public ActionResult Update(int gameId)
+        {
+            var game = GetGame(gameId);
+            if (game.GameState != Core.Game.State.Setup)
+            {
+                throw new InvalidOperationException("Game already started");
+            }
+
+            for (var i = 0; i < game.AvailableCharacters.Count; i++)
+            {
+                game.AvailableCharacters[i] = (Character)Enum.Parse(typeof(Character), Request.Params["Character-" + i]);
+            }
+
+            game.Rules.Clear();
             foreach (var rule in Enum.GetValues(typeof(ResistanceOnline.Core.Rule)).Cast<ResistanceOnline.Core.Rule>())
             {
                 if (!String.IsNullOrWhiteSpace(Request.Params[rule.ToString()]))
                 {
-                    setup.Rules.Add(rule);
+                    game.Rules.Add(rule);
                 }
             }
 
-            for (var i = 0; i < setup.RoundTables.Count; i++)
+            for (var i = 0; i < game.RoundTables.Count; i++)
             {
-                setup.RoundTables[i].TeamSize = int.Parse(Request.Params["roundsize-" + i]);
-                setup.RoundTables[i].RequiredFails = int.Parse(Request.Params["roundfails-" + i]);
+                game.RoundTables[i].TeamSize = int.Parse(Request.Params["roundsize-" + i]);
+                game.RoundTables[i].RequiredFails = int.Parse(Request.Params["roundfails-" + i]);
+            }
+            
+            return RedirectToAction("Game", new { gameId = gameId });
+        }
+
+        [HttpPost]
+        public ActionResult Join(int gameId)
+        {
+            var game = GetGame(gameId);
+            if (game.GameState != Core.Game.State.Setup)
+            {
+                throw new InvalidOperationException("Game already started");
             }
 
-            return View("Setup", setup);
+            var userId = User.Identity.GetUserId();
+            using (var context = new Database.ResistanceOnlineDbContext()) 
+            {
+                var userAccount = context.Users.FirstOrDefault(user => user.Id == userId);
+                game.JoinGame(userAccount.UserName, userAccount.PlayerGuid);
+            }
+
+            return RedirectToAction("Game", new { gameId = gameId });
         }
-	}
+
+        [HttpPost]
+        public ActionResult Start(int gameId)
+        {
+            var game = GetGame(gameId);
+            if (game.GameState != Core.Game.State.Setup)
+            {
+                throw new InvalidOperationException("Game already started");
+            }
+
+            game.StartGame();
+            return Redirect("#/game/" + gameId.ToString());
+        }
+
+
+    }
 }

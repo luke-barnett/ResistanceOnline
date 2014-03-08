@@ -17,8 +17,11 @@ namespace ResistanceOnline.Site.Models
         public string TeamSummary { get; set; }
         public TeamModel(Core.Team team, int totalPlayers, int teamNumber)
 		{
-			Leader = team.Leader.Name;
-            TeamSummary = string.Format("Team {0}, as proposed by {1}", teamNumber.ToWords(), team.Leader.Name);
+            if (team.Leader != null)
+            {
+                Leader = team.Leader.Name;
+                TeamSummary = string.Format("Team {0}, as proposed by {1}", teamNumber.ToWords(), Leader);
+            }
             if (team.Excalibur != null)
             {
                 Excalibur = new ExcaliburUseModel(team.Excalibur, team.Excalibur.Holder);

@@ -9,7 +9,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
 {
     public class TrustBot : ComputerPlayer
     {
-        public TrustBot(GamePlay game, Guid playerGuid) : base(game, playerGuid) { }
+        public TrustBot(Guid playerGuid) : base(playerGuid) { }
 
         private double ProbabilityOfEvil(Player player)
         {

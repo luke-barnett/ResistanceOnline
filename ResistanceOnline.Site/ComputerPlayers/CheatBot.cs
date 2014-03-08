@@ -11,7 +11,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
 {
     public class CheatBot : ComputerPlayer
     {
-        public CheatBot(GamePlay game, Guid playerGuid) : base(game, playerGuid) { }
+        public CheatBot(Guid playerGuid) : base(playerGuid) { }
         
         protected override Core.Player LadyOfTheLakeTarget()
         {

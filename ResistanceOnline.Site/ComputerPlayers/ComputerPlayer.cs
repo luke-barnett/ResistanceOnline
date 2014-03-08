@@ -16,11 +16,9 @@ namespace ResistanceOnline.Site.ComputerPlayers
         public Guid PlayerGuid { get; private set; }
         private List<string> _thingsIWantToSay = new List<string>();
         
-        public ComputerPlayer(GamePlay gameplay, Guid playerGuid)
+        public ComputerPlayer(Guid playerGuid)
         {
             PlayerGuid = playerGuid;
-            _player = gameplay.Game.Players.First(p => p.Guid == playerGuid);
-            _gameplay = gameplay;
         }
 
         public void Say(string message)

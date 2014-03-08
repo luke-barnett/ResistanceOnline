@@ -185,8 +185,6 @@
     <Content Include="App\Widgets\FailQuest.js" />
     <Content Include="App\Widgets\UseExcalibur.html" />
     <Content Include="App\Widgets\UseExcalibur.js" />
-    <Content Include="App\Widgets\StartGame.html" />
-    <Content Include="App\Widgets\StartGame.js" />
     <Content Include="App\Widgets\Message.html" />
     <Content Include="App\Widgets\Message.js" />
     <Content Include="App\Widgets\UseTheLadyOfTheLake.html" />
@@ -286,7 +284,7 @@
     <Content Include="Scripts\jquery-2.1.0.min.map" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\LoginConfirmation.cshtml" />
-    <Content Include="Views\Game\Setup.cshtml" />
+    <Content Include="Views\Game\Game.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -314,6 +312,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Infrastructure\ChallengeResult.cs" />
+    <Compile Include="Infrastructure\Useful.cs" />
     <Compile Include="Models\ExcaliburUseModel.cs" />
     <Compile Include="Models\GameModel.cs" />
     <Compile Include="Models\LadyOfTheLakeUseModel.cs" />

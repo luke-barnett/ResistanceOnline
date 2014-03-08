@@ -2,10 +2,9 @@
 	<h2>Current Games</h2>
 	<ol data-bind="foreach: games">
 		<li>              
-            <a data-bind="attr: { href: '#/game/' + $index() }, visible: GameState() != 'Setup'">Game</a>
-            <a data-bind="attr: { href: '/setup/' + $index() }, visible: GameState() == 'Setup'">Setup</a>
+            <a data-bind="attr: { href: '#/game/' + $index() }, visible: State() != 'Setup'">Game</a>
+            <a data-bind="attr: { href: '/setup/' + $index() }, visible: State() == 'Setup'">Setup</a>
             <span>{{PlayerCountSummary}}</span>
-            <span>{{WaitingMessage}}</span>
 		</li>
 	</ol>
 

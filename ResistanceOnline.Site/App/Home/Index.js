@@ -9,13 +9,6 @@
             $.connection.gameHub.server.createGame();
             //todo redirect?
         },
-
-        //join game
-        joinGame: function (game) {
-            var id = game.children[0].value; //todo how does knockout work?
-            $.connection.gameHub.server.joinGame(id);
-            //todo redirect?        
-        }
     }
 
     return viewModel;

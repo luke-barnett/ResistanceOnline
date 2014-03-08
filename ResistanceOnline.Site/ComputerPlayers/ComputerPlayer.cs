@@ -101,6 +101,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
         public Action DoSomething(GamePlay gameplay) 
         {
             _gameplay = gameplay;
+            _player = _gameplay.Game.Players.First(p => p.Guid == PlayerGuid);
             _IAmEvil = _gameplay.Game.IsCharacterEvil(_player.Character, false);
 
             var availableActions = _gameplay.AvailableActions(_player);

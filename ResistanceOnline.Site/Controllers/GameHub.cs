@@ -103,6 +103,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             foreach (var guid in _userConnections.Keys)
             {
+                //todo - don't need all games sent every update
                 var games = Games.Select(g => new GamePlayModel(GetGamePlay(g.GameId), guid));
 
                 foreach (var connection in _userConnections[guid])
@@ -112,7 +113,7 @@ namespace ResistanceOnline.Site.Controllers
             }
         }
 
-        private void OnAfterAction(GamePlay game)
+        private void ComputerPlayers(GamePlay game)
         {
             var state = game.GamePlayState;
             var computersPlayersInGame = _computerPlayers.Where(c => game.Game.Players.Select(p => p.Guid).Contains(c.PlayerGuid));
@@ -175,7 +176,7 @@ namespace ResistanceOnline.Site.Controllers
             var action = new Action(owner, actionType, targetPlayer, text);
             game.DoAction(action);
             AddAction(gameId, action);
-            OnAfterAction(game);
+            ComputerPlayers(game);
         }
 
         public void SucceedQuest(int gameId)

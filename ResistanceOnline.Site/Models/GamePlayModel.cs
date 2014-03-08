@@ -16,14 +16,14 @@ namespace ResistanceOnline.Site.Models
 
 		public Guid? PlayerGuid { get; set; }
 
-		public string GameState { get; set; }
+		public string State { get; set; }
 
         public bool GameOver
         {
             get
             {
 
-                return GameState == GamePlay.State.EternalChaos.ToString() || GameState == GamePlay.State.EvilTriumphs.ToString() || GameState == GamePlay.State.GoodPrevails.ToString();
+                return State == GamePlay.State.EternalChaos.ToString() || State == GamePlay.State.EvilTriumphs.ToString() || State == GamePlay.State.GoodPrevails.ToString();
             }
         }
 		
@@ -102,7 +102,7 @@ namespace ResistanceOnline.Site.Models
             PlayerName = player == null ? "Spectator" : player.Name;
 
             AssassinsGuessAtMerlin = gameplay.AssassinsGuessAtMerlin;
-			GameState = gameplay.GamePlayState.ToString();
+			State = gameplay.GamePlayState.ToString();
             CharactersInGame = gameplay.Game.AvailableCharacters.Select(i => i.ToString()).ToList();
 		
             AllCharactersSelectList =
@@ -162,7 +162,7 @@ namespace ResistanceOnline.Site.Models
 
             //build waiting message
             List<string> waitings = new List<string>();
-            foreach (var action in waiting.Select(w => w.Action).Distinct())                
+            foreach (var action in waiting.Where(a=>a.Action != Core.Action.Type.Message).Select(w => w.Action).Distinct())                
             {
                 var players = "someone";
                 if (waiting.Count(w => w.Action == action) < GameSize)

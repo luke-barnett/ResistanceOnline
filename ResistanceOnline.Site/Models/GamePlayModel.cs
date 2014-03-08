@@ -48,6 +48,10 @@ namespace ResistanceOnline.Site.Models
         public List<string> LoyaltyCardsDeltInAdvance { get; set; }
 		public bool IsSpectator { get; set; }
         public int GameSize { get; set; }
+        public List<string> Rules { get; set; }
+        public string GameState { get; set; }
+        public string PlayerCountSummary { get; set; }
+        public string GameOverMessage { get; set; }
 
         public string GameSetup
         {
@@ -66,11 +70,13 @@ namespace ResistanceOnline.Site.Models
             }
         }
 
-		public List<string> Rules { get; set; }
+
 
 		public GamePlayModel(GamePlay gameplay, Guid? playerGuid)
 		{
             GameId = gameplay.Game.GameId;
+            PlayerCountSummary = ("player".ToQuantity(gameplay.Game.Players.Count, ShowQuantityAs.Words)).ApplyCase(LetterCasing.Sentence);
+            GameState = gameplay.Game.GameState.ToString();
 			PlayerGuid = playerGuid;
             GameSize = gameplay.Game.Players.Count;
             Rules = gameplay.Game.Rules.Select(r => r.Humanize()).ToList();
@@ -146,8 +152,14 @@ namespace ResistanceOnline.Site.Models
 			for(int i=0; i<gameplay.Rounds.Count; i++)
 			{
                 Rounds.Add(new RoundModel(gameplay.Rounds[i], i + 1, gameplay, player));
-			}          
+			}
+
+            if (GameOver)
+            {
+                GameOverMessage = gameplay.GamePlayState.Humanize(LetterCasing.Sentence);
+            }
 		}
+
 
     }
 }

@@ -16,14 +16,6 @@ namespace ResistanceOnline.Site.Models
         public List<RoundTable> RoundTables;
         public string State { get; set; }
 
-        public string PlayerCountSummary
-        {
-            get
-            {
-                return "player".ToQuantity(Players.Count, ShowQuantityAs.Words);
-            }
-        }
-
         public GameModel(Game game)
         {
             Players = game.Players.Select(p=>p.Name).ToList();

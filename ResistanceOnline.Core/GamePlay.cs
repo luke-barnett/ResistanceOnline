@@ -28,7 +28,6 @@ namespace ResistanceOnline.Core
 
         public State GamePlayState { get; set; }
         public Game Game { get; set; }
-        public List<PlayerMessage> Messages { get; set; }
         public List<Round> Rounds { get; set; }
         public int QuestIndicator { get; set; }
         public Player HolderOfLadyOfTheLake { get; set; }
@@ -201,6 +200,9 @@ namespace ResistanceOnline.Core
 
             switch (action.ActionType)
             {
+                case Action.Type.Message:
+                    Message(action.Owner, action.Text);
+                    break;
                 case Action.Type.AddToTeam:
                     AddToTeam(action.Owner, action.TargetPlayer);
                     break;

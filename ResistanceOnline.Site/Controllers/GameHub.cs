@@ -37,11 +37,21 @@ namespace ResistanceOnline.Site.Controllers
                 _computerPlayers.Add(new TrustBot(game.JoinGame("\"Luke\"", Guid.NewGuid())));
                 _computerPlayers.Add(new TrustBot(game.JoinGame("\"Jeffrey\"", Guid.NewGuid())));
                 _computerPlayers.Add(new TrustBot(game.JoinGame("\"Jayvin\"", Guid.NewGuid())));
+                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Yif\"", Guid.NewGuid())));
+                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Alex\"", Guid.NewGuid())));
+                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Betty\"", Guid.NewGuid())));
+                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Gareth\"", Guid.NewGuid())));
+                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Gavin\"", Guid.NewGuid())));
 
                 game.AvailableCharacters[0] = Character.Merlin;
                 game.AvailableCharacters[1] = Character.Assassin;
                 game.AvailableCharacters[2] = Character.Percival;
                 game.AvailableCharacters[3] = Character.Morgana;
+                game.AvailableCharacters[4] = Character.Oberon;
+                game.AvailableCharacters[5] = Character.Mordred;
+                game.AvailableCharacters[6] = Character.LoyalServantOfArthur;
+                game.AvailableCharacters[7] = Character.LoyalServantOfArthur;
+                game.AvailableCharacters[8] = Character.LoyalServantOfArthur;
 
                 Games.Add(game);
                 game.GameId = Games.IndexOf(game);
@@ -104,29 +114,12 @@ namespace ResistanceOnline.Site.Controllers
             foreach (var guid in _userConnections.Keys)
             {
                 //todo - don't need all games sent every update
+                //it feels like this should be split out into game hubs for playing games and home page stuff for managing games
                 var games = Games.Select(g => new GamePlayModel(GetGamePlay(g.GameId), guid));
 
                 foreach (var connection in _userConnections[guid])
                 {
                     Clients.Client(connection).Update(games);
-                }
-            }
-        }
-
-        private void ComputerPlayers(GamePlay game)
-        {
-            var state = game.GamePlayState;
-            var computersPlayersInGame = _computerPlayers.Where(c => game.Game.Players.Select(p => p.Guid).Contains(c.PlayerGuid));
-            while (computersPlayersInGame.Any(c => game.AvailableActions(game.Game.Players.First(p => p.Guid == c.PlayerGuid)).Any(action => action!=Action.Type.Message)))
-            {
-                foreach (var computerPlayer in computersPlayersInGame)
-                {
-                    var action = computerPlayer.DoSomething(game);
-                    if (action != null)
-                    {
-                        game.DoAction(action);
-                        AddAction(game.Game.GameId, action);
-                    }
                 }
             }
         }
@@ -149,19 +142,13 @@ namespace ResistanceOnline.Site.Controllers
         public GamePlay CreateGame()
         {
             //todo - something with the database :)
-            var gameSetup = new Game();
-            Games.Add(gameSetup);
-            gameSetup.GameId = Games.IndexOf(gameSetup);
+            var game = new Game();
+            Games.Add(game);
+            game.GameId = Games.IndexOf(game);
 
             Update();
 
-            return new GamePlay(gameSetup);
-        }
-
-        public void AddToTeam(int gameId, string person)
-        {
-            DoAction(gameId, Action.Type.AddToTeam, targetPlayerName:person);
-            Update();
+            return new GamePlay(game);
         }
 
         private void DoAction(int gameId, Action.Type actionType, string targetPlayerName = null, string text = null)
@@ -176,7 +163,31 @@ namespace ResistanceOnline.Site.Controllers
             var action = new Action(owner, actionType, targetPlayer, text);
             game.DoAction(action);
             AddAction(gameId, action);
-            ComputerPlayers(game);
+            LetComputerPlayersDoActions(game);
+        }
+
+        private void LetComputerPlayersDoActions(GamePlay gameplay)
+        {
+            var state = gameplay.GamePlayState;
+            var computersPlayersInGame = _computerPlayers.Where(c => gameplay.Game.Players.Select(p => p.Guid).Contains(c.PlayerGuid));
+            while (computersPlayersInGame.Any(c => gameplay.AvailableActions(gameplay.Game.Players.First(p => p.Guid == c.PlayerGuid)).Any(action => action != Action.Type.Message)))
+            {
+                foreach (var computerPlayer in computersPlayersInGame)
+                {
+                    var action = computerPlayer.DoSomething(gameplay);
+                    if (action != null)
+                    {
+                        gameplay.DoAction(action);
+                        AddAction(gameplay.Game.GameId, action);
+                    }
+                }
+            }
+        }
+
+        public void AddToTeam(int gameId, string person)
+        {
+            DoAction(gameId, Action.Type.AddToTeam, targetPlayerName: person);
+            Update();
         }
 
         public void SucceedQuest(int gameId)

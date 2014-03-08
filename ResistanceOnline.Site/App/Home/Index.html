@@ -2,13 +2,13 @@
 	<h2>Current Games</h2>
 	<ol data-bind="foreach: games">
 		<li>              
-            <a data-bind="attr: { href: '#/game/' + $index() }, visible: State() != 'Setup'">Game</a>
-            <a data-bind="attr: { href: '/setup/' + $index() }, visible: State() == 'Setup'">Setup</a>
-            <span>{{PlayerCountSummary}}</span>
+            <span>{{PlayerCountSummary}}, {{State}}</span>
+            <a class="btn btn-info" data-bind="attr: { href: '#/game/' + $index() }, visible: GameState() != 'Setup'">View Game</a>
+            <a class="btn btn-warning" data-bind="attr: { href: '/game/' + $index() }, visible: GameState() == 'Setup'">View Setup</a>
 		</li>
 	</ol>
 
 	<form role="form" data-bind="submit: createGame">		
-		<input class="btn btn-default" type="submit" value="Create New Game">
+		<input class="btn btn-danger" type="submit" value="Create New Game">
     </form>
 </div>

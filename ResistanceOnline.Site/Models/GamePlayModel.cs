@@ -38,22 +38,15 @@ namespace ResistanceOnline.Site.Models
         public SelectList AddToTeamPlayersSelectList { get; set; }
         public SelectList UseExcaliburSelectList { get; set; }
         public SelectList AssignExcaliburSelectList { get; set; }
-
+        public string PlayerName { get; set; }
+        public Player AssassinsGuessAtMerlin { get; set; }
 		public List<string> Actions { get; set; }
-
 		public string WaitingMessage { get; set; }
-
 		public List<PlayerInfoModel> PlayerInfo { get; set; }
-
 		public List<RoundModel> Rounds { get; set; }
-
-
         public List<string> RoundTables { get; set; }
-
         public List<string> LoyaltyCardsDeltInAdvance { get; set; }
-
 		public bool IsSpectator { get; set; }
-
         public int GameSize { get; set; }
 
         public string GameSetup
@@ -73,8 +66,6 @@ namespace ResistanceOnline.Site.Models
             }
         }
 
-		public List<SelectListItem> AllRulesSelectList { get; set; }
-
 		public List<string> Rules { get; set; }
 
 		public GamePlayModel(GamePlay gameplay, Guid? playerGuid)
@@ -82,11 +73,8 @@ namespace ResistanceOnline.Site.Models
             GameId = gameplay.Game.GameId;
 			PlayerGuid = playerGuid;
             GameSize = gameplay.Game.Players.Count;
-            AssassinIsInTheGame = gameplay.Game.Players.Select(p => p.Character).Contains(Character.Assassin);
             Rules = gameplay.Game.Rules.Select(r => r.Humanize()).ToList();
-
             RoundTables = gameplay.Game.RoundTables.Select(t=>String.Format("Round {0} has {1} and requires {2}", (gameplay.Game.RoundTables.IndexOf(t) + 1).ToWords(), "player".ToQuantity(t.TeamSize, ShowQuantityAs.Words), "fail".ToQuantity(t.RequiredFails, ShowQuantityAs.Words))).ToList();
-
             LoyaltyCardsDeltInAdvance = new List<string>();
             if (gameplay.Game.Rules.Contains(Rule.LoyaltyCardsDeltInAdvance) && gameplay.Game.ContainsLancelot())
             {
@@ -98,25 +86,12 @@ namespace ResistanceOnline.Site.Models
 
             var player = gameplay.Game.Players.FirstOrDefault(p => p.Guid == playerGuid);
 			IsSpectator = player == null;
-
             PlayerName = player == null ? "Spectator" : player.Name;
 
             AssassinsGuessAtMerlin = gameplay.AssassinsGuessAtMerlin;
 			State = gameplay.GamePlayState.ToString();
             CharactersInGame = gameplay.Game.AvailableCharacters.Select(i => i.ToString()).ToList();
 		
-            AllCharactersSelectList =
-				Enum.GetValues(typeof(Character))
-					.Cast<Character>()
-					.Select(c => new SelectListItem { Text = c.Humanize(LetterCasing.Sentence), Value = c.ToString() })
-					.ToList();
-
-			AllRulesSelectList =
-				Enum.GetValues(typeof(Rule))
-					.Cast<Rule>()
-					.Select(r => new SelectListItem { Text = r.Humanize(LetterCasing.Sentence), Value = r.ToString() })
-					.ToList();
-
             //can guess anyone but self
             GuessMerlinPlayersSelectList = new SelectList(gameplay.Game.Players.Where(p => p != player).Select(p => p.Name));
 
@@ -174,9 +149,5 @@ namespace ResistanceOnline.Site.Models
 			}          
 		}
 
-        public string PlayerName { get; set; }
-
-        public Player AssassinsGuessAtMerlin { get; set; }
-        public bool AssassinIsInTheGame { get; set; }
     }
 }

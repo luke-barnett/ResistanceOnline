@@ -30,6 +30,9 @@ namespace ResistanceOnline.Site.Controllers
         public ActionResult Game(int gameId)
         {
             var game = GetGame(gameId);
+            ViewBag.IsPlayer = false;
+            ViewBag.CanUpdateGame = false;
+            ViewBag.CanStartGame = false;
 
             ViewBag.AllCharactersSelectList =
                 Enum.GetValues(typeof(Character))
@@ -48,13 +51,16 @@ namespace ResistanceOnline.Site.Controllers
             {
                 var userAccount = context.Users.FirstOrDefault(user => user.Id == userId);
 
-                if (userAccount != null && !game.Players.Select(p => p.Guid).Contains(userAccount.PlayerGuid))
-                {
-                    ViewBag.IsPlayer = false;
-                }
-                else
+                if (userAccount != null && game.Players.Select(p => p.Guid).Contains(userAccount.PlayerGuid))
                 {
                     ViewBag.IsPlayer = true;
+
+                    if (game.GameState == Core.Game.State.Setup)
+                    {
+                        //todo - could restrict this to the game owner only?
+                        ViewBag.CanUpdateGame = true;
+                        ViewBag.CanStartGame = true;
+                    }
                 }
             }
 

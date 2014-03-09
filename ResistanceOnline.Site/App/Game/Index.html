@@ -1,34 +1,21 @@
-<h3>Game setup</h3>
-<p>
-    {{game().GameSetup}}
-</p>
-<ul class="cards" data-bind="foreach: game().CharactersInGame">
-    <li class="btn-group">
-        <img class="card" data-bind="attr: { src: image, title: name }" alt="{{$data}}" />
-    </li>	
-</ul>
+<ul>
+    <li>{{game().PlayerCountSummary}} <i>({{game().Characters}})</i></li>
 
-<div class="clear"></div>    
-
-<ul class="rules-table" data-bind="foreach: game().Rules">
+    <!-- ko foreach: game().Rules -->
 	<li>{{$data}}</li>
-</ul>
+    <!-- /ko -->
 
-<ul class="round-table" data-bind="foreach: game().RoundTables">
-    <li>{{$data}}</li>    
-</ul>
-
-<ul class="loyaltycards-table" data-bind="foreach: game().LoyaltyCardsDeltInAdvance">
+    <!-- ko foreach: game().RoundTables -->
     <li>{{$data}}</li>
-</ul>
+    <!-- /ko -->
 
-<div data-bind="visible: game().RoundTables().length == 0">
-    This game only supports five to ten players
-</div>
+    <!-- ko foreach: game().LoyaltyCardsDeltInAdvance -->
+    <li>{{$data}}</li>
+    <!-- /ko -->
+</ul>
 
 <div data-bind="visible: game().PlayerInfo">
-    <h3>Oracle</h3>
-    <p>Click any card to see the knowledge you have about that player</p>    
+    <p>Click each card to see the knowledge you have about that player</p>    
     <ul class="cards" data-bind="foreach: game().PlayerInfo">
 		<li>
 			<img class="playercard" data-bind="attr: { src: image }, click: toggleShowActual" />
@@ -42,7 +29,6 @@
 <div data-bind="foreach: game().Rounds">
 	<h3>
         {{Title}}
-        <img  title="{{Outcome}}" data-bind="visible: Outcome, attr: { src: '/images/' + Outcome() + '.png' }" />
     </h3>
     <p>{{Summary}}</p>
 	
@@ -89,21 +75,19 @@
 
     <div class="clear"></div>    
 
-    <!--
-    <div class="ladyofthelake" data-bind="visible: LadyOfTheLake!=null">
+    <div class="ladyofthelake" data-bind="visible: LadyOfTheLakeUsedBy()!=null">
         <ul class="cards">
             <li>
                 <img src="/images/ladyofthelake.png" />
-                <div class="playername">{{LadyOfTheLake.UsedBy}}</div>
+                <div class="playername">{{LadyOfTheLakeUsedBy}}</div>
             </li>
-            <li>
-                <img class="card" data-bind="attr: { src: '/images/' + LadyOfTheLake().Result + '.png' }" />
-                <div class="playername">{{LadyOfTheLake.UsedOn}}</div>
+            <li data-bind="visible: LadyOfTheLakeUsedOn()!=null">
+                <img class="card" data-bind="attr: { src: '/images/' + LadyOfTheLakeResult() + '.png' }" />
+                <div class="playername">{{LadyOfTheLakeUsedOn}}</div>
             </li>
         </ul>
     </div>
     <div class="clear"></div>      
-    -->
 
 
     <p data-bind="visible: LoyaltyCard!=null">

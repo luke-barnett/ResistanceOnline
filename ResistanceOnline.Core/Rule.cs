@@ -8,8 +8,8 @@ namespace ResistanceOnline.Core
 {
     public enum Rule
     {
-        GoodMustAlwaysVoteSucess,
-        IncludeLadyOfTheLake,
+        GoodMustAlwaysSucceedQuests,
+        LadyOfTheLakeExists,
         /// <summary>
         /// Lancelot Variation #3
         /// </summary>
@@ -21,7 +21,7 @@ namespace ResistanceOnline.Core
         /// <summary>
         /// Lancelot Variation #2
         /// </summary>
-        LoyaltyCardsDeltInAdvance,
-        IncludeExcalibur
+        LoyaltyCardsAreDeltInAdvance,
+        ExcaliburExists
     }
 }

@@ -26,12 +26,6 @@ namespace ResistanceOnline.Site.Models
                 return State == GamePlay.State.EternalChaos.ToString() || State == GamePlay.State.EvilTriumphs.ToString() || State == GamePlay.State.GoodPrevails.ToString();
             }
         }
-		
-		public List<Core.Player> ImpersonationList { get; set; }
-
-		public List<string> CharactersInGame { get; set; }
-
-		public List<SelectListItem> AllCharactersSelectList { get; set; }
 
         public SelectList LadyOfTheLakePlayerSelectList { get; set; }
         public SelectList GuessMerlinPlayersSelectList { get; set; }
@@ -52,25 +46,7 @@ namespace ResistanceOnline.Site.Models
         public string GameState { get; set; }
         public string PlayerCountSummary { get; set; }
         public string GameOverMessage { get; set; }
-
-        public string GameSetup
-        {
-            get
-            {
-                StringBuilder setup = new StringBuilder();
-                setup.AppendFormat("This is a {0} player game",GameSize.ToWords());
-                if (CharactersInGame.Count > 0) 
-                {
-                    setup.AppendFormat(" with the following characters");
-                }
-                if (CharactersInGame.Count<GameSize) {
-                    setup.AppendFormat(" (waiting on {0} to be added)", "more character".ToQuantity(GameSize - CharactersInGame.Count, ShowQuantityAs.Words));
-                }
-                return setup.ToString();
-            }
-        }
-
-
+        public string Characters { get; set; }
 
 		public GamePlayModel(GamePlay gameplay, Guid? playerGuid)
 		{
@@ -82,13 +58,37 @@ namespace ResistanceOnline.Site.Models
             Rules = gameplay.Game.Rules.Select(r => r.Humanize()).ToList();
             RoundTables = gameplay.Game.RoundTables.Select(t=>String.Format("Round {0} has {1} and requires {2}", (gameplay.Game.RoundTables.IndexOf(t) + 1).ToWords(), "player".ToQuantity(t.TeamSize, ShowQuantityAs.Words), "fail".ToQuantity(t.RequiredFails, ShowQuantityAs.Words))).ToList();
             LoyaltyCardsDeltInAdvance = new List<string>();
-            if (gameplay.Game.Rules.Contains(Rule.LoyaltyCardsDeltInAdvance) && gameplay.Game.ContainsLancelot())
+            if (gameplay.Game.Rules.Contains(Rule.LoyaltyCardsAreDeltInAdvance) && gameplay.Game.ContainsLancelot())
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    LoyaltyCardsDeltInAdvance.Add(string.Format("Round {0} - {1}", (i + 1).ToWords(), gameplay.Game.LoyaltyDeck[i].Humanize()));
+                    LoyaltyCardsDeltInAdvance.Add(string.Format("On round {0}, Lancelot's {1} switch alegiance", (i + 1).ToWords(), gameplay.Game.LoyaltyDeck[i] == LoyaltyCard.SwitchAlegiance ? "will" : "will not"));
                 }
             }
+
+            var characters = new List<string>();
+            foreach (var character in gameplay.Game.AvailableCharacters.Distinct()) {
+                var count = gameplay.Game.AvailableCharacters.Count(c=>c==character);
+                if (count > 1)
+                {
+                    switch (character)
+                    {
+                        case Character.LoyalServantOfArthur:
+                            characters.Add(String.Format("{0} Loyal Servants of Arthur", count));
+                            break;
+                        case Character.MinionOfMordred:
+                            characters.Add(String.Format("{0} Minions of Mordred", count));
+                            break;
+                        default:
+                            characters.Add(character.Humanize().ToQuantity(count));
+                            break;
+                    }
+                        
+                } else {
+                    characters.Add(character.Humanize());
+                }
+            }
+            Characters = Useful.CommaQuibbling(characters);
 
             var player = gameplay.Game.Players.FirstOrDefault(p => p.Guid == playerGuid);
 			IsSpectator = player == null;
@@ -96,7 +96,6 @@ namespace ResistanceOnline.Site.Models
 
             AssassinsGuessAtMerlin = gameplay.AssassinsGuessAtMerlin;
 			State = gameplay.GamePlayState.ToString();
-            CharactersInGame = gameplay.Game.AvailableCharacters.Select(i => i.ToString()).ToList();
 		
             //can guess anyone but self
             GuessMerlinPlayersSelectList = new SelectList(gameplay.Game.Players.Where(p => p != player).Select(p => p.Name));
@@ -145,7 +144,7 @@ namespace ResistanceOnline.Site.Models
             var waitings = waiting.Where(a=>a.Action != Core.Action.Type.Message).Select(w => w.Name).Distinct().ToList();
             if (waitings.Any())
             {
-                WaitingMessage = String.Format("Waiting for {0}.", Useful.CommaQuibbling(waitings));
+                WaitingMessage = String.Format("Waiting for {0}", Useful.CommaQuibbling(waitings));
             }
 			
 			Rounds = new List<RoundModel>();

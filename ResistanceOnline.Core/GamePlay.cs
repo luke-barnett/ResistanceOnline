@@ -126,7 +126,7 @@ namespace ResistanceOnline.Core
                     if (CurrentTeam.TeamMembers.Contains(player) && !CurrentTeam.Quests.Any(q => q.Player == player))
                     {
                         //good must always vote success
-                        if (Game.Rules.Contains(Rule.GoodMustAlwaysVoteSucess) && !Game.IsCharacterEvil(player.Character, LancelotAllegianceSwitched))
+                        if (Game.Rules.Contains(Rule.GoodMustAlwaysSucceedQuests) && !Game.IsCharacterEvil(player.Character, LancelotAllegianceSwitched))
                         {
                             actions.Add(Action.Type.SucceedQuest);
                         }
@@ -159,7 +159,7 @@ namespace ResistanceOnline.Core
                     }
                     break;
                 case State.LadyOfTheLake:
-                    if (Game.Rules.Contains(Rule.IncludeLadyOfTheLake) && CurrentRound.LadyOfTheLake != null && CurrentRound.LadyOfTheLake.Holder == player && CurrentRound.LadyOfTheLake.Target == null)
+                    if (Game.Rules.Contains(Rule.LadyOfTheLakeExists) && CurrentRound.LadyOfTheLake != null && CurrentRound.LadyOfTheLake.Holder == player && CurrentRound.LadyOfTheLake.Target == null)
                     {
                         actions.Add(Action.Type.UseTheLadyOfTheLake);
                     }
@@ -300,7 +300,7 @@ namespace ResistanceOnline.Core
 
             if (CurrentTeam.TeamMembers.Count == CurrentTeam.TeamSize)
             {
-                if (Game.Rules != null && Game.Rules.Contains(Rule.IncludeExcalibur))
+                if (Game.Rules != null && Game.Rules.Contains(Rule.ExcaliburExists))
                 {
                     GamePlayState = State.AssigningExcalibur;
                 }
@@ -341,7 +341,7 @@ namespace ResistanceOnline.Core
 
         void OnTeamFinished()
         {
-            if (Game.Rules.Contains(Rule.IncludeLadyOfTheLake) && Rounds.Count >= 2)
+            if (Game.Rules.Contains(Rule.LadyOfTheLakeExists) && Rounds.Count >= 2)
             {
                 GamePlayState = State.LadyOfTheLake;
                 return;

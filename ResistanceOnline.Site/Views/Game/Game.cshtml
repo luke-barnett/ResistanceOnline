@@ -23,7 +23,12 @@
         @for (var i = 0; i < Model.AvailableCharacters.Count; i++)
         { 
         <dd>
-            @Html.DropDownList("Character-"+i, new SelectList(Enum.GetValues(typeof(ResistanceOnline.Core.Character)), Model.AvailableCharacters[i]))
+            @if (ViewBag.CanUpdateGame)
+            { 
+                @Html.DropDownList("Character-"+i, new SelectList(Enum.GetValues(typeof(ResistanceOnline.Core.Character)), Model.AvailableCharacters[i]))
+            } else {
+                @Model.AvailableCharacters[i].Humanize()
+            }
         </dd>
         }
 
@@ -33,7 +38,11 @@
         @foreach (var rule in Enum.GetValues(typeof(ResistanceOnline.Core.Rule)).Cast<ResistanceOnline.Core.Rule>())
         {
             <dd>
-                <input type="checkbox" @(Model.Rules.Contains(rule)?"checked":"") name="@rule" />@(rule.Humanize(LetterCasing.Sentence))
+                @if (ViewBag.CanUpdateGame)
+                {
+                <input type="checkbox" @(Model.Rules.Contains(rule)?"checked":"") name="@rule" />
+                }
+                @(rule.Humanize(LetterCasing.Sentence))
             </dd>
         }
 
@@ -43,14 +52,23 @@
         @for (var i = 0; i < Model.RoundTables.Count; i++)
         {
             <dd>
-                Size: <input type="number" name="roundsize-@i" value="@Model.RoundTables[i].TeamSize" />
-                Fails: <input type="number" name="roundfails-@i" value="@Model.RoundTables[i].RequiredFails" />
+                @if (ViewBag.CanUpdateGame)
+                {
+                    <span>Round @((i+1))</span>
+                    <span>Size:</span><input type="number" name="roundsize-@i" value="@Model.RoundTables[i].TeamSize" />
+                    <span>Fails:</span><input type="number" name="roundfails-@i" value="@Model.RoundTables[i].RequiredFails" />
+                }
+                else
+                {
+                    <span>Round @((i+1).ToWords()) has @("player".ToQuantity(Model.RoundTables[i].TeamSize, ShowQuantityAs.Words)) and requires @("fail".ToQuantity(Model.RoundTables[i].RequiredFails, ShowQuantityAs.Words))</span>
+                }
             </dd>
         }
     </dl>
-    if (ViewBag.IsPlayer) {         
+        if (ViewBag.CanUpdateGame)
+        {         
         <input class="btn btn-primary" type="submit" value="Update" />
-    }
+        }
     }
 
 @if (Model.State == ResistanceOnline.Core.Game.State.Setup.ToString() && !ViewBag.IsPlayer)
@@ -61,7 +79,7 @@
         <input class="btn btn-success" type="submit" value="Join Game" />
     }
 }
-@if (Model.State == ResistanceOnline.Core.Game.State.Setup.ToString() && ViewBag.IsPlayer)
+@if (Model.State == ResistanceOnline.Core.Game.State.Setup.ToString() && ViewBag.CanStartGame)
 {
     using (Html.BeginForm("Start", "Game", FormMethod.Post))
     {

@@ -12,9 +12,14 @@ namespace ResistanceOnline.Site.Models
         public int FailsRequired { get; set; }
         public List<TeamModel> Teams { get; set; }
         private int _roundNumber;
-        public string Title { get { return String.Format("Round {0}", _roundNumber.ToWords()); } }
+        public string Title { get; set; }
         public string Summary { get { return String.Format("This is a {0} player round and requires {1}", TeamSize.ToWords(), "fail".ToQuantity(FailsRequired, ShowQuantityAs.Words)); } }
-        public LadyOfTheLakeUseModel LadyOfTheLake { get; set; }
+
+        public string LadyOfTheLakeUsedBy { get; set; }
+        public string LadyOfTheLakeUsedOn { get; set; }
+        public string LadyOfTheLakeResult { get; set; }
+
+
         public string LoyaltyCard { get; set; }
         public string Outcome { get; set; }
 
@@ -24,20 +29,35 @@ namespace ResistanceOnline.Site.Models
             FailsRequired = round.RequiredFails;
             _roundNumber = roundNumber;
 
-            if (round.LadyOfTheLake!=null) 
+            Title = String.Format("Quest {0}", _roundNumber.ToWords());
+            if (round.IsSuccess.HasValue && round.IsSuccess.Value)
             {
-                LadyOfTheLake = new LadyOfTheLakeUseModel(round.LadyOfTheLake, round.LadyOfTheLake.Target);
+                Title += " succeeded";
+            }
+            if (round.IsSuccess.HasValue && !round.IsSuccess.Value)
+            {
+                Title += " failed";
+            }
+
+            if (round.LadyOfTheLake!=null && round.LadyOfTheLake.Target!=null) 
+            {
+                LadyOfTheLakeUsedBy = round.LadyOfTheLake.Holder.Name;
+                LadyOfTheLakeUsedOn = round.LadyOfTheLake.Target.Name;
+
+                if (player == round.LadyOfTheLake.Holder)
+                {
+                    LadyOfTheLakeResult = round.LadyOfTheLake.IsEvil ? "evil" : "good";
+                }
+                else
+                {
+                    LadyOfTheLakeResult = "allegiance";
+                }
             }
             
             Teams = new List<TeamModel>();
             foreach (var team in round.Teams)
             {
                 Teams.Add(new TeamModel(team, round.Players.Count, round.Teams.IndexOf(team)+1));
-            }
-
-            if (round.IsSuccess.HasValue)
-            {
-                Outcome = round.IsSuccess.Value ? "good-wins" : "evil-wins";
             }
 
             var loyaltyCard = game.Game.GetLoyaltyCard(roundNumber);

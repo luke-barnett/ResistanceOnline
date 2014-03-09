@@ -10,7 +10,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 		{
             var game = new Game();
 
-            game.Rules.Remove(Rule.IncludeLadyOfTheLake);
+            game.Rules.Remove(Rule.LadyOfTheLakeExists);
 
 			for (var i = 0; i < numberOfPlayers; i++)
 			{

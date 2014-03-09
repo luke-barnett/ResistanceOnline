@@ -33,7 +33,7 @@ namespace ResistanceOnline.Core
             Players = new List<Player>();
             AvailableCharacters = new List<Character>();
             LoyaltyDeck = new List<LoyaltyCard> { LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.SwitchAlegiance, LoyaltyCard.SwitchAlegiance }.Shuffle().ToList();
-            Rules = new List<Rule>() { Rule.IncludeLadyOfTheLake };
+            Rules = new List<Rule>() { Rule.LadyOfTheLakeExists };
             RoundTables = StandardRoundTables(0);
             GameState = State.Setup;
         }
@@ -72,7 +72,7 @@ namespace ResistanceOnline.Core
 
         public LoyaltyCard? GetLoyaltyCard(int roundNumber)
         {
-            if (Rules.Contains(Rule.LoyaltyCardsDeltInAdvance))
+            if (Rules.Contains(Rule.LoyaltyCardsAreDeltInAdvance))
                 return null;
             if (!ContainsLancelot())
                 return null;

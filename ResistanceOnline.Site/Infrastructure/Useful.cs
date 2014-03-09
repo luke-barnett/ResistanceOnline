@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Humanizer;
 
 namespace ResistanceOnline.Site.Infrastructure
 {
@@ -16,6 +17,6 @@ namespace ResistanceOnline.Site.Infrastructure
 
             return commaSeparated + itemArray.LastOrDefault();
         }
-
+      
     }
 }

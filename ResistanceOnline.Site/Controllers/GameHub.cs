@@ -29,9 +29,7 @@ namespace ResistanceOnline.Site.Controllers
             {
                 var game = new Game();
                 game.Rules.Clear();
-                game.Rules.Add(Rule.LancelotsKnowEachOther);
-                game.Rules.Add(Rule.GoodMustAlwaysVoteSucess);
-                game.Rules.Add(Rule.IncludeLadyOfTheLake);
+                game.Rules.Add(Rule.LadyOfTheLakeExists);
                 
 				_computerPlayers.Add(new TrustBot(game.JoinGame("\"Jordan\"", Guid.NewGuid())));
                 _computerPlayers.Add(new TrustBot(game.JoinGame("\"Luke\"", Guid.NewGuid())));
@@ -39,19 +37,13 @@ namespace ResistanceOnline.Site.Controllers
                 _computerPlayers.Add(new TrustBot(game.JoinGame("\"Jayvin\"", Guid.NewGuid())));
                 _computerPlayers.Add(new TrustBot(game.JoinGame("\"Yif\"", Guid.NewGuid())));
                 _computerPlayers.Add(new TrustBot(game.JoinGame("\"Alex\"", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Betty\"", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Gareth\"", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Gavin\"", Guid.NewGuid())));
 
                 game.AvailableCharacters[0] = Character.Merlin;
                 game.AvailableCharacters[1] = Character.Assassin;
                 game.AvailableCharacters[2] = Character.Percival;
                 game.AvailableCharacters[3] = Character.Morgana;
-                game.AvailableCharacters[4] = Character.Oberon;
-                game.AvailableCharacters[5] = Character.Mordred;
-                game.AvailableCharacters[6] = Character.LoyalServantOfArthur;
-                game.AvailableCharacters[7] = Character.LoyalServantOfArthur;
-                game.AvailableCharacters[8] = Character.LoyalServantOfArthur;
+                game.AvailableCharacters[4] = Character.Mordred;
+                game.AvailableCharacters[5] = Character.LoyalServantOfArthur;
 
                 Games.Add(game);
                 game.GameId = Games.IndexOf(game);

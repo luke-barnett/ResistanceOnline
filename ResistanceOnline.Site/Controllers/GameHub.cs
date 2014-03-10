@@ -12,6 +12,7 @@ using System.Web.Mvc;
 using ResistanceOnline.Database.Entities;
 using ResistanceOnline.Site.ComputerPlayers;
 using Action = ResistanceOnline.Core.Action;
+using Game = ResistanceOnline.Core.Game;
 
 
 namespace ResistanceOnline.Site.Controllers

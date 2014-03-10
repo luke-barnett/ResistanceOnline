@@ -68,6 +68,7 @@ namespace ResistanceOnline.Database.Migrations
                     {
                         PlayerId = c.Int(nullable: false, identity: true),
                         Name = c.String(),
+                        Character = c.String(),
                         Type = c.String(),
                         Guid = c.Guid(nullable: false),
                         Game_GameId = c.Int(),

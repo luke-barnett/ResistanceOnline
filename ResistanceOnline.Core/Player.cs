@@ -20,5 +20,19 @@ namespace ResistanceOnline.Core
         public Character Character { get; set; }
         public Guid Guid { get; set; }
         public Type PlayerType { get; set; }
+
+
+		public Player()
+		{
+
+		}
+
+		public Player(ResistanceOnline.Database.Entities.Player player)
+		{
+			Name = player.Name;
+			Character = (Core.Character)Enum.Parse(typeof(Core.Character), player.Character);
+			PlayerType = (Type)Enum.Parse(typeof(Type), player.Type);
+			Guid = player.Guid;
+		}
     }
 }

@@ -8,6 +8,8 @@ namespace ResistanceOnline.Core
 {
     public class RoundTable
     {
+		private Database.Entities.Round x;
+
         public int TeamSize { get; set; }
         public int RequiredFails { get; set; }
 
@@ -16,5 +18,11 @@ namespace ResistanceOnline.Core
             TeamSize = teamSize;
             RequiredFails = requiredFails;
         }
+
+		public RoundTable(Database.Entities.Round round)
+		{
+			TeamSize = round.Size;
+			RequiredFails = round.Fails;
+		}
     }
 }

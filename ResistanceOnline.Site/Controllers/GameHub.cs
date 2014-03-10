@@ -27,7 +27,7 @@ namespace ResistanceOnline.Site.Controllers
             _dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
             
             //create a default game to make development easier
-            if (Games.Count == 0)
+            if (_dbContext.Games.Count() == 0)
             {
                 var game = new Game();
                 game.Rules.Clear();
@@ -47,8 +47,9 @@ namespace ResistanceOnline.Site.Controllers
                 game.AvailableCharacters[4] = Character.Mordred;
                 game.AvailableCharacters[5] = Character.LoyalServantOfArthur;
 
-                Games.Add(game);
-                game.GameId = Games.IndexOf(game);
+				//todo store game to db
+                //Games.Add(game);
+                //game.GameId = Games.IndexOf(game);
             }
         }
 
@@ -80,22 +81,20 @@ namespace ResistanceOnline.Site.Controllers
         }
 
 
-        public static List<Game> Games = new List<Game>();
-        public static List<Action> _actions = new List<Action>();
         static Dictionary<Guid, List<string>> _userConnections = new Dictionary<Guid, List<string>>();
 
         private void AddAction(int gameId, Action action)
         {
             action.GameId = gameId;
 
-            var actionDb = new Database.Entities.Action
-            {
-                Game = _dbContext.Games.First(x=>x.GameId == gameId),
-                Owner = _dbContext.Players.First(x=>x.Game.GameId == gameId && x.Guid == action.Owner.Guid),
-                Timestamp = action.Timestamp,
-                Type = action.ActionType.ToString(),
-                Text = action.Text
-            };
+			var actionDb = new Database.Entities.Action
+			{
+				Game = new Database.Entities.Game { GameId = gameId },
+				Owner = _dbContext.Players.First(x => x.Game.GameId == gameId && x.Guid == action.Owner.Guid),
+				Timestamp = action.Timestamp,
+				Type = action.ActionType.ToString(),
+				Text = action.Text
+			};
             if (action.TargetPlayer!=null) {
                 actionDb.Target = _dbContext.Players.FirstOrDefault(x => x.Game.GameId == gameId && x.Guid == action.TargetPlayer.Guid);
             }
@@ -106,14 +105,15 @@ namespace ResistanceOnline.Site.Controllers
 
         private GamePlay GetGamePlay(int? gameId)
         {
-            //todo - something to do with databases
-            if (gameId.HasValue == false || gameId.Value >= Games.Count)
+            if (gameId.HasValue == false)
                 return null;
 
-            var gameplay = new GamePlay(Games[gameId.Value]);
-            gameplay.DoActions(_actions.Where(a => a.GameId == gameId).ToList());
+            var gameplay = new GamePlay(new Game(_dbContext.Games.First(game=>game.GameId==gameId.Value)));
+			var actions = _dbContext.Actions.Include("Owner").Include("Target").Where(a => a.Game.GameId == gameId).ToList().Select(db => new Action(db)).ToList();
+            gameplay.DoActions(actions);
             return gameplay;
         }
+
 
         private void Update()
         {
@@ -121,7 +121,7 @@ namespace ResistanceOnline.Site.Controllers
             {
                 //todo - don't need all games sent every update
                 //it feels like this should be split out into game hubs for playing games and home page stuff for managing games
-                var games = Games.Select(g => new GamePlayModel(GetGamePlay(g.GameId), guid));
+				var games = _dbContext.Games.ToList().Select(g => new GamePlayModel(GetGamePlay(g.GameId), guid));
 
                 foreach (var connection in _userConnections[guid])
                 {
@@ -149,8 +149,6 @@ namespace ResistanceOnline.Site.Controllers
         {
             //todo - something with the database :)
             var game = new Game();
-            Games.Add(game);
-            game.GameId = Games.IndexOf(game);
 
             Update();
 

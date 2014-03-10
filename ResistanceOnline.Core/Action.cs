@@ -50,7 +50,19 @@ namespace ResistanceOnline.Core
             Text = text;
             Timestamp = DateTime.Now;
         }
-       
+
+
+		public Action(ResistanceOnline.Database.Entities.Action action)
+		{
+			ActionType = (Type)Enum.Parse(typeof(Type), action.Type);
+			Owner = new Player(action.Owner);
+			if (action.Target != null)
+			{
+				TargetPlayer = new Player(action.Target);
+			}
+			Timestamp = action.Timestamp;
+			Text = action.Text;			
+		}
     }
 
 

@@ -38,6 +38,19 @@ namespace ResistanceOnline.Core
             GameState = State.Setup;
         }
 
+		public Game(ResistanceOnline.Database.Entities.Game game)
+		{
+			GameId = game.GameId;
+	        GameState = (State)Enum.Parse(typeof(State), game.GameState);
+			AvailableCharacters = game.Characters.Select(x=>(Character)Enum.Parse(typeof(Character), x.Name)).ToList();
+			Players = game.Players.Select(x=>new Player(x)).ToList();
+			LoyaltyDeck = game.LoyaltyDeck.Select(x=>(LoyaltyCard)Enum.Parse(typeof(LoyaltyCard), x.Card)).ToList();
+			Rules = game.Rules.Select(x=>(Rule)Enum.Parse(typeof(Rule), x.Name)).ToList();
+	        InitialHolderOfLadyOfTheLake = Players.First(p=>p.Name == game.InitialHolderOfLadyOfTheLake);
+			InitialLeader = Players.First(p => p.Name == game.InitialLeader);
+			RoundTables = game.RoundTables.Select(x => new RoundTable(x)).ToList();
+		}
+
         public Guid JoinGame(string playerName, Guid playerGuid, Player.Type playerType=Player.Type.Human)
         {
             if (Players.Select(p => p.Guid).Contains(playerGuid))

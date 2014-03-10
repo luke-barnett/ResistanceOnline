@@ -26,7 +26,10 @@ namespace ResistanceOnline.Site.Controllers
 
         private Game GetGame(int gameId)
         {
-            return GameHub.Games.Single(s => s.GameId == gameId);
+			using (var context = new Database.ResistanceOnlineDbContext())
+			{
+				return new Game(context.Games.Single(s => s.GameId == gameId));
+			}
         }
 
         public ActionResult Game(int gameId)

@@ -41,6 +41,10 @@
   <ItemGroup>
     <Compile Include="Action.cs" />
     <Compile Include="Character.cs" />
+    <Compile Include="ComputerPlayers\CheatBot.cs" />
+    <Compile Include="ComputerPlayers\ComputerPlayer.cs" />
+    <Compile Include="ComputerPlayers\SimpleBot.cs" />
+    <Compile Include="ComputerPlayers\TrustBot.cs" />
     <Compile Include="ExcaliburUse.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="GamePlay.cs" />

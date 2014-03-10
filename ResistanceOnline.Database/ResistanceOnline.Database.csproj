@@ -57,6 +57,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Action.cs" />
+    <Compile Include="Entities\LoyaltyCard.cs" />
+    <Compile Include="Entities\Round.cs" />
+    <Compile Include="Entities\Rule.cs" />
+    <Compile Include="Entities\Player.cs" />
+    <Compile Include="Entities\Character.cs" />
     <Compile Include="Entities\Game.cs" />
     <Compile Include="InjectionModule.cs" />
     <Compile Include="Migrations\201402192233104_InitialCreate.cs" />

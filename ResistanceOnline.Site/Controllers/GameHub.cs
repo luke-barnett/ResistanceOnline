@@ -10,9 +10,10 @@ using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using System.Web.Mvc;
 using ResistanceOnline.Database.Entities;
-using ResistanceOnline.Site.ComputerPlayers;
 using Action = ResistanceOnline.Core.Action;
 using Game = ResistanceOnline.Core.Game;
+using Rule = ResistanceOnline.Core.Rule;
+using Character = ResistanceOnline.Core.Character;
 
 
 namespace ResistanceOnline.Site.Controllers
@@ -24,20 +25,20 @@ namespace ResistanceOnline.Site.Controllers
         public GameHub()//(ResistanceOnlineDbContext dbContext)
         {
             _dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
-
+            
             //create a default game to make development easier
             if (Games.Count == 0)
             {
                 var game = new Game();
                 game.Rules.Clear();
                 game.Rules.Add(Rule.LadyOfTheLakeExists);
-                
-				_computerPlayers.Add(new TrustBot(game.JoinGame("\"Jordan\"", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Luke\"", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Jeffrey\"", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Jayvin\"", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Yif\"", Guid.NewGuid())));
-                _computerPlayers.Add(new TrustBot(game.JoinGame("\"Alex\"", Guid.NewGuid())));
+
+                game.JoinGame("\"Jordan\"", Guid.NewGuid(), Core.Player.Type.TrustBot);
+                game.JoinGame("\"Luke\"", Guid.NewGuid(), Core.Player.Type.TrustBot);
+                game.JoinGame("\"Jeffrey\"", Guid.NewGuid(), Core.Player.Type.TrustBot);
+                game.JoinGame("\"Jayvin\"", Guid.NewGuid(), Core.Player.Type.TrustBot);
+                game.JoinGame("\"Yif\"", Guid.NewGuid(), Core.Player.Type.TrustBot);
+                game.JoinGame("\"Alex\"", Guid.NewGuid(), Core.Player.Type.TrustBot);
 
                 game.AvailableCharacters[0] = Character.Merlin;
                 game.AvailableCharacters[1] = Character.Assassin;
@@ -80,15 +81,27 @@ namespace ResistanceOnline.Site.Controllers
 
 
         public static List<Game> Games = new List<Game>();
-        static List<Action> _actions = new List<Action>();
-        static List<ComputerPlayer> _computerPlayers = new List<ComputerPlayer>();
+        public static List<Action> _actions = new List<Action>();
         static Dictionary<Guid, List<string>> _userConnections = new Dictionary<Guid, List<string>>();
 
         private void AddAction(int gameId, Action action)
         {
-            //todo - something to do with databases
             action.GameId = gameId;
-            _actions.Add(action);
+
+            var actionDb = new Database.Entities.Action
+            {
+                Game = _dbContext.Games.First(x=>x.GameId == gameId),
+                Owner = _dbContext.Players.First(x=>x.Game.GameId == gameId && x.Guid == action.Owner.Guid),
+                Timestamp = action.Timestamp,
+                Type = action.ActionType.ToString(),
+                Text = action.Text
+            };
+            if (action.TargetPlayer!=null) {
+                actionDb.Target = _dbContext.Players.FirstOrDefault(x => x.Game.GameId == gameId && x.Guid == action.TargetPlayer.Guid);
+            }
+
+            _dbContext.Actions.Add(actionDb);
+            _dbContext.SaveChanges();
         }
 
         private GamePlay GetGamePlay(int? gameId)
@@ -162,12 +175,12 @@ namespace ResistanceOnline.Site.Controllers
         private void LetComputerPlayersDoActions(GamePlay gameplay)
         {
             var state = gameplay.GamePlayState;
-            var computersPlayersInGame = _computerPlayers.Where(c => gameplay.Game.Players.Select(p => p.Guid).Contains(c.PlayerGuid));
-            while (computersPlayersInGame.Any(c => gameplay.AvailableActions(gameplay.Game.Players.First(p => p.Guid == c.PlayerGuid)).Any(action => action != Action.Type.Message)))
+            var computersPlayersInGame = gameplay.Game.Players.Where(p=>p.PlayerType != Core.Player.Type.Human);
+            while (computersPlayersInGame.Any(c => gameplay.AvailableActions(gameplay.Game.Players.First(p => p.Guid == c.Guid)).Any(action => action != Action.Type.Message)))
             {
                 foreach (var computerPlayer in computersPlayersInGame)
-                {
-                    var action = computerPlayer.DoSomething(gameplay);
+                {                    
+                    var action = Core.ComputerPlayers.ComputerPlayer.Factory(computerPlayer.PlayerType, computerPlayer.Guid).DoSomething(gameplay);
                     if (action != null)
                     {
                         gameplay.DoAction(action);

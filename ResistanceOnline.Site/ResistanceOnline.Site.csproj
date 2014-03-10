@@ -319,10 +319,6 @@
     <Compile Include="Models\LoginConfirmationViewModel.cs" />
     <Compile Include="Models\MessageModel.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="ComputerPlayers\ComputerPlayer.cs" />
-    <Compile Include="ComputerPlayers\CheatBot.cs" />
-    <Compile Include="ComputerPlayers\TrustBot.cs" />
-    <Compile Include="ComputerPlayers\SimpleBot.cs" />
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\GameHub.cs" />
     <Compile Include="Global.asax.cs">

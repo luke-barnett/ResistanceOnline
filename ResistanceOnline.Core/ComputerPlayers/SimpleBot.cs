@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ResistanceOnline.Site.ComputerPlayers
+namespace ResistanceOnline.Core.ComputerPlayers
 {
     public class SimpleBot : ComputerPlayer
     {

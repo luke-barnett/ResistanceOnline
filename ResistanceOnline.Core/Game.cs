@@ -38,7 +38,7 @@ namespace ResistanceOnline.Core
             GameState = State.Setup;
         }
 
-        public Guid JoinGame(string playerName, Guid playerGuid)
+        public Guid JoinGame(string playerName, Guid playerGuid, Player.Type playerType=Player.Type.Human)
         {
             if (Players.Select(p => p.Guid).Contains(playerGuid))
                 throw new InvalidOperationException("It's really not fair if you play as more than one player and you want the game to be fair don't you?");
@@ -48,7 +48,7 @@ namespace ResistanceOnline.Core
 
             playerName = playerName.Uniquify(Players.Select(p => p.Name));
 
-            Players.Add(new Player() { Name = playerName, Guid = playerGuid });
+            Players.Add(new Player() { Name = playerName, Guid = playerGuid, PlayerType = playerType });
 
             var evilCount = AvailableCharacters.Count(c => IsCharacterEvil(c, false));
             if (evilCount < (AvailableCharacters.Count / 3.0))

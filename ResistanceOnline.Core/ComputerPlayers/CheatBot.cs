@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Humanizer;
-using ResistanceOnline.Site;
 
-namespace ResistanceOnline.Site.ComputerPlayers
+namespace ResistanceOnline.Core.ComputerPlayers
 {
     public class CheatBot : ComputerPlayer
     {

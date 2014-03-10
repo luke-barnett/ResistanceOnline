@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Action = ResistanceOnline.Core.Action;
 
-namespace ResistanceOnline.Site.ComputerPlayers
+namespace ResistanceOnline.Core.ComputerPlayers
 {
     public abstract class ComputerPlayer
     {
@@ -15,7 +15,18 @@ namespace ResistanceOnline.Site.ComputerPlayers
         protected Player _player;
         public Guid PlayerGuid { get; private set; }
         private List<string> _thingsIWantToSay = new List<string>();
-        
+
+
+        public static ComputerPlayer Factory(Player.Type type, Guid playerGuid)
+        {
+            switch (type)
+            {
+                case Player.Type.TrustBot:
+                default:
+                    return new TrustBot(playerGuid);
+            }
+        }
+
         public ComputerPlayer(Guid playerGuid)
         {
             PlayerGuid = playerGuid;

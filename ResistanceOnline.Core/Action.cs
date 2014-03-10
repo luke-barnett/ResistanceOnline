@@ -40,7 +40,7 @@ namespace ResistanceOnline.Core
         public Type ActionType { get; set; }
         public Player TargetPlayer { get; set; }
         public string Text { get; set; }
-        public DateTime Timestamp { get; set; }
+        public DateTimeOffset Timestamp { get; set; }
 
         public Action(Player owner, Type actionType, Player targetPlayer = null, string text = null)
         {

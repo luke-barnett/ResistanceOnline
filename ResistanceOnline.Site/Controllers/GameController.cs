@@ -59,7 +59,12 @@ namespace ResistanceOnline.Site.Controllers
                     {
                         //todo - could restrict this to the game owner only?
                         ViewBag.CanUpdateGame = true;
-                        ViewBag.CanStartGame = true;
+
+                        //ensure you can only start a game that can actually work
+                        if (game.RoundTables.Select(r => r.TeamSize).Max() <= game.Players.Count)
+                        {
+                            ViewBag.CanStartGame = true;
+                        }
                     }
                 }
             }
@@ -130,7 +135,5 @@ namespace ResistanceOnline.Site.Controllers
             game.StartGame();
             return Redirect("#/game/" + gameId.ToString());
         }
-
-
     }
 }

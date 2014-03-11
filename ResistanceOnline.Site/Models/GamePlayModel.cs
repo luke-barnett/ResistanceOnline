@@ -101,19 +101,19 @@ namespace ResistanceOnline.Site.Models
             GuessMerlinPlayersSelectList = new SelectList(gameplay.Game.Players.Where(p => p != player).Select(p => p.Name));
 
             //can use on anyone who hasn't had it
-            var ladyOfTheLakeHistory = gameplay.Rounds.Where(r=>r.LadyOfTheLake!=null).Select(r => r.LadyOfTheLake.Holder);
+            var ladyOfTheLakeHistory = gameplay.Quests.Where(r=>r.LadyOfTheLake!=null).Select(r => r.LadyOfTheLake.Holder);
             LadyOfTheLakePlayerSelectList = new SelectList(gameplay.Game.Players.Where(p => p != player).Except(ladyOfTheLakeHistory).Select(p => p.Name));
 
-            if (gameplay.CurrentRound != null && gameplay.CurrentRound.CurrentTeam != null)
+            if (gameplay.CurrentQuest != null && gameplay.CurrentQuest.CurrentVoteTrack != null)
             {
-                UseExcaliburSelectList = new SelectList(gameplay.CurrentRound.CurrentTeam.TeamMembers.Where(p => p != gameplay.CurrentRound.CurrentTeam.Leader).Select(p => p.Name));
-                AssignExcaliburSelectList = new SelectList(gameplay.CurrentRound.CurrentTeam.TeamMembers.Select(p => p.Name));
+                UseExcaliburSelectList = new SelectList(gameplay.CurrentQuest.CurrentVoteTrack.Players.Where(p => p != gameplay.CurrentQuest.CurrentVoteTrack.Leader).Select(p => p.Name));
+                AssignExcaliburSelectList = new SelectList(gameplay.CurrentQuest.CurrentVoteTrack.Players.Select(p => p.Name));
             }
 
             //can put anyone on a team who isn't already on it
-            if (gameplay.CurrentRound != null)
+            if (gameplay.CurrentQuest != null)
             {
-                AddToTeamPlayersSelectList = new SelectList(gameplay.Game.Players.Where(p => !gameplay.CurrentRound.CurrentTeam.TeamMembers.Select(t => t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
+                AddToTeamPlayersSelectList = new SelectList(gameplay.Game.Players.Where(p => !gameplay.CurrentQuest.CurrentVoteTrack.Players.Select(t => t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
             }
 
 			Actions = gameplay.AvailableActions(player).Select(i => i.ToString()).ToList();         
@@ -148,9 +148,9 @@ namespace ResistanceOnline.Site.Models
             }
 			
 			Rounds = new List<RoundModel>();
-			for(int i=0; i<gameplay.Rounds.Count; i++)
+			for(int i=0; i<gameplay.Quests.Count; i++)
 			{
-                Rounds.Add(new RoundModel(gameplay.Rounds[i], i + 1, gameplay, player));
+                Rounds.Add(new RoundModel(gameplay.Quests[i], i + 1, gameplay, player));
 			}
 
             if (GameOver)

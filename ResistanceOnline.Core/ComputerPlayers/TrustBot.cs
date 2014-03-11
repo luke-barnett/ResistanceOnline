@@ -37,15 +37,15 @@ namespace ResistanceOnline.Core.ComputerPlayers
             int correctVotes = 0, votesCounted = 0;
 
             //nothing confirmed, look at quest behaviour
-            foreach (var round in _gameplay.Rounds)
+            foreach (var round in _gameplay.Quests)
             {
-                var onTeam = round.Teams.Last().TeamMembers.Contains(player);
+                var onTeam = round.VoteTracks.Last().Players.Contains(player);
                 if (onTeam)
                 {
-                    var fails = round.Teams.Last().Quests.Count(q => !q.Success);
-                    var size = round.Teams.Last().TeamMembers.Count();
+                    var fails = round.VoteTracks.Last().QuestCards.Count(q => !q.Success);
+                    var size = round.VoteTracks.Last().Players.Count();
 
-                    if (round.Teams.Last().TeamMembers.Contains(_player))
+                    if (round.VoteTracks.Last().Players.Contains(_player))
                     {
                         if (_IAmEvil) { fails = fails - 1; }
                         size = size - 1;
@@ -58,10 +58,10 @@ namespace ResistanceOnline.Core.ComputerPlayers
                     }
                 }
 
-                if(round.Teams.Count() < 5) { //ignore last round as everyone votes accept            
-                    if (round.CurrentTeam.Votes.Count == _gameplay.Game.Players.Count)
+                if(round.VoteTracks.Count() < 5) { //ignore last round as everyone votes accept            
+                    if (round.CurrentVoteTrack.Votes.Count == _gameplay.Game.Players.Count)
                     {
-                        var vote = round.Teams.Last().Votes.FirstOrDefault(v => v.Player == player);
+                        var vote = round.VoteTracks.Last().Votes.FirstOrDefault(v => v.Player == player);
                         if (vote.Approve == round.IsSuccess.Value)
                             correctVotes++;
                         votesCounted++;
@@ -84,7 +84,7 @@ namespace ResistanceOnline.Core.ComputerPlayers
 
         protected override Core.Player LadyOfTheLakeTarget()
         {
-            var ladyOfTheLakeHistory = _gameplay.Rounds.Where(r => r.LadyOfTheLake != null).Select(r => r.LadyOfTheLake.Holder);
+            var ladyOfTheLakeHistory = _gameplay.Quests.Where(r => r.LadyOfTheLake != null).Select(r => r.LadyOfTheLake.Holder);
             var eligiblePlayers = _gameplay.Game.Players.Where(p => p.Guid != PlayerGuid).Except(ladyOfTheLakeHistory);
 
             //use it on the person you know the least about
@@ -101,12 +101,12 @@ namespace ResistanceOnline.Core.ComputerPlayers
         protected override Core.Player ChooseTeamPlayer()
         {
             //put myself on
-            if (!_gameplay.CurrentRound.CurrentTeam.TeamMembers.Any(p => p == _player))
+            if (!_gameplay.CurrentQuest.CurrentVoteTrack.Players.Any(p => p == _player))
             {
                 return _player;
             }
 
-            var playersNotOnTeam = _gameplay.Game.Players.Where(p => p != _player).Except(_gameplay.CurrentRound.CurrentTeam.TeamMembers);
+            var playersNotOnTeam = _gameplay.Game.Players.Where(p => p != _player).Except(_gameplay.CurrentQuest.CurrentVoteTrack.Players);
 
             //if I'm evil, put anyone else on
             Player player = null;
@@ -131,17 +131,17 @@ namespace ResistanceOnline.Core.ComputerPlayers
         protected override bool TeamVote()
         {
             //always succeed the last round
-            if (_gameplay.CurrentRound.Teams.Count == 5)
+            if (_gameplay.CurrentQuest.VoteTracks.Count == 5)
             {
                 SayTeamIsOk();
                 return true;
             }
 
             //work out how many evil players I think might be on the team
-            var evilCount = _gameplay.CurrentRound.CurrentTeam.TeamMembers.Select(p => IsProbablyEvil(p)).Count(x => x);
+            var evilCount = _gameplay.CurrentQuest.CurrentVoteTrack.Players.Select(p => IsProbablyEvil(p)).Count(x => x);
             if (_IAmEvil)
             {
-                if (evilCount >= _gameplay.CurrentRound.RequiredFails)
+                if (evilCount >= _gameplay.CurrentQuest.RequiredFails)
                 {
                     SayTeamIsOk();
                     return true;
@@ -151,7 +151,7 @@ namespace ResistanceOnline.Core.ComputerPlayers
             }
             else
             {
-                if (evilCount >= _gameplay.CurrentRound.RequiredFails)
+                if (evilCount >= _gameplay.CurrentQuest.RequiredFails)
                 {
                     SayTeamNotOk();
                     return false;
@@ -170,7 +170,7 @@ namespace ResistanceOnline.Core.ComputerPlayers
 
         protected override Player UseExcalibur()
         {
-            var teamMembers = _gameplay.CurrentRound.CurrentTeam.TeamMembers;
+            var teamMembers = _gameplay.CurrentQuest.CurrentVoteTrack.Players;
 
             foreach(var player in teamMembers) {
                 if(ProbabilityOfEvil(player) == (_IAmEvil ? 0 : 100)) {

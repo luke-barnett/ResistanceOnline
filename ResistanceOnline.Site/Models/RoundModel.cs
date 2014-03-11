@@ -13,7 +13,7 @@ namespace ResistanceOnline.Site.Models
         public List<TeamModel> Teams { get; set; }
         private int _roundNumber;
         public string Title { get; set; }
-        public string Summary { get { return String.Format("This is a {0} player round and requires {1}", TeamSize.ToWords(), "fail".ToQuantity(FailsRequired, ShowQuantityAs.Words)); } }
+        public string Summary { get { return String.Format("This is a {0} player quest and requires {1}", TeamSize.ToWords(), "fail".ToQuantity(FailsRequired, ShowQuantityAs.Words)); } }
 
         public string LadyOfTheLakeUsedBy { get; set; }
         public string LadyOfTheLakeUsedOn { get; set; }
@@ -23,7 +23,7 @@ namespace ResistanceOnline.Site.Models
         public string LoyaltyCard { get; set; }
         public string Outcome { get; set; }
 
-        public RoundModel(Core.Round round, int roundNumber, Core.GamePlay game, Core.Player player)
+        public RoundModel(Core.Quest round, int roundNumber, Core.GamePlay game, Core.Player player)
         {
             TeamSize = round.TeamSize;
             FailsRequired = round.RequiredFails;
@@ -55,13 +55,13 @@ namespace ResistanceOnline.Site.Models
             }
             
             Teams = new List<TeamModel>();
-            foreach (var team in round.Teams)
+            foreach (var team in round.VoteTracks)
             {
-                Teams.Add(new TeamModel(team, round.Players.Count, round.Teams.IndexOf(team)+1));
+                Teams.Add(new TeamModel(team, round.Players.Count, round.VoteTracks.IndexOf(team)+1));
             }
 
             var loyaltyCard = game.Game.GetLoyaltyCard(roundNumber);
-            if (loyaltyCard.HasValue && round != game.CurrentRound)
+            if (loyaltyCard.HasValue && round != game.CurrentQuest)
             {
                 LoyaltyCard = string.Format("Lancelot loyalty card: {0}", loyaltyCard.Value.Humanize());
             }

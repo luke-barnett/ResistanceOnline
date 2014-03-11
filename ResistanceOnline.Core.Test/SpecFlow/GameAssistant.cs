@@ -34,9 +34,9 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 		internal void ChooseCrew()
 		{
 			var gameplay = ContextAccess.GamePlay;
-			var leader = gameplay.CurrentRound.CurrentTeam.Leader;
+			var leader = gameplay.CurrentQuest.CurrentVoteTrack.Leader;
             gameplay.DoAction(gameplay.Game.GameId, leader, Action.Type.AddToTeam, leader);
-            foreach (var player in gameplay.Game.Players.Where(player => player != leader).Take(gameplay.CurrentRound.TeamSize - 1))
+            foreach (var player in gameplay.Game.Players.Where(player => player != leader).Take(gameplay.CurrentQuest.TeamSize - 1))
 			{
                 gameplay.DoAction(gameplay.Game.GameId, leader, Action.Type.AddToTeam, player);
 			}
@@ -100,9 +100,9 @@ namespace ResistanceOnline.Core.Test.SpecFlow
             var gameplay = ContextAccess.GamePlay;
 
             //build team
-            for (int i = 0; i < gameplay.CurrentRound.TeamSize; i++)
+            for (int i = 0; i < gameplay.CurrentQuest.TeamSize; i++)
             {
-                gameplay.DoAction(gameplay.Game.GameId, gameplay.CurrentRound.CurrentTeam.Leader, Action.Type.AddToTeam, gameplay.Game.Players[i]);
+                gameplay.DoAction(gameplay.Game.GameId, gameplay.CurrentQuest.CurrentVoteTrack.Leader, Action.Type.AddToTeam, gameplay.Game.Players[i]);
             }
 
             //pass the vote
@@ -112,7 +112,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
             }
 
             //do the quest
-            foreach (var player in gameplay.CurrentRound.CurrentTeam.TeamMembers)
+            foreach (var player in gameplay.CurrentQuest.CurrentVoteTrack.Players)
             {
                 gameplay.DoAction(gameplay.Game.GameId, player, successful ? Action.Type.SucceedQuest : Action.Type.FailQuest);
             }
@@ -153,7 +153,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 		void IncrementRound()
 		{
             var gameplay = ContextAccess.GamePlay;
-            var roundNumber = gameplay.Rounds.Count;
+            var roundNumber = gameplay.Quests.Count;
             CompleteQuest(roundNumber, roundNumber % 2 == 0);
 		}
 	}

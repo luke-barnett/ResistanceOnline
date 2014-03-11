@@ -8,7 +8,7 @@ namespace ResistanceOnline.Core
     public class ExcaliburUse
     {
         public Player Holder { get; set; }
-        public Quest UsedOn { get; set; }
+        public QuestCard UsedOn { get; set; }
         public bool? OriginalMissionWasSuccess { get; set; }
     }
 }

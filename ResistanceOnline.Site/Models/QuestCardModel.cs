@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ResistanceOnline.Site.Models
 {
-    public class QuestModel
+    public class QuestCardModel
     {
         public bool Hidden { get; set; }
         public bool Success { get; set; }
@@ -22,7 +22,7 @@ namespace ResistanceOnline.Site.Models
             }
         }
 
-        public QuestModel(bool success, bool hidden)
+        public QuestCardModel(bool success, bool hidden)
         {
             Success = success;
             Hidden = hidden;

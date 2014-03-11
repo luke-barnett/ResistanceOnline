@@ -181,7 +181,7 @@ namespace ResistanceOnline.Core.ComputerPlayers
         //todo implement for each bot
         protected virtual Player AssignExcalibur()
         {
-            return _gameplay.CurrentRound.CurrentTeam.TeamMembers.RandomOrDefault(p => p.Name != _player.Name);            
+            return _gameplay.CurrentQuest.CurrentVoteTrack.Players.RandomOrDefault(p => p.Name != _player.Name);            
         }        
     }
 }

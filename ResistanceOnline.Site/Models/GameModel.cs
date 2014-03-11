@@ -13,7 +13,7 @@ namespace ResistanceOnline.Site.Models
         public int GameId { get; set; }
         public List<Character> AvailableCharacters { get; set; }
         public List<Rule> Rules { get; set; }
-        public List<RoundTable> RoundTables;
+        public List<QuestSize> RoundTables;
         public string State { get; set; }
 
         public GameModel(Game game)

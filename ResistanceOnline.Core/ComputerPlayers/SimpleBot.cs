@@ -36,7 +36,7 @@ namespace ResistanceOnline.Core.ComputerPlayers
 
         protected override Core.Player LadyOfTheLakeTarget()
         {
-            var ladyOfTheLakeHistory = _gameplay.Rounds.Where(r => r.LadyOfTheLake != null).Select(r => r.LadyOfTheLake.Holder);
+            var ladyOfTheLakeHistory = _gameplay.Quests.Where(r => r.LadyOfTheLake != null).Select(r => r.LadyOfTheLake.Holder);
             return _gameplay.Game.Players.Where(p => p != _player).Except(ladyOfTheLakeHistory).Random();
         }
 
@@ -49,12 +49,12 @@ namespace ResistanceOnline.Core.ComputerPlayers
         protected override Core.Player ChooseTeamPlayer()
         {
             //put myself on
-            if (!_gameplay.CurrentRound.CurrentTeam.TeamMembers.Any(p => p == _player))
+            if (!_gameplay.CurrentQuest.CurrentVoteTrack.Players.Any(p => p == _player))
             {
                 return _player;
             }
 
-            var playersNotOnTeam = _gameplay.Game.Players.Where(p => p != _player).Except(_gameplay.CurrentRound.CurrentTeam.TeamMembers);
+            var playersNotOnTeam = _gameplay.Game.Players.Where(p => p != _player).Except(_gameplay.CurrentQuest.CurrentVoteTrack.Players);
             Player player = null;
 
             //if I'm evil, put anyone else on
@@ -87,10 +87,10 @@ namespace ResistanceOnline.Core.ComputerPlayers
 
         protected override bool TeamVote()
         {
-            var evilCount = CountEvil(_gameplay.CurrentRound.CurrentTeam.TeamMembers, _gameplay);
+            var evilCount = CountEvil(_gameplay.CurrentQuest.CurrentVoteTrack.Players, _gameplay);
             if (_IAmEvil)
             {
-                if (evilCount >= _gameplay.CurrentRound.RequiredFails)
+                if (evilCount >= _gameplay.CurrentQuest.RequiredFails)
                 {
                     Say("I like this team");
                     return true;
@@ -100,7 +100,7 @@ namespace ResistanceOnline.Core.ComputerPlayers
             }
             else
             {
-                if (evilCount >= _gameplay.CurrentRound.RequiredFails)
+                if (evilCount >= _gameplay.CurrentQuest.RequiredFails)
                 {
                     Say("I really don't like this");
                     return false;

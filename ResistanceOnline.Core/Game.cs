@@ -26,7 +26,7 @@ namespace ResistanceOnline.Core
         public List<Rule> Rules { get; set; }
         public Player InitialHolderOfLadyOfTheLake { get; set; }
         public Player InitialLeader { get; set; }
-        public List<RoundTable> RoundTables;
+        public List<QuestSize> RoundTables;
 
         public Game()
         {
@@ -48,7 +48,7 @@ namespace ResistanceOnline.Core
 			Rules = game.Rules.Select(x=>(Rule)Enum.Parse(typeof(Rule), x.Name)).ToList();
 	        InitialHolderOfLadyOfTheLake = Players.First(p=>p.Name == game.InitialHolderOfLadyOfTheLake);
 			InitialLeader = Players.First(p => p.Name == game.InitialLeader);
-			RoundTables = game.RoundTables.Select(x => new RoundTable(x)).ToList();
+			RoundTables = game.RoundTables.Select(x => new QuestSize(x)).ToList();
 		}
 
         public Guid JoinGame(string playerName, Guid playerGuid, Player.Type playerType=Player.Type.Human)
@@ -111,55 +111,55 @@ namespace ResistanceOnline.Core
         }
 
 
-        public List<RoundTable> StandardRoundTables(int GameSize)
+        public List<QuestSize> StandardRoundTables(int GameSize)
         {
-            var roundTables = new List<RoundTable>();
+            var roundTables = new List<QuestSize>();
             if (GameSize <= 5)
             {
-                roundTables.Add(new RoundTable(2));
-                roundTables.Add(new RoundTable(3));
-                roundTables.Add(new RoundTable(2));
-                roundTables.Add(new RoundTable(3));
-                roundTables.Add(new RoundTable(3));
+                roundTables.Add(new QuestSize(2));
+                roundTables.Add(new QuestSize(3));
+                roundTables.Add(new QuestSize(2));
+                roundTables.Add(new QuestSize(3));
+                roundTables.Add(new QuestSize(3));
                 return roundTables;
             }
 
             switch (GameSize)
             {
                 case 6:
-                    roundTables.Add(new RoundTable(2));
-                    roundTables.Add(new RoundTable(3));
-                    roundTables.Add(new RoundTable(4));
-                    roundTables.Add(new RoundTable(3));
-                    roundTables.Add(new RoundTable(4));
+                    roundTables.Add(new QuestSize(2));
+                    roundTables.Add(new QuestSize(3));
+                    roundTables.Add(new QuestSize(4));
+                    roundTables.Add(new QuestSize(3));
+                    roundTables.Add(new QuestSize(4));
                     break;
                 case 7:
-                    roundTables.Add(new RoundTable(2));
-                    roundTables.Add(new RoundTable(3));
-                    roundTables.Add(new RoundTable(3));
-                    roundTables.Add(new RoundTable(4, 2));
-                    roundTables.Add(new RoundTable(4));
+                    roundTables.Add(new QuestSize(2));
+                    roundTables.Add(new QuestSize(3));
+                    roundTables.Add(new QuestSize(3));
+                    roundTables.Add(new QuestSize(4, 2));
+                    roundTables.Add(new QuestSize(4));
                     break;
                 case 8:
-                    roundTables.Add(new RoundTable(3));
-                    roundTables.Add(new RoundTable(4));
-                    roundTables.Add(new RoundTable(4));
-                    roundTables.Add(new RoundTable(5, 2));
-                    roundTables.Add(new RoundTable(5));
+                    roundTables.Add(new QuestSize(3));
+                    roundTables.Add(new QuestSize(4));
+                    roundTables.Add(new QuestSize(4));
+                    roundTables.Add(new QuestSize(5, 2));
+                    roundTables.Add(new QuestSize(5));
                     break;
                 case 9:
-                    roundTables.Add(new RoundTable(3));
-                    roundTables.Add(new RoundTable(4));
-                    roundTables.Add(new RoundTable(4));
-                    roundTables.Add(new RoundTable(5, 2));
-                    roundTables.Add(new RoundTable(5));
+                    roundTables.Add(new QuestSize(3));
+                    roundTables.Add(new QuestSize(4));
+                    roundTables.Add(new QuestSize(4));
+                    roundTables.Add(new QuestSize(5, 2));
+                    roundTables.Add(new QuestSize(5));
                     break;
                 default:
-                    roundTables.Add(new RoundTable(3));
-                    roundTables.Add(new RoundTable(4));
-                    roundTables.Add(new RoundTable(4));
-                    roundTables.Add(new RoundTable(5, 2));
-                    roundTables.Add(new RoundTable(5));
+                    roundTables.Add(new QuestSize(3));
+                    roundTables.Add(new QuestSize(4));
+                    roundTables.Add(new QuestSize(4));
+                    roundTables.Add(new QuestSize(5, 2));
+                    roundTables.Add(new QuestSize(5));
                     break;
             }
             return roundTables;

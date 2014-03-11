@@ -28,25 +28,24 @@ namespace ResistanceOnline.Core
 
         public State GamePlayState { get; set; }
         public Game Game { get; set; }
-        public List<Round> Rounds { get; set; }
-        public int QuestIndicator { get; set; }
+        public List<Quest> Quests { get; set; }
         public Player HolderOfLadyOfTheLake { get; set; }
         public bool LancelotAllegianceSwitched { get; set; }
         public Player AssassinsGuessAtMerlin { get; set; }
-        public Round CurrentRound { get { return Rounds.LastOrDefault(); } }
-        public Team CurrentTeam { get { return CurrentRound == null ? null : CurrentRound.CurrentTeam; } }   // todo - use the fancy "?." operator :)   
+        public Quest CurrentQuest { get { return Quests.LastOrDefault(); } }
+        public VoteTrack CurrentVoteTrack { get { return CurrentQuest == null ? null : CurrentQuest.CurrentVoteTrack; } }   // todo - use the fancy "?." operator :)   
 
         public GamePlay(Game game)
         {
-            Rounds = new List<Round>();
+            Quests = new List<Quest>();
             Game = game;
             HolderOfLadyOfTheLake = Game.InitialHolderOfLadyOfTheLake;
-            NextRound(Game.InitialLeader);
+            NextQuest(Game.InitialLeader);
         }
 
         public void Message(Player player, string message)
         {
-            CurrentRound.CurrentTeam.Messages.Add(new PlayerMessage { Player = player, Message = message });
+            CurrentQuest.CurrentVoteTrack.Messages.Add(new PlayerMessage { Player = player, Message = message });
         }
 
         public Knowledge PlayerKnowledge(Player myself, Player someoneelse)
@@ -104,26 +103,26 @@ namespace ResistanceOnline.Core
             switch (GamePlayState)
             {
                 case State.ChoosingTeam:
-                    if (player == CurrentTeam.Leader)
+                    if (player == CurrentVoteTrack.Leader)
                     {
                         actions.Add(Action.Type.AddToTeam);
                     }
                     break;
                 case State.AssigningExcalibur:
-                    if (player == CurrentTeam.Leader)
+                    if (player == CurrentVoteTrack.Leader)
                     {
                         actions.Add(Action.Type.AssignExcalibur);
                     }
                     break;
                 case State.VotingForTeam:
-                    if (!CurrentTeam.Votes.Any(v => v.Player == player))
+                    if (!CurrentVoteTrack.Votes.Any(v => v.Player == player))
                     {
                         actions.Add(Action.Type.VoteApprove);
                         actions.Add(Action.Type.VoteReject);
                     }
                     break;
                 case State.Questing:
-                    if (CurrentTeam.TeamMembers.Contains(player) && !CurrentTeam.Quests.Any(q => q.Player == player))
+                    if (CurrentVoteTrack.Players.Contains(player) && !CurrentVoteTrack.QuestCards.Any(q => q.Player == player))
                     {
                         //good must always vote success
                         if (Game.Rules.Contains(Rule.GoodMustAlwaysSucceedQuests) && !Game.IsCharacterEvil(player.Character, LancelotAllegianceSwitched))
@@ -153,13 +152,13 @@ namespace ResistanceOnline.Core
                     }
                     break;
                 case State.UsingExcalibur:
-                    if (CurrentTeam.Excalibur.Holder == player)
+                    if (CurrentVoteTrack.Excalibur.Holder == player)
                     {
                         actions.Add(Action.Type.UseExcalibur);
                     }
                     break;
                 case State.LadyOfTheLake:
-                    if (Game.Rules.Contains(Rule.LadyOfTheLakeExists) && CurrentRound.LadyOfTheLake != null && CurrentRound.LadyOfTheLake.Holder == player && CurrentRound.LadyOfTheLake.Target == null)
+                    if (Game.Rules.Contains(Rule.LadyOfTheLakeExists) && CurrentQuest.LadyOfTheLake != null && CurrentQuest.LadyOfTheLake.Holder == player && CurrentQuest.LadyOfTheLake.Target == null)
                     {
                         actions.Add(Action.Type.UseTheLadyOfTheLake);
                     }
@@ -233,7 +232,6 @@ namespace ResistanceOnline.Core
             }
         }
 
-
         void GuessMerlin(Player player, Player guess)
         {
             AssassinsGuessAtMerlin = guess;
@@ -248,27 +246,27 @@ namespace ResistanceOnline.Core
             }
         }
 
-        void NextRound(Player leader)
+        void NextQuest(Player leader)
         {
-            var roundTable = Game.RoundTables[Rounds.Count];
-            var round = new Round(Game.Players, leader, HolderOfLadyOfTheLake, roundTable.TeamSize, roundTable.RequiredFails, LancelotAllegianceSwitched);
-            var team = new Team(leader, roundTable.TeamSize, roundTable.RequiredFails);
-            round.Teams.Add(team);
-            Rounds.Add(round);
+            var roundTable = Game.RoundTables[Quests.Count];
+            var round = new Quest(Game.Players, leader, HolderOfLadyOfTheLake, roundTable.TeamSize, roundTable.RequiredFails, LancelotAllegianceSwitched);
+            var team = new VoteTrack(leader, roundTable.TeamSize, roundTable.RequiredFails);
+            round.VoteTracks.Add(team);
+            Quests.Add(round);
             GamePlayState = State.ChoosingTeam;
         }
 
-        void OnRoundFinished()
+        void QuestFinished()
         {
             //3 failed missions, don't bother going any further
-            if (Rounds.Count(r => !r.IsSuccess.Value) >= 3)
+            if (Quests.Count(r => !r.IsSuccess.Value) >= 3)
             {
                 GamePlayState = State.EvilTriumphs;
                 return;
             }
 
             //3 successful missions, don't bother going any further
-            if (Rounds.Count(r => r.IsSuccess.Value) >= 3)
+            if (Quests.Count(r => r.IsSuccess.Value) >= 3)
             {
                 if (Game.AvailableCharacters.Contains(Character.Assassin))
                 {
@@ -282,23 +280,23 @@ namespace ResistanceOnline.Core
             }
 
             //loyalty cards
-            if (Game.GetLoyaltyCard(Rounds.Count) == LoyaltyCard.SwitchAlegiance)
+            if (Game.GetLoyaltyCard(Quests.Count) == LoyaltyCard.SwitchAlegiance)
             {
                 LancelotAllegianceSwitched = !LancelotAllegianceSwitched;
             }
 
-            NextRound(Game.Players.Next(CurrentRound.CurrentTeam.Leader));
+            NextQuest(Game.Players.Next(CurrentQuest.CurrentVoteTrack.Leader));
         }
 
 
         void AddToTeam(Player player, Player proposedPlayer)
         {
-            if (CurrentTeam.TeamMembers.Contains(proposedPlayer))
+            if (CurrentVoteTrack.Players.Contains(proposedPlayer))
                 throw new InvalidOperationException("Player is already on the team");
 
-            CurrentTeam.TeamMembers.Add(proposedPlayer);
+            CurrentVoteTrack.Players.Add(proposedPlayer);
 
-            if (CurrentTeam.TeamMembers.Count == CurrentTeam.TeamSize)
+            if (CurrentVoteTrack.Players.Count == CurrentVoteTrack.QuestSize)
             {
                 if (Game.Rules != null && Game.Rules.Contains(Rule.ExcaliburExists))
                 {
@@ -312,62 +310,62 @@ namespace ResistanceOnline.Core
         }
 
         void AssignExcalibur(Player player, Player proposedPlayer)
-        {           
-            if (!CurrentTeam.TeamMembers.Contains(proposedPlayer))
+        {
+            if (!CurrentVoteTrack.Players.Contains(proposedPlayer))
                 throw new InvalidOperationException("Player is not on team..");
 
-            if (proposedPlayer == CurrentTeam.Leader)
+            if (proposedPlayer == CurrentVoteTrack.Leader)
                 throw new InvalidOperationException("Leader cannot assign excalibur to themself");
 
-            CurrentTeam.Excalibur.Holder = proposedPlayer;
+            CurrentVoteTrack.Excalibur.Holder = proposedPlayer;
 
             GamePlayState = State.VotingForTeam;
         }
 
         void UseExcalibur(Player player, Player proposedPlayer)
         {
-            if (proposedPlayer != null && !CurrentTeam.TeamMembers.Contains(proposedPlayer))
+            if (proposedPlayer != null && !CurrentVoteTrack.Players.Contains(proposedPlayer))
                 throw new InvalidOperationException("Player is not on team..");
 
             if (proposedPlayer == player)
                 throw new InvalidOperationException("Really? On yourself? How would that work? It's a sword..");
 
-            CurrentTeam.Excalibur.UsedOn = CurrentTeam.Quests.First(p => p.Player == proposedPlayer);
-            CurrentTeam.Excalibur.OriginalMissionWasSuccess = CurrentTeam.Excalibur.UsedOn.Success;
-            CurrentTeam.Excalibur.UsedOn.Success = !CurrentTeam.Excalibur.UsedOn.Success;
+            CurrentVoteTrack.Excalibur.UsedOn = CurrentVoteTrack.QuestCards.First(p => p.Player == proposedPlayer);
+            CurrentVoteTrack.Excalibur.OriginalMissionWasSuccess = CurrentVoteTrack.Excalibur.UsedOn.Success;
+            CurrentVoteTrack.Excalibur.UsedOn.Success = !CurrentVoteTrack.Excalibur.UsedOn.Success;
 
-            OnTeamFinished();
+            TeamFinished();
         }
 
-        void OnTeamFinished()
+        void TeamFinished()
         {
-            if (Game.Rules.Contains(Rule.LadyOfTheLakeExists) && Rounds.Count >= 2)
+            if (Game.Rules.Contains(Rule.LadyOfTheLakeExists) && Quests.Count >= 2)
             {
                 GamePlayState = State.LadyOfTheLake;
                 return;
             }
 
-            OnRoundFinished();
+            QuestFinished();
         }
 
         void VoteForTeam(Player player, bool approve)
         {
-            CurrentTeam.Votes.Add(new Vote { Approve = approve, Player = player });
+            CurrentVoteTrack.Votes.Add(new VoteToken { Approve = approve, Player = player });
 
-            if (CurrentTeam.Votes.Count < Game.Players.Count)
+            if (CurrentVoteTrack.Votes.Count < Game.Players.Count)
                 return;
 
             //on the last vote, if it fails, create the next quest
-            var rejects = CurrentTeam.Votes.Count(v => !v.Approve);
+            var rejects = CurrentVoteTrack.Votes.Count(v => !v.Approve);
             if (rejects >= Math.Ceiling(Game.Players.Count / 2.0))
             {
-                if (CurrentRound.Teams.Count == 5)
+                if (CurrentQuest.VoteTracks.Count == 5)
                 {
                     GamePlayState = State.EternalChaos;
                 }
                 else
                 {
-                    CurrentRound.Teams.Add(new Team(Game.Players.Next(CurrentTeam.Leader), CurrentRound.TeamSize, CurrentRound.RequiredFails));
+                    CurrentQuest.VoteTracks.Add(new VoteTrack(Game.Players.Next(CurrentVoteTrack.Leader), CurrentQuest.TeamSize, CurrentQuest.RequiredFails));
                     GamePlayState = State.ChoosingTeam;
                 }
             }
@@ -379,24 +377,24 @@ namespace ResistanceOnline.Core
 
         void SubmitQuest(Player player, bool success)
         {
-            CurrentTeam.Quests.Add(new Quest { Player = player, Success = success });
+            CurrentVoteTrack.QuestCards.Add(new QuestCard { Player = player, Success = success });
 
-            if (CurrentTeam.Quests.Count == CurrentTeam.TeamSize)
+            if (CurrentVoteTrack.QuestCards.Count == CurrentVoteTrack.QuestSize)
             {
-                OnTeamFinished();
+                TeamFinished();
             }
         }
 
         void UseLadyOfTheLake(Player player, Player target)
         {
-            if (Rounds.Any(r=>r.LadyOfTheLake != null && r.LadyOfTheLake.Holder == target))
+            if (Quests.Any(r=>r.LadyOfTheLake != null && r.LadyOfTheLake.Holder == target))
                 throw new Exception("Once a lady has gone " + target + ", she does NOT go back..");
 
-            CurrentRound.LadyOfTheLake.Target = target;
-            CurrentRound.LadyOfTheLake.IsEvil = Game.IsCharacterEvil(target.Character, LancelotAllegianceSwitched);
+            CurrentQuest.LadyOfTheLake.Target = target;
+            CurrentQuest.LadyOfTheLake.IsEvil = Game.IsCharacterEvil(target.Character, LancelotAllegianceSwitched);
             HolderOfLadyOfTheLake = target;
 
-            OnRoundFinished();
+            QuestFinished();
         }
 
     }

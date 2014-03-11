@@ -27,7 +27,7 @@ namespace ResistanceOnline.Site.Controllers
         {
             _dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
             _simpleDb = new Infrastructure.SimpleDb(_dbContext);
-            
+
             //create a default game to make development easier
             if (_dbContext.Games.Count() == 0)
             {
@@ -49,9 +49,7 @@ namespace ResistanceOnline.Site.Controllers
                 game.AvailableCharacters[4] = Character.Mordred;
                 game.AvailableCharacters[5] = Character.LoyalServantOfArthur;
 
-				//todo store game to db
-                //Games.Add(game);
-                //game.GameId = Games.IndexOf(game);
+                _simpleDb.AddGame(game);
             }
         }
 
@@ -129,7 +127,7 @@ namespace ResistanceOnline.Site.Controllers
         public GamePlay CreateGame()
         {            
             var game = new Game();
-            _simpleDb.SaveGame(game);
+            _simpleDb.AddGame(game);
             Update();
 
             return new GamePlay(game);

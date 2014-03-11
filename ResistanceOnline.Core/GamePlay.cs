@@ -103,7 +103,7 @@ namespace ResistanceOnline.Core
             switch (GamePlayState)
             {
                 case State.ChoosingTeam:
-                    if (player == CurrentVoteTrack.Leader)
+                    if (CurrentVoteTrack!=null && player == CurrentVoteTrack.Leader)
                     {
                         actions.Add(Action.Type.AddToTeam);
                     }
@@ -248,6 +248,9 @@ namespace ResistanceOnline.Core
 
         void NextQuest(Player leader)
         {
+            if (Game.RoundTables.Count == 0)
+                return;
+
             var roundTable = Game.RoundTables[Quests.Count];
             var round = new Quest(Game.Players, leader, HolderOfLadyOfTheLake, roundTable.TeamSize, roundTable.RequiredFails, LancelotAllegianceSwitched);
             var team = new VoteTrack(leader, roundTable.TeamSize, roundTable.RequiredFails);

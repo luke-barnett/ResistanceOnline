@@ -13,28 +13,27 @@ using System.Web.Mvc;
 using Game = ResistanceOnline.Core.Game;
 using Rule = ResistanceOnline.Core.Rule;
 using Character = ResistanceOnline.Core.Character;
+using ResistanceOnline.Site.Infrastructure;
 
 namespace ResistanceOnline.Site.Controllers
 {
 	[Authorize]
 	public class GameController : Controller
 	{
+        SimpleDb _simpleDb;
+        public GameController()
+        {
+            _simpleDb = new SimpleDb(new ResistanceOnlineDbContext());
+        }
+
 		public ActionResult Index()
 		{
 			return View();
 		}
 
-        private Game GetGame(int gameId)
-        {
-			using (var context = new Database.ResistanceOnlineDbContext())
-			{
-				return new Game(context.Games.Single(s => s.GameId == gameId));
-			}
-        }
-
         public ActionResult Game(int gameId)
         {
-            var game = GetGame(gameId);
+            var game = _simpleDb.GetGame(gameId);
             ViewBag.IsPlayer = false;
             ViewBag.CanUpdateGame = false;
             ViewBag.CanStartGame = false;
@@ -80,7 +79,7 @@ namespace ResistanceOnline.Site.Controllers
         [HttpPost]
         public ActionResult Update(int gameId)
         {
-            var game = GetGame(gameId);
+            var game = _simpleDb.GetGame(gameId);
             if (game.GameState != Core.Game.State.Setup)
             {
                 throw new InvalidOperationException("Game already started");
@@ -105,14 +104,15 @@ namespace ResistanceOnline.Site.Controllers
                 game.RoundTables[i].TeamSize = int.Parse(Request.Params["roundsize-" + i]);
                 game.RoundTables[i].RequiredFails = int.Parse(Request.Params["roundfails-" + i]);
             }
-            
+
+            _simpleDb.UpdateGame(game);
             return RedirectToAction("Game", new { gameId = gameId });
         }
 
         [HttpPost]
         public ActionResult Join(int gameId)
         {
-            var game = GetGame(gameId);
+            var game = _simpleDb.GetGame(gameId);
             if (game.GameState != Core.Game.State.Setup)
             {
                 throw new InvalidOperationException("Game already started");
@@ -124,20 +124,21 @@ namespace ResistanceOnline.Site.Controllers
                 var userAccount = context.Users.FirstOrDefault(user => user.Id == userId);
                 game.JoinGame(userAccount.UserName, userAccount.PlayerGuid);
             }
-
+            _simpleDb.UpdateGame(game);
             return RedirectToAction("Game", new { gameId = gameId });
         }
 
         [HttpPost]
         public ActionResult Start(int gameId)
         {
-            var game = GetGame(gameId);
+            var game = _simpleDb.GetGame(gameId);
             if (game.GameState != Core.Game.State.Setup)
             {
                 throw new InvalidOperationException("Game already started");
             }
 
             game.StartGame();
+            _simpleDb.UpdateGame(game);
             return Redirect("#/game/" + gameId.ToString());
         }
     }

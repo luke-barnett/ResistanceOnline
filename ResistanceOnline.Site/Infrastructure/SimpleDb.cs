@@ -43,7 +43,7 @@ namespace ResistanceOnline.Site.Infrastructure
 
         public Core.Game GetGame(int gameId)
         {
-            return new Core.Game(_context.Games.First(game => game.GameId == gameId));
+            return new Core.Game(_context.Games.Include("Players").Include("Characters").Include("Rules").Include("LoyaltyDeck").Include("RoundTables").First(game => game.GameId == gameId));
         }
 
         public Core.GamePlay GetGamePlay(int gameId)
@@ -54,12 +54,42 @@ namespace ResistanceOnline.Site.Infrastructure
             return gameplay;
         }
 
-        public void SaveGame(Core.Game game)
+        public void AddGame(Core.Game game)
         {
+            Database.Entities.Game entity = null;
             if (game.GameId==0) 
             {
+                entity = new Database.Entities.Game();
                 _context.Games.Add(new Database.Entities.Game());
             }
+
+            entity.GameState = game.GameState.ToString();
+            if (game.InitialHolderOfLadyOfTheLake != null)
+            {
+                entity.InitialHolderOfLadyOfTheLake = game.InitialHolderOfLadyOfTheLake.Name;
+            }
+            if (game.InitialLeader != null)
+            {
+                entity.InitialLeader = game.InitialLeader.Name;
+            }
+            
+            _context.SaveChanges();
+        }
+
+        public void UpdateGame(Core.Game game)
+        {
+            var entity = _context.Games.First(g => g.GameId == game.GameId);
+            
+            entity.GameState = game.GameState.ToString();
+            if (game.InitialHolderOfLadyOfTheLake != null)
+            {
+                entity.InitialHolderOfLadyOfTheLake = game.InitialHolderOfLadyOfTheLake.Name;
+            }
+            if (game.InitialLeader != null)
+            {
+                entity.InitialLeader = game.InitialLeader.Name;
+            }
+
             _context.SaveChanges();
         }
     }

@@ -87,16 +87,7 @@ namespace ResistanceOnline.Database.Migrations
                     })
                 .PrimaryKey(t => t.RuleId)
                 .ForeignKey("dbo.Games", t => t.Game_GameId)
-                .Index(t => t.Game_GameId);
-            
-            CreateTable(
-                "dbo.AspNetRoles",
-                c => new
-                    {
-                        Id = c.String(nullable: false, maxLength: 128),
-                        Name = c.String(nullable: false),
-                    })
-                .PrimaryKey(t => t.Id);
+                .Index(t => t.Game_GameId);                      
             
             CreateTable(
                 "dbo.Rounds",
@@ -109,67 +100,11 @@ namespace ResistanceOnline.Database.Migrations
                     })
                 .PrimaryKey(t => t.RoundId)
                 .ForeignKey("dbo.Games", t => t.Game_GameId)
-                .Index(t => t.Game_GameId);
-            
-            CreateTable(
-                "dbo.AspNetUsers",
-                c => new
-                    {
-                        Id = c.String(nullable: false, maxLength: 128),
-                        UserName = c.String(),
-                        PasswordHash = c.String(),
-                        SecurityStamp = c.String(),
-                        PlayerGuid = c.Guid(),
-                        Discriminator = c.String(nullable: false, maxLength: 128),
-                    })
-                .PrimaryKey(t => t.Id);
-            
-            CreateTable(
-                "dbo.AspNetUserClaims",
-                c => new
-                    {
-                        Id = c.Int(nullable: false, identity: true),
-                        ClaimType = c.String(),
-                        ClaimValue = c.String(),
-                        User_Id = c.String(nullable: false, maxLength: 128),
-                    })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.AspNetUsers", t => t.User_Id, cascadeDelete: true)
-                .Index(t => t.User_Id);
-            
-            CreateTable(
-                "dbo.AspNetUserLogins",
-                c => new
-                    {
-                        UserId = c.String(nullable: false, maxLength: 128),
-                        LoginProvider = c.String(nullable: false, maxLength: 128),
-                        ProviderKey = c.String(nullable: false, maxLength: 128),
-                    })
-                .PrimaryKey(t => new { t.UserId, t.LoginProvider, t.ProviderKey })
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
-                .Index(t => t.UserId);
-            
-            CreateTable(
-                "dbo.AspNetUserRoles",
-                c => new
-                    {
-                        UserId = c.String(nullable: false, maxLength: 128),
-                        RoleId = c.String(nullable: false, maxLength: 128),
-                    })
-                .PrimaryKey(t => new { t.UserId, t.RoleId })
-                .ForeignKey("dbo.AspNetRoles", t => t.RoleId, cascadeDelete: true)
-                .ForeignKey("dbo.AspNetUsers", t => t.UserId, cascadeDelete: true)
-                .Index(t => t.RoleId)
-                .Index(t => t.UserId);
-            
+                .Index(t => t.Game_GameId);                       
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.AspNetUserClaims", "User_Id", "dbo.AspNetUsers");
-            DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.AspNetUsers");
-            DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
-            DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.AspNetUsers");
             DropForeignKey("dbo.Rounds", "Game_GameId", "dbo.Games");
             DropForeignKey("dbo.Actions", "Target_PlayerId", "dbo.Players");
             DropForeignKey("dbo.Actions", "Owner_PlayerId", "dbo.Players");
@@ -177,11 +112,7 @@ namespace ResistanceOnline.Database.Migrations
             DropForeignKey("dbo.Rules", "Game_GameId", "dbo.Games");
             DropForeignKey("dbo.Players", "Game_GameId", "dbo.Games");
             DropForeignKey("dbo.LoyaltyCards", "Game_GameId", "dbo.Games");
-            DropForeignKey("dbo.Characters", "Game_GameId", "dbo.Games");
-            DropIndex("dbo.AspNetUserClaims", new[] { "User_Id" });
-            DropIndex("dbo.AspNetUserRoles", new[] { "UserId" });
-            DropIndex("dbo.AspNetUserRoles", new[] { "RoleId" });
-            DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
+            DropForeignKey("dbo.Characters", "Game_GameId", "dbo.Games");          
             DropIndex("dbo.Rounds", new[] { "Game_GameId" });
             DropIndex("dbo.Actions", new[] { "Target_PlayerId" });
             DropIndex("dbo.Actions", new[] { "Owner_PlayerId" });
@@ -190,12 +121,7 @@ namespace ResistanceOnline.Database.Migrations
             DropIndex("dbo.Players", new[] { "Game_GameId" });
             DropIndex("dbo.LoyaltyCards", new[] { "Game_GameId" });
             DropIndex("dbo.Characters", new[] { "Game_GameId" });
-            DropTable("dbo.AspNetUserRoles");
-            DropTable("dbo.AspNetUserLogins");
-            DropTable("dbo.AspNetUserClaims");
-            DropTable("dbo.AspNetUsers");
             DropTable("dbo.Rounds");
-            DropTable("dbo.AspNetRoles");
             DropTable("dbo.Rules");
             DropTable("dbo.Players");
             DropTable("dbo.LoyaltyCards");

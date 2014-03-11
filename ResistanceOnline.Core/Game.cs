@@ -41,14 +41,21 @@ namespace ResistanceOnline.Core
 		public Game(ResistanceOnline.Database.Entities.Game game)
 		{
 			GameId = game.GameId;
-	        GameState = (State)Enum.Parse(typeof(State), game.GameState);
+            if (game.GameState != null)
+            {
+                GameState = (State)Enum.Parse(typeof(State), game.GameState);
+            }            
 			AvailableCharacters = game.Characters.Select(x=>(Character)Enum.Parse(typeof(Character), x.Name)).ToList();
 			Players = game.Players.Select(x=>new Player(x)).ToList();
 			LoyaltyDeck = game.LoyaltyDeck.Select(x=>(LoyaltyCard)Enum.Parse(typeof(LoyaltyCard), x.Card)).ToList();
 			Rules = game.Rules.Select(x=>(Rule)Enum.Parse(typeof(Rule), x.Name)).ToList();
-	        InitialHolderOfLadyOfTheLake = Players.First(p=>p.Name == game.InitialHolderOfLadyOfTheLake);
-			InitialLeader = Players.First(p => p.Name == game.InitialLeader);
-			RoundTables = game.RoundTables.Select(x => new QuestSize(x)).ToList();
+            RoundTables = game.RoundTables.Select(x => new QuestSize(x)).ToList();
+
+            if (Players != null && Players.Count > 0)
+            {
+                InitialHolderOfLadyOfTheLake = Players.First(p => p.Name == game.InitialHolderOfLadyOfTheLake);
+                InitialLeader = Players.First(p => p.Name == game.InitialLeader);
+            }
 		}
 
         public Guid JoinGame(string playerName, Guid playerGuid, Player.Type playerType=Player.Type.Human)

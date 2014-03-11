@@ -14,7 +14,7 @@ namespace ResistanceOnline.Database.Entities
         public List<Player> Players { get; set; }
         public List<LoyaltyCard> LoyaltyDeck { get; set; }
         public List<Rule> Rules { get; set; }
-        public List<Round> RoundTables;
+        public List<Round> RoundTables { get; set; }
         public string InitialHolderOfLadyOfTheLake { get; set; }
         public string InitialLeader { get; set; }
 	}

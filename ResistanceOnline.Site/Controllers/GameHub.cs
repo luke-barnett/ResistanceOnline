@@ -22,9 +22,11 @@ namespace ResistanceOnline.Site.Controllers
     public class GameHub : Hub
     {
         readonly ResistanceOnlineDbContext _dbContext;
+        Infrastructure.SimpleDb _simpleDb;
         public GameHub()//(ResistanceOnlineDbContext dbContext)
         {
             _dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
+            _simpleDb = new Infrastructure.SimpleDb(_dbContext);
             
             //create a default game to make development easier
             if (_dbContext.Games.Count() == 0)
@@ -83,35 +85,14 @@ namespace ResistanceOnline.Site.Controllers
 
         static Dictionary<Guid, List<string>> _userConnections = new Dictionary<Guid, List<string>>();
 
-        private void AddAction(int gameId, Action action)
-        {
-            action.GameId = gameId;
 
-			var actionDb = new Database.Entities.Action
-			{
-				Game = new Database.Entities.Game { GameId = gameId },
-				Owner = _dbContext.Players.First(x => x.Game.GameId == gameId && x.Guid == action.Owner.Guid),
-				Timestamp = action.Timestamp,
-				Type = action.ActionType.ToString(),
-				Text = action.Text
-			};
-            if (action.TargetPlayer!=null) {
-                actionDb.Target = _dbContext.Players.FirstOrDefault(x => x.Game.GameId == gameId && x.Guid == action.TargetPlayer.Guid);
-            }
-
-            _dbContext.Actions.Add(actionDb);
-            _dbContext.SaveChanges();
-        }
 
         private GamePlay GetGamePlay(int? gameId)
         {
             if (gameId.HasValue == false)
                 return null;
 
-            var gameplay = new GamePlay(new Game(_dbContext.Games.First(game=>game.GameId==gameId.Value)));
-			var actions = _dbContext.Actions.Include("Owner").Include("Target").Where(a => a.Game.GameId == gameId).ToList().Select(db => new Action(db)).ToList();
-            gameplay.DoActions(actions);
-            return gameplay;
+            return _simpleDb.GetGamePlay(gameId.Value);
         }
 
 
@@ -146,10 +127,9 @@ namespace ResistanceOnline.Site.Controllers
         }
 
         public GamePlay CreateGame()
-        {
-            //todo - something with the database :)
+        {            
             var game = new Game();
-
+            _simpleDb.SaveGame(game);
             Update();
 
             return new GamePlay(game);
@@ -166,7 +146,7 @@ namespace ResistanceOnline.Site.Controllers
             var targetPlayer = game.Game.Players.FirstOrDefault(p => p.Name == targetPlayerName);
             var action = new Action(owner, actionType, targetPlayer, text);
             game.DoAction(action);
-            AddAction(gameId, action);
+            _simpleDb.AddAction(gameId, action);
             LetComputerPlayersDoActions(game);
         }
 
@@ -182,7 +162,7 @@ namespace ResistanceOnline.Site.Controllers
                     if (action != null)
                     {
                         gameplay.DoAction(action);
-                        AddAction(gameplay.Game.GameId, action);
+                        _simpleDb.AddAction(gameplay.Game.GameId, action);
                     }
                 }
             }

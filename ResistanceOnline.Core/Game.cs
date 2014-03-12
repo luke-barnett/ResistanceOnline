@@ -49,7 +49,7 @@ namespace ResistanceOnline.Core
             Players = new List<Player>();
             AvailableCharacters = new List<Character>();
             LoyaltyDeck = new List<LoyaltyCard> { LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.SwitchAlegiance, LoyaltyCard.SwitchAlegiance };
-            Rules = new List<Rule>() { Rule.LadyOfTheLakeExists };
+            Rules = new List<Rule>();
             RoundTables = StandardRoundTables(0);
             Quests = new List<Quest>();
 
@@ -362,7 +362,8 @@ namespace ResistanceOnline.Core
         {
             var owner = Players.FirstOrDefault(p => p.Guid == action.Owner);
             var target = Players.FirstOrDefault(p => p.Name == action.Text);
-            if (!AvailableActions(owner).Contains(action.ActionType))
+            var availableActions = AvailableActions(owner);
+            if (!availableActions.Contains(action.ActionType))
             {
                 throw new InvalidOperationException("Action not valid");
             }

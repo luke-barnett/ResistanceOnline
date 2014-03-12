@@ -16,11 +16,5 @@ namespace ResistanceOnline.Core
             TeamSize = teamSize;
             RequiredFails = requiredFails;
         }
-
-		public QuestSize(Database.Entities.Round round)
-		{
-			TeamSize = round.Size;
-			RequiredFails = round.Fails;
-		}
     }
 }

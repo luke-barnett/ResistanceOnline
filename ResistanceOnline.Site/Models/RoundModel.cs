@@ -23,7 +23,7 @@ namespace ResistanceOnline.Site.Models
         public string LoyaltyCard { get; set; }
         public string Outcome { get; set; }
 
-        public RoundModel(Core.Quest round, int roundNumber, Core.GamePlay game, Core.Player player)
+        public RoundModel(Core.Quest round, int roundNumber, Core.Game game, Core.Player player)
         {
             TeamSize = round.TeamSize;
             FailsRequired = round.RequiredFails;
@@ -60,7 +60,7 @@ namespace ResistanceOnline.Site.Models
                 Teams.Add(new TeamModel(team, round.Players.Count, round.VoteTracks.IndexOf(team)+1));
             }
 
-            var loyaltyCard = game.Game.GetLoyaltyCard(roundNumber);
+            var loyaltyCard = game.GetLoyaltyCard(roundNumber);
             if (loyaltyCard.HasValue && round != game.CurrentQuest)
             {
                 LoyaltyCard = string.Format("Lancelot loyalty card: {0}", loyaltyCard.Value.Humanize());

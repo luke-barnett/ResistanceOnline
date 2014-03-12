@@ -14,6 +14,9 @@ namespace ResistanceOnline.Core
     {
         public enum Type
         {
+            Join,           
+            Start,
+
             [Description("Add a player to the current team")]
             AddToTeam,
             [Description("Approve the current team")]
@@ -32,21 +35,20 @@ namespace ResistanceOnline.Core
             AssignExcalibur,
             [Description("Use Excalibur on a quest card")]
             UseExcalibur,
+
             Message
         };
 
         public int GameId { get; set; }
-        public Player Owner { get; set; }
+        public Guid Owner { get; set; }
         public Type ActionType { get; set; }
-        public Player TargetPlayer { get; set; }
         public string Text { get; set; }
         public DateTimeOffset Timestamp { get; set; }
 
-        public Action(Player owner, Type actionType, Player targetPlayer = null, string text = null)
+        public Action(Guid owner, Type actionType, string text = null)
         {
             Owner = owner;
             ActionType = actionType;
-            TargetPlayer = targetPlayer;
             Text = text;
             Timestamp = DateTime.Now;
         }
@@ -55,11 +57,7 @@ namespace ResistanceOnline.Core
 		public Action(ResistanceOnline.Database.Entities.Action action)
 		{
 			ActionType = (Type)Enum.Parse(typeof(Type), action.Type);
-			Owner = new Player(action.Owner);
-			if (action.Target != null)
-			{
-				TargetPlayer = new Player(action.Target);
-			}
+            Owner = action.Owner;
 			Timestamp = action.Timestamp;
 			Text = action.Text;			
 		}

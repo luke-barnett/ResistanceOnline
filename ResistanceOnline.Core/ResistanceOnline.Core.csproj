@@ -47,8 +47,7 @@
     <Compile Include="ComputerPlayers\TrustBot.cs" />
     <Compile Include="ExcaliburUse.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="GamePlay.cs" />
-    <Compile Include="Game.cs" />
+    <Compile Include="GameFile.cs" />
     <Compile Include="Knowledge.cs" />
     <Compile Include="LadyOfTheLakeUse.cs" />
     <Compile Include="LoyaltyCard.cs" />

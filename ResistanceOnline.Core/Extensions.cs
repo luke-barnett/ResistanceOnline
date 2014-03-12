@@ -12,33 +12,35 @@ namespace ResistanceOnline.Core
         /// <summary>
         /// returns a random element from the list
         /// </summary>
-        public static T Random<T>(this IEnumerable<T> list)
+        public static T Random<T>(this IEnumerable<T> list, int seed)
         {
-            return list.Random(x => true);
+            return list.Random(x => true, seed);
         }
 
         /// <summary>
         /// returns a random element from the list
         /// </summary>
-        public static T Random<T>(this IEnumerable<T> list, Func<T, bool> predicate)
+        public static T Random<T>(this IEnumerable<T> list, Func<T, bool> predicate, int seed)
         {
-            return (T)list.OrderBy(x => _random.Next()).First(predicate);
+            var random = new Random(seed);
+            return (T)list.OrderBy(x => random.Next()).First(predicate);
         }
 
         /// <summary>
         /// returns a random element from the list
         /// </summary>
-        public static T RandomOrDefault<T>(this IEnumerable<T> list, Func<T, bool> predicate)
+        public static T RandomOrDefault<T>(this IEnumerable<T> list, Func<T, bool> predicate, int seed)
         {
-            return (T)list.OrderBy(x => _random.Next()).FirstOrDefault(predicate);
+            var random = new Random(seed);
+            return (T)list.OrderBy(x => random.Next()).FirstOrDefault(predicate);
         }
 
         /// <summary>
         /// returns a random element from the list
         /// </summary>
-        public static T RandomOrDefault<T>(this IEnumerable<T> list)
+        public static T RandomOrDefault<T>(this IEnumerable<T> list, int seed)
         {
-            return list.RandomOrDefault(x => true);
+            return list.RandomOrDefault(x => true, seed);
         }
 
         /// <summary>
@@ -56,9 +58,10 @@ namespace ResistanceOnline.Core
         /// <summary>
         /// shuffles the list randomly
         /// </summary>
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> list)
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> list, int seed)
         {
-            return list.OrderBy(x => _random.Next());
+            var random = new Random(seed);
+            return list.OrderBy(x => random.Next());
         }
 
         /// <summary>

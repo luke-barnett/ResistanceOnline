@@ -11,7 +11,6 @@ using Microsoft.Owin.Security;
 using System.Web.Mvc;
 using ResistanceOnline.Database.Entities;
 using Action = ResistanceOnline.Core.Action;
-using Game = ResistanceOnline.Core.Game;
 using Rule = ResistanceOnline.Core.Rule;
 using Character = ResistanceOnline.Core.Character;
 
@@ -27,30 +26,6 @@ namespace ResistanceOnline.Site.Controllers
         {
             _dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
             _simpleDb = new Infrastructure.SimpleDb(_dbContext);
-
-            //create a default game to make development easier
-            if (_dbContext.Games.Count() == 0)
-            {
-                var game = new Game();
-                game.Rules.Clear();
-                game.Rules.Add(Rule.LadyOfTheLakeExists);
-
-                game.JoinGame("\"Jordan\"", Guid.NewGuid(), Core.Player.Type.TrustBot);
-                game.JoinGame("\"Luke\"", Guid.NewGuid(), Core.Player.Type.TrustBot);
-                game.JoinGame("\"Jeffrey\"", Guid.NewGuid(), Core.Player.Type.TrustBot);
-                game.JoinGame("\"Jayvin\"", Guid.NewGuid(), Core.Player.Type.TrustBot);
-                game.JoinGame("\"Yif\"", Guid.NewGuid(), Core.Player.Type.TrustBot);
-                game.JoinGame("\"Alex\"", Guid.NewGuid(), Core.Player.Type.TrustBot);
-
-                game.AvailableCharacters[0] = Character.Merlin;
-                game.AvailableCharacters[1] = Character.Assassin;
-                game.AvailableCharacters[2] = Character.Percival;
-                game.AvailableCharacters[3] = Character.Morgana;
-                game.AvailableCharacters[4] = Character.Mordred;
-                game.AvailableCharacters[5] = Character.LoyalServantOfArthur;
-
-                _simpleDb.AddGame(game);
-            }
         }
 
         //todo logged in user
@@ -85,12 +60,12 @@ namespace ResistanceOnline.Site.Controllers
 
 
 
-        private GamePlay GetGamePlay(int? gameId)
+        private Game GetGame(int? gameId)
         {
             if (gameId.HasValue == false)
                 return null;
 
-            return _simpleDb.GetGamePlay(gameId.Value);
+            return _simpleDb.GetGame(gameId.Value);
         }
 
 
@@ -100,11 +75,11 @@ namespace ResistanceOnline.Site.Controllers
             {
                 //todo - don't need all games sent every update
                 //it feels like this should be split out into game hubs for playing games and home page stuff for managing games
-				var games = _dbContext.Games.ToList().Select(g => new GamePlayModel(GetGamePlay(g.GameId), guid));
+                //var games = null;// _dbContext.Games.ToList().Select(g => new GameModel(GetGame(g.GameId), guid));
 
                 foreach (var connection in _userConnections[guid])
                 {
-                    Clients.Client(connection).Update(games);
+                    Clients.Client(connection).Update(null);
                 }
             }
         }
@@ -124,43 +99,35 @@ namespace ResistanceOnline.Site.Controllers
             return base.OnConnected();
         }
 
-        public GamePlay CreateGame()
-        {            
-            var game = new Game();
-            _simpleDb.AddGame(game);
+        public Game CreateGame()
+        {
+            var game = _simpleDb.CreateGame(PlayerGuid, CurrentUser.UserName);
             Update();
-
-            return new GamePlay(game);
+            return game;
         }
 
         private void DoAction(int gameId, Action.Type actionType, string targetPlayerName = null, string text = null)
         {
-            var game = GetGamePlay(gameId);
-            var owner = game.Game.Players.FirstOrDefault(p => p.Guid == PlayerGuid);
-            if (owner == null)
-            {
-                throw new UnauthorizedAccessException("Player needs to learn to play their own games");
-            }
-            var targetPlayer = game.Game.Players.FirstOrDefault(p => p.Name == targetPlayerName);
-            var action = new Action(owner, actionType, targetPlayer, text);
+            var game = GetGame(gameId);
+            var action = new Action(PlayerGuid, actionType, text);
             game.DoAction(action);
-            _simpleDb.AddAction(gameId, action);
+            _simpleDb.AddAction(action);
             LetComputerPlayersDoActions(game);
         }
 
-        private void LetComputerPlayersDoActions(GamePlay gameplay)
+        private void LetComputerPlayersDoActions(Game game)
         {
-            var state = gameplay.GamePlayState;
-            var computersPlayersInGame = gameplay.Game.Players.Where(p=>p.PlayerType != Core.Player.Type.Human);
-            while (computersPlayersInGame.Any(c => gameplay.AvailableActions(gameplay.Game.Players.First(p => p.Guid == c.Guid)).Any(action => action != Action.Type.Message)))
+            var state = game.GameState;
+            var computersPlayersInGame = game.Players.Where(p=>p.PlayerType != Core.Player.Type.Human);
+            while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.Guid)).Any(action => action != Action.Type.Message)))
             {
                 foreach (var computerPlayer in computersPlayersInGame)
                 {                    
-                    var action = Core.ComputerPlayers.ComputerPlayer.Factory(computerPlayer.PlayerType, computerPlayer.Guid).DoSomething(gameplay);
+                    var action = Core.ComputerPlayers.ComputerPlayer.Factory(computerPlayer.PlayerType, computerPlayer.Guid).DoSomething(game);
                     if (action != null)
                     {
-                        gameplay.DoAction(action);
-                        _simpleDb.AddAction(gameplay.Game.GameId, action);
+                        game.DoAction(action);
+                        _simpleDb.AddAction(action);
                     }
                 }
             }

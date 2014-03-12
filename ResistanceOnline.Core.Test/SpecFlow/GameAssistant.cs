@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System;
 using TechTalk.SpecFlow;
+using System.Collections.Generic;
 
 namespace ResistanceOnline.Core.Test.SpecFlow
 {
@@ -8,19 +9,19 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 	{
 		internal void CreateStandardGame(int numberOfPlayers)
 		{
-            var game = new Game();
+            var owner = Guid.NewGuid();
+            var actions = new List<Action>();
 
-            game.Rules.Remove(Rule.LadyOfTheLakeExists);
+            for (var i = 0; i < numberOfPlayers; i++)
+            {
+                actions.Add(new Action(Guid.NewGuid(), Action.Type.Join, string.Format("player{0}", i)));
+                //actions.Add(new Action(owner, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
+            }
 
-			for (var i = 0; i < numberOfPlayers; i++)
-			{
-                game.JoinGame(string.Format("player{0}", i), Guid.NewGuid());
-                game.AvailableCharacters[i] = Character.LoyalServantOfArthur;
-			}
-            game.Rules.Clear();
-            game.StartGame();
-            var gameplay = new GamePlay(game);
-			ContextAccess.GamePlay = gameplay;
+            actions.Add(new Action(owner, Action.Type.Start, "0"));
+
+            var game = new Game(actions);
+			ContextAccess.Game = game;
 		}
 
 		internal void ProgressToRound(int round)
@@ -33,18 +34,18 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 
 		internal void ChooseCrew()
 		{
-			var gameplay = ContextAccess.GamePlay;
-			var leader = gameplay.CurrentQuest.CurrentVoteTrack.Leader;
-            gameplay.DoAction(gameplay.Game.GameId, leader, Action.Type.AddToTeam, leader);
-            foreach (var player in gameplay.Game.Players.Where(player => player != leader).Take(gameplay.CurrentQuest.TeamSize - 1))
+			var game = ContextAccess.Game;
+			var leader = game.CurrentQuest.CurrentVoteTrack.Leader;
+            game.DoAction(leader.Guid, Action.Type.AddToTeam, leader.Name);
+            foreach (var player in game.Players.Where(player => player != leader).Take(game.CurrentQuest.TeamSize - 1))
 			{
-                gameplay.DoAction(gameplay.Game.GameId, leader, Action.Type.AddToTeam, player);
+                game.DoAction(leader.Guid, Action.Type.AddToTeam, player.Name);
 			}
 		}
 
 		internal void AllApproveTeam()
 		{
-            VoteForTeam(ContextAccess.GamePlay.Game.Players.Count);
+            VoteForTeam(ContextAccess.Game.Players.Count);
 		}
 
 		internal void AllDeclineTeam()
@@ -54,106 +55,106 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 
 		internal void VoteForTeam(int numberOfPlayersForTeam)
 		{
-            var gameplay = ContextAccess.GamePlay;
+            var game = ContextAccess.Game;
 
-            foreach (var player in ContextAccess.GamePlay.Game.Players.Take(numberOfPlayersForTeam))
+            foreach (var player in ContextAccess.Game.Players.Take(numberOfPlayersForTeam))
 			{
-                gameplay.DoAction(gameplay.Game.GameId, player, Action.Type.VoteApprove);
+                game.DoAction(player.Guid, Action.Type.VoteApprove);
 			}
 
-            foreach (var player in ContextAccess.GamePlay.Game.Players.Skip(numberOfPlayersForTeam))
+            foreach (var player in ContextAccess.Game.Players.Skip(numberOfPlayersForTeam))
 			{
-                gameplay.DoAction(gameplay.Game.GameId, player, Action.Type.VoteReject);
+                game.DoAction(player.Guid, Action.Type.VoteReject);
             }
 		}
 
 		internal void RemoveMerlin()
 		{
-            var gameplay = ContextAccess.GamePlay;
-            foreach (var merlinPlayer in gameplay.Game.Players.Where(player => player.Character == Character.Merlin))
+            var game = ContextAccess.Game;
+            foreach (var merlinPlayer in game.Players.Where(player => player.Character == Character.Merlin))
 			{
 				merlinPlayer.Character = Character.LoyalServantOfArthur;
 			}
 
-            foreach (var assasinPlayer in gameplay.Game.Players.Where(player => player.Character == Character.Assassin))
+            foreach (var assasinPlayer in game.Players.Where(player => player.Character == Character.Assassin))
 			{
 				assasinPlayer.Character = Character.MinionOfMordred;
 			}
 
-            var merlinCount = gameplay.Game.AvailableCharacters.Count(character => character == Character.Merlin);
+            var merlinCount = game.AvailableCharacters.Count(character => character == Character.Merlin);
 
-            gameplay.Game.AvailableCharacters.RemoveAll(character => character == Character.Merlin);
+            game.AvailableCharacters.RemoveAll(character => character == Character.Merlin);
 
 			for (var i = 0; i < merlinCount; i++)
-                gameplay.Game.AvailableCharacters.Add(Character.LoyalServantOfArthur);
+                game.AvailableCharacters.Add(Character.LoyalServantOfArthur);
 
-            var assasinCount = gameplay.Game.AvailableCharacters.Count(character => character == Character.Assassin);
+            var assasinCount = game.AvailableCharacters.Count(character => character == Character.Assassin);
 
-            gameplay.Game.AvailableCharacters.RemoveAll(character => character == Character.Assassin);
+            game.AvailableCharacters.RemoveAll(character => character == Character.Assassin);
 
 			for (var i = 0; i < assasinCount; i++)
-                gameplay.Game.AvailableCharacters.Add(Character.MinionOfMordred);
+                game.AvailableCharacters.Add(Character.MinionOfMordred);
 		}
 
 		internal void CompleteQuest(int roundNumber, bool successful)
 		{
-            var gameplay = ContextAccess.GamePlay;
+            var game = ContextAccess.Game;
 
             //build team
-            for (int i = 0; i < gameplay.CurrentQuest.TeamSize; i++)
+            for (int i = 0; i < game.CurrentQuest.TeamSize; i++)
             {
-                gameplay.DoAction(gameplay.Game.GameId, gameplay.CurrentQuest.CurrentVoteTrack.Leader, Action.Type.AddToTeam, gameplay.Game.Players[i]);
+                game.DoAction(game.CurrentQuest.CurrentVoteTrack.Leader.Guid, Action.Type.AddToTeam, game.Players[i].Name);
             }
 
             //pass the vote
-            foreach (var player in gameplay.Game.Players)
+            foreach (var player in game.Players)
             {
-                gameplay.DoAction(gameplay.Game.GameId, player, Action.Type.VoteApprove);
+                game.DoAction(player.Guid, Action.Type.VoteApprove);
             }
 
             //do the quest
-            foreach (var player in gameplay.CurrentQuest.CurrentVoteTrack.Players)
+            foreach (var player in game.CurrentQuest.CurrentVoteTrack.Players)
             {
-                gameplay.DoAction(gameplay.Game.GameId, player, successful ? Action.Type.SucceedQuest : Action.Type.FailQuest);
+                game.DoAction(player.Guid, successful ? Action.Type.SucceedQuest : Action.Type.FailQuest);
             }
         }
 
 		internal void AddMerlin()
 		{
-            var gameplay = ContextAccess.GamePlay;
-            gameplay.Game.Players.First(p => p.Character == Character.LoyalServantOfArthur).Character = Character.Merlin;
-            gameplay.Game.AvailableCharacters[gameplay.Game.AvailableCharacters.IndexOf(Character.LoyalServantOfArthur)] = Character.Merlin;
+            var game = ContextAccess.Game;
+            game.Players.First(p => p.Character == Character.LoyalServantOfArthur).Character = Character.Merlin;
+            game.AvailableCharacters[game.AvailableCharacters.IndexOf(Character.LoyalServantOfArthur)] = Character.Merlin;
 		}
 
         internal void AddAssassin()
         {
-            var gameplay = ContextAccess.GamePlay;
-            gameplay.Game.Players.First(p => p.Character == Character.LoyalServantOfArthur).Character = Character.Assassin;
-            gameplay.Game.AvailableCharacters[gameplay.Game.AvailableCharacters.IndexOf(Character.LoyalServantOfArthur)] = Character.Assassin;
+            var game = ContextAccess.Game;
+            game.Players.First(p => p.Character == Character.LoyalServantOfArthur).Character = Character.Assassin;
+            game.AvailableCharacters[game.AvailableCharacters.IndexOf(Character.LoyalServantOfArthur)] = Character.Assassin;
         }
 
 		internal void PickMerlin(bool successfullMerlinPick)
 		{
-            var gameplay = ContextAccess.GamePlay;
+            var game = ContextAccess.Game;
 
-            var assasin = gameplay.Game.Players.First(player => player.Character == Character.Assassin);
+            var assasin = game.Players.First(player => player.Character == Character.Assassin);
 
 			if (successfullMerlinPick)
 			{
-                gameplay.DoAction(gameplay.Game.GameId, assasin, Action.Type.GuessMerlin, gameplay.Game.Players.First(player => player.Character == Character.Merlin));
+                game.DoAction(assasin.Guid, Action.Type.GuessMerlin, game.Players.First(player => player.Character == Character.Merlin).Name);
 			}
 			else
 			{
-                gameplay.DoAction(gameplay.Game.GameId, assasin, Action.Type.GuessMerlin, gameplay.Game.Players
+                game.DoAction(assasin.Guid, Action.Type.GuessMerlin, game.Players
                     .Where(player => player.Character == Character.LoyalServantOfArthur || player.Character == Character.Percival)
-                    .First(player => player.Character != Character.Merlin));
+                    .First(player => player.Character != Character.Merlin).Name);
 			}
 		}
 
 		void IncrementRound()
 		{
-            var gameplay = ContextAccess.GamePlay;
-            var roundNumber = gameplay.Quests.Count;
+            var game = ContextAccess.Game;
+            var roundNumber = game.Quests.Count;
             CompleteQuest(roundNumber, roundNumber % 2 == 0);
 		}
 	}

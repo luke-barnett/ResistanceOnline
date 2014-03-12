@@ -15,22 +15,16 @@ namespace ResistanceOnline.Site.Infrastructure
             _context = dbContext;
         }
 
-        public void AddAction(int gameId, Core.Action action)
+        public void AddAction(Core.Action action)
         {
-            action.GameId = gameId;
-
             var actionDb = new Database.Entities.Action
             {
-                Game = new Database.Entities.Game { GameId = gameId },
-                Owner = _context.Players.First(x => x.Game.GameId == gameId && x.Guid == action.Owner.Guid),
+                GameId = action.GameId,
+                Owner = action.Owner,
                 Timestamp = action.Timestamp,
                 Type = action.ActionType.ToString(),
                 Text = action.Text
             };
-            if (action.TargetPlayer != null)
-            {
-                actionDb.Target = _context.Players.FirstOrDefault(x => x.Game.GameId == gameId && x.Guid == action.TargetPlayer.Guid);
-            }
 
             _context.Actions.Add(actionDb);
             _context.SaveChanges();
@@ -38,59 +32,20 @@ namespace ResistanceOnline.Site.Infrastructure
 
         public List<Core.Action> GetActionsForGame(int? gameId)
         {
-            return _context.Actions.Include("Owner").Include("Target").Where(a => a.Game.GameId == gameId).ToList().Select(db => new Core.Action(db)).ToList();
+            return _context.Actions.Where(a => a.GameId == gameId).ToList().Select(db => new Core.Action(db)).ToList();
         }
 
         public Core.Game GetGame(int gameId)
         {
-            return new Core.Game(_context.Games.Include("Players").Include("Characters").Include("Rules").Include("LoyaltyDeck").Include("RoundTables").First(game => game.GameId == gameId));
+            return new Core.Game(GetActionsForGame(gameId));
         }
 
-        public Core.GamePlay GetGamePlay(int gameId)
+        internal Core.Game CreateGame(Guid owner, string name)
         {
-            var gameplay = new Core.GamePlay(GetGame(gameId));
-            var actions = GetActionsForGame(gameId);
-            gameplay.DoActions(actions);
-            return gameplay;
-        }
-
-        public void AddGame(Core.Game game)
-        {
-            Database.Entities.Game entity = null;
-            if (game.GameId==0) 
-            {
-                entity = new Database.Entities.Game();
-                _context.Games.Add(new Database.Entities.Game());
-            }
-
-            entity.GameState = game.GameState.ToString();
-            if (game.InitialHolderOfLadyOfTheLake != null)
-            {
-                entity.InitialHolderOfLadyOfTheLake = game.InitialHolderOfLadyOfTheLake.Name;
-            }
-            if (game.InitialLeader != null)
-            {
-                entity.InitialLeader = game.InitialLeader.Name;
-            }
-            
-            _context.SaveChanges();
-        }
-
-        public void UpdateGame(Core.Game game)
-        {
-            var entity = _context.Games.First(g => g.GameId == game.GameId);
-            
-            entity.GameState = game.GameState.ToString();
-            if (game.InitialHolderOfLadyOfTheLake != null)
-            {
-                entity.InitialHolderOfLadyOfTheLake = game.InitialHolderOfLadyOfTheLake.Name;
-            }
-            if (game.InitialLeader != null)
-            {
-                entity.InitialLeader = game.InitialLeader.Name;
-            }
-
-            _context.SaveChanges();
+            var gameId = _context.Actions.Max(a => a.GameId) + 1;
+            var action = new Core.Action(owner, Core.Action.Type.Join, name);
+            AddAction(action);
+            return GetGame(gameId);
         }
     }
 }

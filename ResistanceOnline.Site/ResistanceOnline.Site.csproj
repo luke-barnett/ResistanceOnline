@@ -284,7 +284,6 @@
     <Content Include="Scripts\jquery-2.1.0.min.map" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\LoginConfirmation.cshtml" />
-    <Content Include="Views\Game\Game.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -315,7 +314,6 @@
     <Compile Include="Infrastructure\SimpleDb.cs" />
     <Compile Include="Infrastructure\Useful.cs" />
     <Compile Include="Models\ExcaliburUseModel.cs" />
-    <Compile Include="Models\GameModel.cs" />
     <Compile Include="Models\LadyOfTheLakeUseModel.cs" />
     <Compile Include="Models\LoginConfirmationViewModel.cs" />
     <Compile Include="Models\MessageModel.cs" />
@@ -325,7 +323,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\GamePlayModel.cs" />
+    <Compile Include="Models\GameModel.cs" />
     <Compile Include="Models\PlayerInfoModel.cs" />
     <Compile Include="Models\QuestCardModel.cs" />
     <Compile Include="Models\TeamModel.cs" />

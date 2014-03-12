@@ -13,37 +13,37 @@ namespace ResistanceOnline.Core.ComputerPlayers
         
         protected override Core.Player LadyOfTheLakeTarget()
         {
-            var ladyOfTheLakeHistory = _gameplay.Quests.Where(r => r.LadyOfTheLake != null).Select(r => r.LadyOfTheLake.Holder);
-            return _gameplay.Game.Players.Where(p => p != _player).Except(ladyOfTheLakeHistory).Random();
+            var ladyOfTheLakeHistory = _game.Quests.Where(r => r.LadyOfTheLake != null).Select(r => r.LadyOfTheLake.Holder);
+            return Random(_game.Players.Where(p => p != _player).Except(ladyOfTheLakeHistory));
         }
 
         protected override Core.Player GuessMerlin()
         {
             Say("Hahaha, I saw who merlin was at the beginning of the game!");
-            return _gameplay.Game.Players.FirstOrDefault(p => p.Character == Character.Merlin);
+            return _game.Players.FirstOrDefault(p => p.Character == Character.Merlin);
         }
 
         protected override Core.Player ChooseTeamPlayer()
         {
             //put myself on
-            if (!_gameplay.CurrentQuest.CurrentVoteTrack.Players.Any(p => p == _player))
+            if (!_game.CurrentQuest.CurrentVoteTrack.Players.Any(p => p == _player))
             {
                 return _player;
             }
 
-            var playersNotOnTeam = _gameplay.Game.Players.Where(p => p != _player).Except(_gameplay.CurrentQuest.CurrentVoteTrack.Players);
+            var playersNotOnTeam = _game.Players.Where(p => p != _player).Except(_game.CurrentQuest.CurrentVoteTrack.Players);
             Player player = null;
 
             //if I'm evil, put anyone else on
             if (_IAmEvil)
             {
-                player = playersNotOnTeam.Random();
+                player = Random(playersNotOnTeam);
                 SayTheyAreGood(player.Name);
                 return player;
             }
 
             //if I'm good, only put good on
-            player = playersNotOnTeam.RandomOrDefault(p => !_gameplay.Game.IsCharacterEvil(p.Character, false));
+            player = Random(playersNotOnTeam.Where(p => !_game.IsCharacterEvil(p.Character, false)));
             //failing that we need to put someone evil on the mission :(
             if (player == null)
             {
@@ -64,11 +64,11 @@ namespace ResistanceOnline.Core.ComputerPlayers
 
         protected override bool TeamVote()
         {
-            var evilCount = _gameplay.CurrentQuest.CurrentVoteTrack.Players.Count(p => _gameplay.Game.IsCharacterEvil(p.Character, false));
+            var evilCount = _game.CurrentQuest.CurrentVoteTrack.Players.Count(p => _game.IsCharacterEvil(p.Character, false));
 
             if (_IAmEvil)
             {
-                if (evilCount >= _gameplay.CurrentQuest.RequiredFails)
+                if (evilCount >= _game.CurrentQuest.RequiredFails)
                 {
                     SayTeamIsOk();
                     return true;
@@ -78,7 +78,7 @@ namespace ResistanceOnline.Core.ComputerPlayers
             }
             else
             {
-                if (evilCount >= _gameplay.CurrentQuest.RequiredFails)
+                if (evilCount >= _game.CurrentQuest.RequiredFails)
                 {
                     SayTeamNotOk();
                     return false;
@@ -91,7 +91,7 @@ namespace ResistanceOnline.Core.ComputerPlayers
 
         protected override Player UseExcalibur()
         {
-            var quest = _gameplay.CurrentQuest.CurrentVoteTrack.QuestCards.FirstOrDefault(i => i.Success != _IAmEvil);
+            var quest = _game.CurrentQuest.CurrentVoteTrack.QuestCards.FirstOrDefault(i => i.Success != _IAmEvil);
             return quest == null ? null : quest.Player;
         }
     }

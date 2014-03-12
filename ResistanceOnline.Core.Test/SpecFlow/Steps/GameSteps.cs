@@ -22,7 +22,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow.Steps
 		[Given(@"the game is in the (first|second|third|fourth|fifth) round")]
 		public void GivenTheGameIsInTheFirstRound(string round)
 		{
-			var gameplay = ContextAccess.GamePlay;
+			var game = ContextAccess.Game;
 
 			switch (round)
 			{
@@ -139,37 +139,37 @@ namespace ResistanceOnline.Core.Test.SpecFlow.Steps
 		[Then(@"the quest goes ahead")]
 		public void ThenTheQuestGoesAhead()
 		{            
-			Assert.AreEqual(ResistanceOnline.Core.GamePlay.State.Questing, ContextAccess.GamePlay.GamePlayState);
+			Assert.AreEqual(ResistanceOnline.Core.Game.State.Questing, ContextAccess.Game.GameState);
 		}
 
 		[Then(@"the quest does not go ahead")]
 		public void ThenTheQuestDoesNotGoesAhead()
 		{
-            Assert.AreEqual(ResistanceOnline.Core.GamePlay.State.ChoosingTeam, ContextAccess.GamePlay.GamePlayState);
+            Assert.AreEqual(ResistanceOnline.Core.Game.State.ChoosingTeam, ContextAccess.Game.GameState);
 		}
 
 		[Then(@"evil wins the game")]
 		public void ThenEvilWinsTheGame()
 		{
-            Assert.AreEqual(ResistanceOnline.Core.GamePlay.State.EvilTriumphs, ContextAccess.GamePlay.GamePlayState);
+            Assert.AreEqual(ResistanceOnline.Core.Game.State.EvilTriumphs, ContextAccess.Game.GameState);
 		}
 
 		[Then(@"good wins the game")]
 		public void ThenGoodlWinsTheGame()
 		{
-            Assert.AreEqual(ResistanceOnline.Core.GamePlay.State.GoodPrevails, ContextAccess.GamePlay.GamePlayState);
+            Assert.AreEqual(ResistanceOnline.Core.Game.State.GoodPrevails, ContextAccess.Game.GameState);
         }
 
 		[Then(@"merlin dies")]
 		public void ThenMerlinDies()
 		{
-            Assert.AreEqual(ResistanceOnline.Core.GamePlay.State.EvilTriumphs, ContextAccess.GamePlay.GamePlayState);
+            Assert.AreEqual(ResistanceOnline.Core.Game.State.EvilTriumphs, ContextAccess.Game.GameState);
         }
 
 		[Then(@"assasin is to pick merlin")]
 		public void AssasinIsToPickMerlin()
 		{
-            Assert.AreEqual(ResistanceOnline.Core.GamePlay.State.GuessingMerlin, ContextAccess.GamePlay.GamePlayState);
+            Assert.AreEqual(ResistanceOnline.Core.Game.State.GuessingMerlin, ContextAccess.Game.GameState);
         }    
 	}
 }

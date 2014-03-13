@@ -17,6 +17,10 @@ namespace ResistanceOnline.Site.Infrastructure
 
         public void AddAction(Core.Action action)
         {
+            //debug game is always in memory
+            if (action.GameId == 0)
+                return;
+
             var actionDb = new Database.Entities.Action
             {
                 GameId = action.GameId,

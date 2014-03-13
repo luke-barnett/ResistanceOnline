@@ -8,6 +8,19 @@ namespace ResistanceOnline.Database.Migrations
         public override void Up()
         {
             CreateTable(
+                "dbo.Actions",
+                c => new
+                    {
+                        ActionId = c.Int(nullable: false, identity: true),
+                        GameId = c.Int(nullable: false),
+                        Type = c.String(),
+                        Owner = c.Guid(nullable: false),
+                        Timestamp = c.DateTimeOffset(nullable: false, precision: 7),
+                        Text = c.String(),
+                    })
+                .PrimaryKey(t => t.ActionId);
+            
+            CreateTable(
                 "dbo.AspNetRoles",
                 c => new
                     {
@@ -84,6 +97,7 @@ namespace ResistanceOnline.Database.Migrations
             DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.AspNetUsers");
             DropTable("dbo.AspNetRoles");
+            DropTable("dbo.Actions");
         }
     }
 }

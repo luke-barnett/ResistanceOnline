@@ -336,7 +336,10 @@ namespace ResistanceOnline.Core
                         actions.Add(Action.Type.GuessMerlin);
                     break;
             }
-            actions.Add(Action.Type.Message);
+            if (player != null)
+            {
+                actions.Add(Action.Type.Message);
+            }
             return actions;
         }
 

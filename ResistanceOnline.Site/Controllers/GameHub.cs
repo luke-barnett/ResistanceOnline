@@ -25,24 +25,7 @@ namespace ResistanceOnline.Site.Controllers
         public GameHub()//(ResistanceOnlineDbContext dbContext)
         {
             _dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
-            _simpleDb = new Infrastructure.SimpleDb(_dbContext);
-
-            if (!_gameCache.ContainsKey(0))
-            {
-                //create game 0 for development
-                var actions = new List<Action>()
-                {
-                    new Action(PlayerGuid, Action.Type.Join, PlayerName),
-                    new Action(PlayerGuid, Action.Type.AddBot, "Alice"),
-                    new Action(PlayerGuid, Action.Type.AddBot, "Bob"),
-                    new Action(PlayerGuid, Action.Type.AddBot, "Chuck"),
-                    new Action(PlayerGuid, Action.Type.AddBot, "Dan"),
-                    new Action(PlayerGuid, Action.Type.AddBot, "Eve"),
-                    new Action(PlayerGuid, Action.Type.Start, "0"),
-                };
-                var game = new Game(actions);
-                _gameCache.Add(0, game);
-            }
+            _simpleDb = new Infrastructure.SimpleDb(_dbContext);            
         }
 
         //todo logged in user
@@ -87,12 +70,11 @@ namespace ResistanceOnline.Site.Controllers
             foreach (var guid in _userConnections.Keys)
             {
                 //todo - don't need all games sent every update
-                //it feels like this should be split out into game hubs for playing games and home page stuff for managing games
-                //var games = null;// _dbContext.Games.ToList().Select(g => new GameModel(GetGame(g.GameId), guid));
+                var games = _gameCache.Values.ToList().Select(g=>new GameModel(g, PlayerGuid)).ToList();
 
                 foreach (var connection in _userConnections[guid])
                 {
-                    Clients.Client(connection).Update(null);
+                    Clients.Client(connection).Update(games);
                 }
             }
         }
@@ -107,6 +89,23 @@ namespace ResistanceOnline.Site.Controllers
                     _userConnections[PlayerGuid] = new List<string>();
                 }
                 _userConnections[PlayerGuid].Add(Context.ConnectionId);
+
+                if (!_gameCache.ContainsKey(0))
+                {
+                    //create game 0 for development
+                    var actions = new List<Action>()
+                {
+                    new Action(PlayerGuid, Action.Type.Join, PlayerName),
+                    new Action(PlayerGuid, Action.Type.AddBot, "Alice"),
+                    new Action(PlayerGuid, Action.Type.AddBot, "Bob"),
+                    new Action(PlayerGuid, Action.Type.AddBot, "Chuck"),
+                    new Action(PlayerGuid, Action.Type.AddBot, "Dan"),
+                    new Action(PlayerGuid, Action.Type.AddBot, "Eve"),
+                    new Action(PlayerGuid, Action.Type.Start, "0"),
+                };
+                    var game = new Game(actions);
+                    _gameCache.Add(0, game);
+                }                
             }
             Update();
             return base.OnConnected();

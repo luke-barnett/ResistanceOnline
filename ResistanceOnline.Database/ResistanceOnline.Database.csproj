@@ -59,13 +59,9 @@
   <ItemGroup>
     <Compile Include="Entities\Action.cs" />
     <Compile Include="InjectionModule.cs" />
-    <Compile Include="Migrations\201402192233104_InitialCreate.cs" />
-    <Compile Include="Migrations\201402192233104_InitialCreate.Designer.cs">
-      <DependentUpon>201402192233104_InitialCreate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201403100233546_GameTable.cs" />
-    <Compile Include="Migrations\201403100233546_GameTable.Designer.cs">
-      <DependentUpon>201403100233546_GameTable.cs</DependentUpon>
+    <Compile Include="Migrations\201403130822199_InitialCreate.cs" />
+    <Compile Include="Migrations\201403130822199_InitialCreate.Designer.cs">
+      <DependentUpon>201403130822199_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -77,11 +73,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201402192233104_InitialCreate.resx">
-      <DependentUpon>201402192233104_InitialCreate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201403100233546_GameTable.resx">
-      <DependentUpon>201403100233546_GameTable.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201403130822199_InitialCreate.resx">
+      <DependentUpon>201403130822199_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

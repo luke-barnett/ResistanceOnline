@@ -7,13 +7,13 @@ namespace ResistanceOnline.Database.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.0.2-21211")]
-    public sealed partial class GameTable : IMigrationMetadata
+    public sealed partial class InitialCreate : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(GameTable));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialCreate));
         
         string IMigrationMetadata.Id
         {
-            get { return "201403100233546_GameTable"; }
+            get { return "201403130822199_InitialCreate"; }
         }
         
         string IMigrationMetadata.Source

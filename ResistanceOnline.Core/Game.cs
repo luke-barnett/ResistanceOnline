@@ -50,7 +50,7 @@ namespace ResistanceOnline.Core
             AvailableCharacters = new List<Character>();
             LoyaltyDeck = new List<LoyaltyCard> { LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.SwitchAlegiance, LoyaltyCard.SwitchAlegiance };
             Rules = new List<Rule>();
-            RoundTables = StandardRoundTables(0);
+            RoundTables = StandardQuestSizes(0);
             Quests = new List<Quest>();
 
             DoActions(actions);
@@ -78,7 +78,7 @@ namespace ResistanceOnline.Core
                 AvailableCharacters.Add(Character.LoyalServantOfArthur);
             }
 
-            RoundTables = StandardRoundTables(Players.Count);
+            RoundTables = StandardQuestSizes(Players.Count);
         }
 
         public bool ContainsLancelot()
@@ -95,7 +95,7 @@ namespace ResistanceOnline.Core
             return LoyaltyDeck[roundNumber - 1];
         }
 
-        public void AllocateCharacters(int seed)
+        void AllocateCharacters(int seed)
         {
             var characterCards = AvailableCharacters.ToList();
             Random random = new Random(seed);
@@ -107,65 +107,65 @@ namespace ResistanceOnline.Core
             }
         }
 
-        public void ChooseLeader(int seed)
+        void ChooseLeader(int seed)
         {
             InitialHolderOfLadyOfTheLake = Players.Random(seed);
             InitialLeader = Players.Next(InitialHolderOfLadyOfTheLake);
         }
 
 
-        public List<QuestSize> StandardRoundTables(int GameSize)
+        List<QuestSize> StandardQuestSizes(int GameSize)
         {
-            var roundTables = new List<QuestSize>();
+            var questSizes = new List<QuestSize>();
             if (GameSize <= 5)
             {
-                roundTables.Add(new QuestSize(2));
-                roundTables.Add(new QuestSize(3));
-                roundTables.Add(new QuestSize(2));
-                roundTables.Add(new QuestSize(3));
-                roundTables.Add(new QuestSize(3));
-                return roundTables;
+                questSizes.Add(new QuestSize(2));
+                questSizes.Add(new QuestSize(3));
+                questSizes.Add(new QuestSize(2));
+                questSizes.Add(new QuestSize(3));
+                questSizes.Add(new QuestSize(3));
+                return questSizes;
             }
 
             switch (GameSize)
             {
                 case 6:
-                    roundTables.Add(new QuestSize(2));
-                    roundTables.Add(new QuestSize(3));
-                    roundTables.Add(new QuestSize(4));
-                    roundTables.Add(new QuestSize(3));
-                    roundTables.Add(new QuestSize(4));
+                    questSizes.Add(new QuestSize(2));
+                    questSizes.Add(new QuestSize(3));
+                    questSizes.Add(new QuestSize(4));
+                    questSizes.Add(new QuestSize(3));
+                    questSizes.Add(new QuestSize(4));
                     break;
                 case 7:
-                    roundTables.Add(new QuestSize(2));
-                    roundTables.Add(new QuestSize(3));
-                    roundTables.Add(new QuestSize(3));
-                    roundTables.Add(new QuestSize(4, 2));
-                    roundTables.Add(new QuestSize(4));
+                    questSizes.Add(new QuestSize(2));
+                    questSizes.Add(new QuestSize(3));
+                    questSizes.Add(new QuestSize(3));
+                    questSizes.Add(new QuestSize(4, 2));
+                    questSizes.Add(new QuestSize(4));
                     break;
                 case 8:
-                    roundTables.Add(new QuestSize(3));
-                    roundTables.Add(new QuestSize(4));
-                    roundTables.Add(new QuestSize(4));
-                    roundTables.Add(new QuestSize(5, 2));
-                    roundTables.Add(new QuestSize(5));
+                    questSizes.Add(new QuestSize(3));
+                    questSizes.Add(new QuestSize(4));
+                    questSizes.Add(new QuestSize(4));
+                    questSizes.Add(new QuestSize(5, 2));
+                    questSizes.Add(new QuestSize(5));
                     break;
                 case 9:
-                    roundTables.Add(new QuestSize(3));
-                    roundTables.Add(new QuestSize(4));
-                    roundTables.Add(new QuestSize(4));
-                    roundTables.Add(new QuestSize(5, 2));
-                    roundTables.Add(new QuestSize(5));
+                    questSizes.Add(new QuestSize(3));
+                    questSizes.Add(new QuestSize(4));
+                    questSizes.Add(new QuestSize(4));
+                    questSizes.Add(new QuestSize(5, 2));
+                    questSizes.Add(new QuestSize(5));
                     break;
                 default:
-                    roundTables.Add(new QuestSize(3));
-                    roundTables.Add(new QuestSize(4));
-                    roundTables.Add(new QuestSize(4));
-                    roundTables.Add(new QuestSize(5, 2));
-                    roundTables.Add(new QuestSize(5));
+                    questSizes.Add(new QuestSize(3));
+                    questSizes.Add(new QuestSize(4));
+                    questSizes.Add(new QuestSize(4));
+                    questSizes.Add(new QuestSize(5, 2));
+                    questSizes.Add(new QuestSize(5));
                     break;
             }
-            return roundTables;
+            return questSizes;
         }
 
         public bool IsCharacterEvil(Character character, bool lancelotAllegianceSwitched)
@@ -194,9 +194,8 @@ namespace ResistanceOnline.Core
             return false;
         }
 
-        void StartGame(string seedText)
+        void StartGame(int seed)
         {
-            int seed = int.Parse(seedText);
             AllocateCharacters(seed);
             ChooseLeader(seed);
             LoyaltyDeck = LoyaltyDeck.Shuffle(seed).ToList();
@@ -267,6 +266,7 @@ namespace ResistanceOnline.Core
                     {
                         actions.Add(Action.Type.Join);
                     }
+                    actions.Add(Action.Type.AddBot);
                     //todo - prevent game start unless valid
                     actions.Add(Action.Type.Start);
                     break;
@@ -340,7 +340,7 @@ namespace ResistanceOnline.Core
             return actions;
         }
 
-        public void DoActions(List<Action> actions)
+        void DoActions(List<Action> actions)
         {
             foreach (var action in actions)
             {
@@ -373,23 +373,26 @@ namespace ResistanceOnline.Core
                 case Action.Type.Join:
                     JoinGame(action.Text, action.Owner);
                     break;
+                case Action.Type.AddBot:
+                    JoinGame(action.Text, Guid.NewGuid(), Player.Type.TrustBot);
+                    break;
                 case Action.Type.Start:
-                    StartGame(action.Text);
+                    StartGame(int.Parse(action.Text));
                     break;
                 case Action.Type.Message:
                     Message(owner, action.Text);
                     break;
                 case Action.Type.AddToTeam:
-                    AddToTeam(owner, target);
+                    AddToTeam(target);
                     break;
                 case Action.Type.AssignExcalibur:
-                    AssignExcalibur(owner, target);
+                    AssignExcalibur(target);
                     break;
                 case Action.Type.FailQuest:
                     SubmitQuest(owner, false);
                     break;
                 case Action.Type.GuessMerlin:
-                    GuessMerlin(owner, target);
+                    GuessMerlin(target);
                     break;
                 case Action.Type.SucceedQuest:
                     SubmitQuest(owner, true);
@@ -398,7 +401,7 @@ namespace ResistanceOnline.Core
                     UseExcalibur(owner, target);
                     break;
                 case Action.Type.UseTheLadyOfTheLake:
-                    UseLadyOfTheLake(owner, target);
+                    UseLadyOfTheLake(target);
                     break;
                 case Action.Type.VoteApprove:
                     VoteForTeam(owner, true);
@@ -409,7 +412,7 @@ namespace ResistanceOnline.Core
             }
         }
 
-        void GuessMerlin(Player player, Player guess)
+        void GuessMerlin(Player guess)
         {
             AssassinsGuessAtMerlin = guess;
 
@@ -429,10 +432,10 @@ namespace ResistanceOnline.Core
                 return;
 
             var roundTable = RoundTables[Quests.Count];
-            var round = new Quest(Players, leader, HolderOfLadyOfTheLake, roundTable.TeamSize, roundTable.RequiredFails, LancelotAllegianceSwitched);
+            var quest = new Quest(HolderOfLadyOfTheLake, roundTable.TeamSize, roundTable.RequiredFails);
             var team = new VoteTrack(leader, roundTable.TeamSize, roundTable.RequiredFails);
-            round.VoteTracks.Add(team);
-            Quests.Add(round);
+            quest.VoteTracks.Add(team);
+            Quests.Add(quest);
             GameState = State.ChoosingTeam;
         }
 
@@ -469,7 +472,7 @@ namespace ResistanceOnline.Core
         }
 
 
-        void AddToTeam(Player player, Player proposedPlayer)
+        void AddToTeam(Player proposedPlayer)
         {
             if (CurrentVoteTrack.Players.Contains(proposedPlayer))
                 throw new InvalidOperationException("Player is already on the team");
@@ -489,7 +492,7 @@ namespace ResistanceOnline.Core
             }
         }
 
-        void AssignExcalibur(Player player, Player proposedPlayer)
+        void AssignExcalibur(Player proposedPlayer)
         {
             if (!CurrentVoteTrack.Players.Contains(proposedPlayer))
                 throw new InvalidOperationException("Player is not on team..");
@@ -545,7 +548,7 @@ namespace ResistanceOnline.Core
                 }
                 else
                 {
-                    CurrentQuest.VoteTracks.Add(new VoteTrack(Players.Next(CurrentVoteTrack.Leader), CurrentQuest.TeamSize, CurrentQuest.RequiredFails));
+                    CurrentQuest.VoteTracks.Add(new VoteTrack(Players.Next(CurrentVoteTrack.Leader), CurrentQuest.QuestSize, CurrentQuest.RequiredFails));
                     GameState = State.ChoosingTeam;
                 }
             }
@@ -565,7 +568,7 @@ namespace ResistanceOnline.Core
             }
         }
 
-        void UseLadyOfTheLake(Player player, Player target)
+        void UseLadyOfTheLake(Player target)
         {
             if (Quests.Any(r => r.LadyOfTheLake != null && r.LadyOfTheLake.Holder == target))
                 throw new Exception("Once a lady has gone " + target + ", she does NOT go back..");

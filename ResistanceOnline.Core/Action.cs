@@ -14,7 +14,8 @@ namespace ResistanceOnline.Core
     {
         public enum Type
         {
-            Join,           
+            Join,
+            AddBot,
             Start,
 
             [Description("Add a player to the current team")]
@@ -52,15 +53,6 @@ namespace ResistanceOnline.Core
             Text = text;
             Timestamp = DateTime.Now;
         }
-
-
-		public Action(ResistanceOnline.Database.Entities.Action action)
-		{
-			ActionType = (Type)Enum.Parse(typeof(Type), action.Type);
-            Owner = action.Owner;
-			Timestamp = action.Timestamp;
-			Text = action.Text;			
-		}
     }
 
 

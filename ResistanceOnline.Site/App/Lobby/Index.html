@@ -1,0 +1,117 @@
+<ul>
+    <li>{{game().PlayerCountSummary}} <i>({{game().Characters}})</i></li>
+
+    <!-- ko foreach: game().Rules -->
+	<li>{{$data}}</li>
+    <!-- /ko -->
+
+    <!-- ko foreach: game().RoundTables -->
+    <li>{{$data}}</li>
+    <!-- /ko -->
+
+    <!-- ko foreach: game().LoyaltyCardsDeltInAdvance -->
+    <li>{{$data}}</li>
+    <!-- /ko -->
+</ul>
+
+<div data-bind="visible: game().PlayerInfo">
+    <p>Click each card to see the knowledge you have about that player</p>    
+    <ul class="cards" data-bind="foreach: game().PlayerInfo">
+		<li>
+			<img class="playercard" data-bind="attr: { src: image }, click: toggleShowActual" />
+            <div class="playername">{{Name}}</div>
+		</li>
+    </ul>
+</div>
+
+<div class="clear"></div>
+
+<div data-bind="foreach: game().Rounds">
+	<h3>
+        {{Title}}
+    </h3>
+    <p>{{Summary}}</p>
+	
+    <div data-bind="foreach: Teams">
+		<div class="quest">
+            <div class="setup">
+                <p>{{TeamSummary}}</p>
+                <ul class="cards">                                       
+
+                    <!-- ko foreach: TeamMembers -->
+                        <li>
+                            <img src="/Images/teamtoken.png" title="{{$data}}" />
+                            <div class="playername">{{$data}}</div>
+                        </li>
+                    
+                    <!-- /ko -->
+                     <!-- ko foreach: Vote -->
+                        <li>
+                            <img class="vote" title="{{Player}}" data-bind="attr: { src: '/images/' + Image() + '.png' }" />
+                            <div class="playername">{{Player}}</div>
+                        </li>
+                    <!-- /ko -->
+
+                </ul>
+            </div>
+            <div class="clear"></div>
+            <div class="results">
+                <ul class="cards" data-bind="foreach: QuestCards">                    
+                    <li> 
+                        <img class="card" data-bind="attr: { src: '/images/' + Image() + '.png' }" />
+                    </li>                    
+                </ul>
+
+            </div>
+            <div class="clear"></div>
+
+            <!-- ko foreach: Messages -->
+            <div class="message">
+                <span>{{Player}}</span>: <span>{{Message}}</span>
+            </div>
+            <!-- /ko -->
+		</div>
+	</div>
+
+    <div class="clear"></div>    
+
+    <div class="ladyofthelake" data-bind="visible: LadyOfTheLakeUsedBy()!=null">
+        <ul class="cards">
+            <li>
+                <img src="/images/ladyofthelake.png" />
+                <div class="playername">{{LadyOfTheLakeUsedBy}}</div>
+            </li>
+            <li data-bind="visible: LadyOfTheLakeUsedOn()!=null">
+                <img class="card" data-bind="attr: { src: '/images/' + LadyOfTheLakeResult() + '.png' }" />
+                <div class="playername">{{LadyOfTheLakeUsedOn}}</div>
+            </li>
+        </ul>
+    </div>
+    <div class="clear"></div>      
+
+
+    <p data-bind="visible: LoyaltyCard!=null">
+        {{LoyaltyCard}}
+    </p>
+    
+</div>
+
+<div data-bind="visible: game().AssassinsGuessAtMerlin">
+    <h3>Guess at merlin</h3>
+    {{game().AssassinsGuessAtMerlin != null ? game().AssassinsGuessAtMerlin.Name : ''}}
+</div>
+
+<div data-bind="visible: game().GameOver">
+    <h3>Game Over</h3>
+    <p>{{game().GameOverMessage}}</p>
+</div>
+
+<span class="warning">{{game().WaitingMessage}}</span>
+
+<ul data-bind="foreach: game().Actions">
+    <li >
+        <!--todo find nicer syntax for this-->
+        <div data-bind="compose: { model: '/app/widgets/' + $data + '.js', view: '/app/widgets/' + $data + '.html', activationData: $root.game }"></div>
+    </li>
+</ul>
+

@@ -26,6 +26,23 @@ namespace ResistanceOnline.Site.Controllers
         {
             _dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
             _simpleDb = new Infrastructure.SimpleDb(_dbContext);
+
+            if (!_gameCache.ContainsKey(0))
+            {
+                //create game 0 for development
+                var actions = new List<Action>()
+                {
+                    new Action(PlayerGuid, Action.Type.Join, PlayerName),
+                    new Action(PlayerGuid, Action.Type.AddBot, "Alice"),
+                    new Action(PlayerGuid, Action.Type.AddBot, "Bob"),
+                    new Action(PlayerGuid, Action.Type.AddBot, "Chuck"),
+                    new Action(PlayerGuid, Action.Type.AddBot, "Dan"),
+                    new Action(PlayerGuid, Action.Type.AddBot, "Eve"),
+                    new Action(PlayerGuid, Action.Type.Start, "0"),
+                };
+                var game = new Game(actions);
+                _gameCache.Add(0, game);
+            }
         }
 
         //todo logged in user
@@ -36,13 +53,20 @@ namespace ResistanceOnline.Site.Controllers
                 return CurrentUser.PlayerGuid;
             }
         }
+        private string PlayerName
+        {
+            get
+            {
+                return CurrentUser.UserName;
+            }
+        }
 
         private UserAccount CurrentUser
         {
             get
             {
                 UserAccount userAccount = null;
-                if (Context.User != null)
+                if (Context!= null && Context.User != null)
                 {
                     var userId = Context.User.Identity.GetUserId();
                     userAccount = _dbContext.Users.FirstOrDefault(user => user.Id == userId);
@@ -56,18 +80,7 @@ namespace ResistanceOnline.Site.Controllers
         }
 
 
-        static Dictionary<Guid, List<string>> _userConnections = new Dictionary<Guid, List<string>>();
-
-
-
-        private Game GetGame(int? gameId)
-        {
-            if (gameId.HasValue == false)
-                return null;
-
-            return _simpleDb.GetGame(gameId.Value);
-        }
-
+        static Dictionary<Guid, List<string>> _userConnections = new Dictionary<Guid, List<string>>();        
 
         private void Update()
         {
@@ -99,35 +112,45 @@ namespace ResistanceOnline.Site.Controllers
             return base.OnConnected();
         }
 
-        public Game CreateGame()
+        private static Dictionary<int, Game> _gameCache = new Dictionary<int, Game>();
+        Game GetGame(int gameId)
         {
-            var game = _simpleDb.CreateGame(PlayerGuid, CurrentUser.UserName);
-            Update();
-            return game;
+            if (!_gameCache.ContainsKey(gameId))
+            {
+                var actions = _simpleDb.GetActions(gameId);
+                var game = new Game(actions);
+                _gameCache.Add(gameId, game);
+            }
+            return _gameCache[gameId];
         }
 
-        private void DoAction(int gameId, Action.Type actionType, string targetPlayerName = null, string text = null)
+        public void CreateGame()
         {
-            var game = GetGame(gameId);
+            var gameId = _simpleDb.NextGameId();
+            DoAction(gameId, Action.Type.Join, CurrentUser.UserName);
+        }
+
+        private void DoAction(int gameId, Action.Type actionType, string text = null)
+        {
             var action = new Action(PlayerGuid, actionType, text);
+
+            var game = GetGame(gameId);
             game.DoAction(action);
             _simpleDb.AddAction(action);
-            LetComputerPlayersDoActions(game);
-        }
 
-        private void LetComputerPlayersDoActions(Game game)
-        {
-            var state = game.GameState;
             var computersPlayersInGame = game.Players.Where(p=>p.PlayerType != Core.Player.Type.Human);
-            while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.Guid)).Any(action => action != Action.Type.Message)))
+            if (game.GameState != Game.State.Lobby)
             {
-                foreach (var computerPlayer in computersPlayersInGame)
-                {                    
-                    var action = Core.ComputerPlayers.ComputerPlayer.Factory(computerPlayer.PlayerType, computerPlayer.Guid).DoSomething(game);
-                    if (action != null)
+                while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.Guid)).Any(a => a != Action.Type.Message)))
+                {
+                    foreach (var computerPlayer in computersPlayersInGame)
                     {
-                        game.DoAction(action);
-                        _simpleDb.AddAction(action);
+                        var computerAction = Core.ComputerPlayers.ComputerPlayer.Factory(computerPlayer.PlayerType, computerPlayer.Guid).DoSomething(game);
+                        if (computerAction != null)
+                        {
+                            game.DoAction(computerAction);
+                            _simpleDb.AddAction(computerAction);
+                        }
                     }
                 }
             }
@@ -135,7 +158,7 @@ namespace ResistanceOnline.Site.Controllers
 
         public void AddToTeam(int gameId, string person)
         {
-            DoAction(gameId, Action.Type.AddToTeam, targetPlayerName: person);
+            DoAction(gameId, Action.Type.AddToTeam, person);
             Update();
         }
 
@@ -165,13 +188,13 @@ namespace ResistanceOnline.Site.Controllers
 
         public void GuessMerlin(int gameId, string guess)
         {
-            DoAction(gameId, Action.Type.GuessMerlin, targetPlayerName:guess);
+            DoAction(gameId, Action.Type.GuessMerlin, guess);
             Update();
         }
 
         public void LadyOfTheLake(int gameId, string target)
         {
-            DoAction(gameId, Action.Type.UseTheLadyOfTheLake, targetPlayerName: target);
+            DoAction(gameId, Action.Type.UseTheLadyOfTheLake, target);
             Update();
         }
 
@@ -184,13 +207,13 @@ namespace ResistanceOnline.Site.Controllers
 
         public void AssignExcalibur(int gameId, string proposedPlayerName)
         {
-            DoAction(gameId, Action.Type.AssignExcalibur, targetPlayerName:proposedPlayerName);
+            DoAction(gameId, Action.Type.AssignExcalibur, proposedPlayerName);
             Update();
         }
 
         public void UseExcalibur(int gameId, string proposedPlayerName)
         {
-            DoAction(gameId, Action.Type.UseExcalibur, targetPlayerName: proposedPlayerName);
+            DoAction(gameId, Action.Type.UseExcalibur, proposedPlayerName);
             Update();
         }
     }

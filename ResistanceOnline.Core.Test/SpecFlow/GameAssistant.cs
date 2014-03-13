@@ -37,7 +37,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 			var game = ContextAccess.Game;
 			var leader = game.CurrentQuest.CurrentVoteTrack.Leader;
             game.DoAction(leader.Guid, Action.Type.AddToTeam, leader.Name);
-            foreach (var player in game.Players.Where(player => player != leader).Take(game.CurrentQuest.TeamSize - 1))
+            foreach (var player in game.Players.Where(player => player != leader).Take(game.CurrentQuest.QuestSize - 1))
 			{
                 game.DoAction(leader.Guid, Action.Type.AddToTeam, player.Name);
 			}
@@ -101,7 +101,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
             var game = ContextAccess.Game;
 
             //build team
-            for (int i = 0; i < game.CurrentQuest.TeamSize; i++)
+            for (int i = 0; i < game.CurrentQuest.QuestSize; i++)
             {
                 game.DoAction(game.CurrentQuest.CurrentVoteTrack.Leader.Guid, Action.Type.AddToTeam, game.Players[i].Name);
             }

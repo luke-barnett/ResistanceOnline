@@ -149,7 +149,7 @@ namespace ResistanceOnline.Site.Models
 			Rounds = new List<RoundModel>();
 			for(int i=0; i<game.Quests.Count; i++)
 			{
-                Rounds.Add(new RoundModel(game.Quests[i], i + 1, game, player));
+                Rounds.Add(new RoundModel(game.Quests[i], i + 1, game, player, game.Players.Count));
 			}
 
             if (GameOver)

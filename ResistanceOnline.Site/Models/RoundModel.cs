@@ -23,9 +23,9 @@ namespace ResistanceOnline.Site.Models
         public string LoyaltyCard { get; set; }
         public string Outcome { get; set; }
 
-        public RoundModel(Core.Quest round, int roundNumber, Core.Game game, Core.Player player)
+        public RoundModel(Core.Quest round, int roundNumber, Core.Game game, Core.Player player, int playerCount)
         {
-            TeamSize = round.TeamSize;
+            TeamSize = round.QuestSize;
             FailsRequired = round.RequiredFails;
             _roundNumber = roundNumber;
 
@@ -55,9 +55,9 @@ namespace ResistanceOnline.Site.Models
             }
             
             Teams = new List<TeamModel>();
-            foreach (var team in round.VoteTracks)
+            foreach (var voteTrack in round.VoteTracks)
             {
-                Teams.Add(new TeamModel(team, round.Players.Count, round.VoteTracks.IndexOf(team)+1));
+                Teams.Add(new TeamModel(voteTrack, playerCount, round.VoteTracks.IndexOf(voteTrack) + 1));
             }
 
             var loyaltyCard = game.GetLoyaltyCard(roundNumber);

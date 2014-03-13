@@ -30,22 +30,18 @@ namespace ResistanceOnline.Site.Infrastructure
             _context.SaveChanges();
         }
 
-        public List<Core.Action> GetActionsForGame(int? gameId)
+        public List<Core.Action> GetActions(int gameId)
         {
-            return _context.Actions.Where(a => a.GameId == gameId).ToList().Select(db => new Core.Action(db)).ToList();
-        }
+            var actions = _context.Actions.Where(a=>a.GameId == gameId).ToList();
+            return actions.Select(
+                a=> new Core.Action(a.Owner, (Core.Action.Type)Enum.Parse(typeof(Core.Action.Type), a.Type), a.Text)
+            ).ToList();
+		}
 
-        public Core.Game GetGame(int gameId)
-        {
-            return new Core.Game(GetActionsForGame(gameId));
-        }
-
-        internal Core.Game CreateGame(Guid owner, string name)
+        public int NextGameId()
         {
             var gameId = _context.Actions.Max(a => a.GameId) + 1;
-            var action = new Core.Action(owner, Core.Action.Type.Join, name);
-            AddAction(action);
-            return GetGame(gameId);
+            return gameId;
         }
     }
 }

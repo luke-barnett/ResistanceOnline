@@ -27,7 +27,7 @@ namespace ResistanceOnline.Core.ComputerPlayers
         private bool IKnowTheyAreEvil(Player player, Game game)
         {
             var knowledge = game.PlayerKnowledge(_player, player);
-            if (knowledge == Knowledge.Evil || (knowledge == Knowledge.EvilLancelot && !game.LancelotAllegianceSwitched) || (knowledge == Knowledge.Lancelot && game.LancelotAllegianceSwitched))
+            if (knowledge == Knowledge.Evil || (knowledge == Knowledge.EvilLancelot && !game.CurrentLancelotAllegianceSwitched) || (knowledge == Knowledge.Lancelot && game.CurrentLancelotAllegianceSwitched))
             {
                 return true;
             }

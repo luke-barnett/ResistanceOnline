@@ -35,12 +35,12 @@ namespace ResistanceOnline.Core
         public Player InitialLeader { get; set; }
         public List<QuestSize> RoundTables;
 
-
         public State GameState { get; set; }
         public List<Quest> Quests { get; set; }
-        public Player HolderOfLadyOfTheLake { get; set; }
-        public bool LancelotAllegianceSwitched { get; set; }
         public Player AssassinsGuessAtMerlin { get; set; }
+
+        public bool CurrentLancelotAllegianceSwitched { get; set; }
+        public Player CurrentHolderOfLadyOfTheLake { get; set; }
         public Quest CurrentQuest { get { return Quests.LastOrDefault(); } }
         public VoteTrack CurrentVoteTrack { get { return CurrentQuest == null ? null : CurrentQuest.CurrentVoteTrack; } }   // todo - use the fancy "?." operator :)   
 
@@ -71,7 +71,7 @@ namespace ResistanceOnline.Core
             RoundTables = StandardQuestSizes(Players.Count);
         }
 
-        public bool ContainsLancelot()
+        bool ContainsLancelot()
         {
             return (CharacterCards.Contains(Character.EvilLancelot) || CharacterCards.Contains(Character.Lancelot));
         }
@@ -293,7 +293,7 @@ namespace ResistanceOnline.Core
                     if (CurrentVoteTrack.Players.Contains(player) && !CurrentVoteTrack.QuestCards.Any(q => q.Player == player))
                     {
                         //good must always vote success
-                        if (Rules.Contains(Rule.GoodMustAlwaysSucceedQuests) && !IsCharacterEvil(player.Character, LancelotAllegianceSwitched))
+                        if (Rules.Contains(Rule.GoodMustAlwaysSucceedQuests) && !IsCharacterEvil(player.Character, CurrentLancelotAllegianceSwitched))
                         {
                             actions.Add(AvailableAction.ActionOnly(Action.Type.SucceedQuest));
                         }
@@ -302,7 +302,7 @@ namespace ResistanceOnline.Core
                             //lancelot fanatasism
                             if (Rules.Contains(Rule.LancelotsMustVoteFanatically) && (player.Character == Character.Lancelot || player.Character == Character.EvilLancelot))
                             {
-                                if (IsCharacterEvil(player.Character, LancelotAllegianceSwitched))
+                                if (IsCharacterEvil(player.Character, CurrentLancelotAllegianceSwitched))
                                 {
                                     actions.Add(AvailableAction.ActionOnly(Action.Type.FailQuest));
                                 }
@@ -467,7 +467,7 @@ namespace ResistanceOnline.Core
                 return;
 
             var roundTable = RoundTables[Quests.Count];
-            var quest = new Quest(HolderOfLadyOfTheLake, roundTable.TeamSize, roundTable.RequiredFails);
+            var quest = new Quest(CurrentHolderOfLadyOfTheLake, roundTable.TeamSize, roundTable.RequiredFails);
             var team = new VoteTrack(leader, roundTable.TeamSize, roundTable.RequiredFails);
             quest.VoteTracks.Add(team);
             Quests.Add(quest);
@@ -500,7 +500,7 @@ namespace ResistanceOnline.Core
             //loyalty cards
             if (GetLoyaltyCard(Quests.Count) == LoyaltyCard.SwitchAlegiance)
             {
-                LancelotAllegianceSwitched = !LancelotAllegianceSwitched;
+                CurrentLancelotAllegianceSwitched = !CurrentLancelotAllegianceSwitched;
             }
 
             NextQuest(Players.Next(CurrentQuest.CurrentVoteTrack.Leader));
@@ -609,8 +609,8 @@ namespace ResistanceOnline.Core
                 throw new Exception("Once a lady has gone " + target + ", she does NOT go back..");
 
             CurrentQuest.LadyOfTheLake.Target = target;
-            CurrentQuest.LadyOfTheLake.IsEvil = IsCharacterEvil(target.Character, LancelotAllegianceSwitched);
-            HolderOfLadyOfTheLake = target;
+            CurrentQuest.LadyOfTheLake.IsEvil = IsCharacterEvil(target.Character, CurrentLancelotAllegianceSwitched);
+            CurrentHolderOfLadyOfTheLake = target;
 
             QuestFinished();
         }

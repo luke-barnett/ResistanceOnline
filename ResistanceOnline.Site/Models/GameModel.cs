@@ -57,7 +57,7 @@ namespace ResistanceOnline.Site.Models
             Rules = game.Rules.Select(r => r.Humanize()).ToList();
             RoundTables = game.RoundTables.Select(t=>String.Format("Quest {0} has {1} and requires {2}", (game.RoundTables.IndexOf(t) + 1).ToWords(), "player".ToQuantity(t.TeamSize, ShowQuantityAs.Words), "fail".ToQuantity(t.RequiredFails, ShowQuantityAs.Words))).ToList();
             LoyaltyCardsDeltInAdvance = new List<string>();
-            if (game.Rules.Contains(Rule.LoyaltyCardsAreDeltInAdvance) && game.ContainsLancelot())
+            if (game.Rules.Contains(Rule.LoyaltyCardsAreDeltInAdvance))
             {
                 for (int i = 0; i < 4; i++)
                 {

@@ -14,12 +14,12 @@ namespace ResistanceOnline.Core.ComputerPlayers
         private double ProbabilityOfEvil(Player player)
         {
             var knowledge = _game.PlayerKnowledge(_player, player);
-            if (knowledge == Knowledge.Evil || (knowledge == Knowledge.EvilLancelot && !_game.LancelotAllegianceSwitched) || (knowledge == Knowledge.Lancelot && _game.LancelotAllegianceSwitched))
+            if (knowledge == Knowledge.Evil || (knowledge == Knowledge.EvilLancelot && !_game.CurrentLancelotAllegianceSwitched) || (knowledge == Knowledge.Lancelot && _game.CurrentLancelotAllegianceSwitched))
             {
                 return 100;
             }
 
-            if (knowledge == Knowledge.Good || (knowledge == Knowledge.EvilLancelot && _game.LancelotAllegianceSwitched) || (knowledge == Knowledge.Lancelot && !_game.LancelotAllegianceSwitched))
+            if (knowledge == Knowledge.Good || (knowledge == Knowledge.EvilLancelot && _game.CurrentLancelotAllegianceSwitched) || (knowledge == Knowledge.Lancelot && !_game.CurrentLancelotAllegianceSwitched))
             {
                 return 0;
             }

@@ -3,7 +3,7 @@
         gameId: ko.observable(),
         rule: ko.observable(),
         rules: ko.observableArray(),
-        addToTeam: function () {
+        addRule: function () {
             $.connection.gameHub.server.addRule(viewModel.gameId(), viewModel.rule().Text());
         },
         activate: function(game) {            

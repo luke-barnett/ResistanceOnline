@@ -3,7 +3,7 @@
         gameId: ko.observable(),
         card: ko.observable(),
         cards: ko.observableArray(),
-        addToTeam: function () {
+        removeCharacterCard: function () {
             $.connection.gameHub.server.removeCharacterCard(viewModel.gameId(), viewModel.card().Text());
         },
         activate: function(game) {            

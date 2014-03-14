@@ -3,7 +3,7 @@
         gameId: ko.observable(),
         name: ko.observable(),
         addBot: function () {
-            $.connection.gameHub.server.addBot(viewModel.gameId(), name);
+            $.connection.gameHub.server.addBot(viewModel.gameId(), viewModel.name());
         },
         activate: function (game) {
             viewModel.gameId(game.GameId());

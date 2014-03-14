@@ -32,6 +32,11 @@ namespace ResistanceOnline.Site.Models
         public SelectList AddToTeamPlayersSelectList { get; set; }
         public SelectList UseExcaliburSelectList { get; set; }
         public SelectList AssignExcaliburSelectList { get; set; }
+        public SelectList AddRulesSelectList { get; set; }
+        public SelectList RemoveRuleSelectList { get; set; }
+        public SelectList AddCharacterCardsSelectList { get; set; }
+        public SelectList RemoveCharacterCardSelectList { get; set; }
+
         public string PlayerName { get; set; }
         public Player AssassinsGuessAtMerlin { get; set; }
 		public List<string> Actions { get; set; }
@@ -131,7 +136,7 @@ namespace ResistanceOnline.Site.Models
             var addRule = availableActions.FirstOrDefault(a => a.ActionType == Core.Action.Type.AddRule);
             if (addRule != null)
             {
-                AddRuleSelectList = new SelectList(addRule.ActionItems);
+                AddRulesSelectList = new SelectList(addRule.ActionItems);
             }
 
             var removeRule = availableActions.FirstOrDefault(a => a.ActionType == Core.Action.Type.RemoveRule);
@@ -143,7 +148,7 @@ namespace ResistanceOnline.Site.Models
             var addCharacterCard = availableActions.FirstOrDefault(a => a.ActionType == Core.Action.Type.AddCharacterCard);
             if (addCharacterCard != null)
             {
-                AddCharacterCardSelectList = new SelectList(addCharacterCard.ActionItems);
+                AddCharacterCardsSelectList = new SelectList(addCharacterCard.ActionItems);
             }
 
             var removeCharacterCard = availableActions.FirstOrDefault(a => a.ActionType == Core.Action.Type.RemoveCharacterCard);
@@ -195,15 +200,5 @@ namespace ResistanceOnline.Site.Models
                 GameOverMessage = game.GameState.Humanize(LetterCasing.Sentence);
             }
 		}
-
-
-
-        public SelectList AddRuleSelectList { get; set; }
-
-        public SelectList RemoveRuleSelectList { get; set; }
-
-        public SelectList AddCharacterCardSelectList { get; set; }
-
-        public SelectList RemoveCharacterCardSelectList { get; set; }
     }
 }

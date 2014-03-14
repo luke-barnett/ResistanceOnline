@@ -262,11 +262,8 @@ namespace ResistanceOnline.Core
                         if (player == Players.First())
                         {
                             actions.Add(AvailableAction.FreeText(Action.Type.AddBot));
+                            actions.Add(AvailableAction.Items(Action.Type.AddCharacterCard, Enum.GetNames(typeof(Character)).ToList()));
 
-                            if (CharacterCards.Count < Players.Count)
-                            {
-                                actions.Add(AvailableAction.Items(Action.Type.AddCharacterCard, Enum.GetNames(typeof(Character)).ToList()));
-                            }
                             if (CharacterCards.Count > 0)
                             {
                                 actions.Add(AvailableAction.Items(Action.Type.RemoveCharacterCard, CharacterCards.Distinct().Select(t => t.ToString()).ToList()));
@@ -282,15 +279,14 @@ namespace ResistanceOnline.Core
                                 actions.Add(AvailableAction.Items(Action.Type.RemoveRule, Rules.Distinct().Select(r=>r.ToString()).ToList()));
                             }
 
-                            if (CharacterCards.Count == Players.Count) //todo check for valid round tables
+                            if (IsValid())
                             {
                                 actions.Add(AvailableAction.FreeText(Action.Type.Start));
                             }
                         }
                     }
 
-                    
-                    break;
+                    return actions;
                 case State.ChoosingTeam:
                     if (CurrentVoteTrack != null && player == CurrentVoteTrack.Leader)
                     {
@@ -367,6 +363,33 @@ namespace ResistanceOnline.Core
             return actions;
         }
 
+        private bool IsValid()
+        {
+            //not enough cards
+            if (CharacterCards.Count != Players.Count)
+                return false;
+
+            //not enough players
+            if (RoundTables.Select(r => r.TeamSize).Max() > Players.Count)
+                return false;
+
+            //invalid rounds - more fails required than people on team
+            if (RoundTables.Any(r => r.RequiredFails > r.TeamSize))
+                return false;
+            
+            var evilCount = Players.Count(p=>IsCharacterEvil(p.Character, false));
+
+            //impossible to win rounds
+            if (RoundTables.Any(r => r.TeamSize - r.RequiredFails > evilCount))
+                return false;
+
+            //impossible to loose rounds
+            if (RoundTables.Any(r => r.RequiredFails > evilCount))
+                return false;
+
+            return true;
+        }
+
         void DoActions(List<Action> actions)
         {
             foreach (var action in actions)
@@ -396,7 +419,7 @@ namespace ResistanceOnline.Core
             }
             if (availableAction.AvailableActionType == AvailableAction.Type.Items && !availableAction.ActionItems.Contains(action.Text))
             {
-                throw new InvalidOperationException("Action option not valid");
+                throw new InvalidOperationException("Action item not valid");
             }
 
             switch (action.ActionType)

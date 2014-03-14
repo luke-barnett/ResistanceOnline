@@ -109,7 +109,7 @@ namespace ResistanceOnline.Site.Controllers
                     actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
 
                     actions.Add(new Action(PlayerGuid, Action.Type.AddRule, Rule.LadyOfTheLakeExists.ToString()));
-                    actions.Add(new Action(PlayerGuid, Action.Type.Start, "0"));
+                    //actions.Add(new Action(PlayerGuid, Action.Type.Start, "0"));
 
                     var game = new Game(actions);
                     _gameCache.Add(0, game);
@@ -167,6 +167,41 @@ namespace ResistanceOnline.Site.Controllers
         {
             DoAction(gameId, Action.Type.AddToTeam, person);
             Update();
+        }
+
+        public void AddBot(int gameId, string name)
+        {
+            DoAction(gameId, Action.Type.AddBot, name);
+            Update();
+        }
+
+        public void AddCharacterCard(int gameId, string card)
+        {
+            DoAction(gameId, Action.Type.AddCharacterCard, card);
+            Update();
+        }
+
+        public void AddRule(int gameId, string rule)
+        {
+            DoAction(gameId, Action.Type.AddRule, rule);
+            Update();
+        }
+
+        public void RemoveCharacterCard(int gameId, string card)
+        {
+            DoAction(gameId, Action.Type.RemoveCharacterCard, card);
+            Update();
+        }
+
+        public void RemoveRule(int gameId, string rule)
+        {
+            DoAction(gameId, Action.Type.RemoveRule, rule);
+            Update();
+        }
+
+        public void StartGame(int gameId)
+        {
+            DoAction(gameId, Action.Type.Start, new Random().Next(int.MaxValue).ToString());
         }
 
         public void SucceedQuest(int gameId)

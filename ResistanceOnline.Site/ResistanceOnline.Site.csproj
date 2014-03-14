@@ -201,14 +201,14 @@
     <Content Include="App\Widgets\VoteReject.html" />
     <Content Include="App\Widgets\VoteApprove.html" />
     <Content Include="App\Widgets\VoteApprove.js" />
-    <Content Include="App_Start\Content\bootstrap-theme.css" />
-    <Content Include="App_Start\Content\bootstrap-theme.min.css" />
-    <Content Include="App_Start\Content\bootstrap.css" />
-    <Content Include="App_Start\Content\bootstrap.min.css" />
-    <Content Include="App_Start\Content\durandal.css" />
-    <Content Include="App_Start\Content\images\icon.png" />
-    <Content Include="App_Start\Content\images\ios-startup-image-landscape.png" />
-    <Content Include="App_Start\Content\images\ios-startup-image-portrait.png" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\durandal.css" />
+    <Content Include="Content\images\icon.png" />
+    <Content Include="Content\images\ios-startup-image-landscape.png" />
+    <Content Include="Content\images\ios-startup-image-portrait.png" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Images\allegiance.png" />
     <Content Include="Images\assassin.png" />
@@ -243,8 +243,8 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="App_Start\Content\bootstrap-theme.css.map" />
-    <Content Include="App_Start\Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Content\bootstrap.css.map" />
     <Content Include="Scripts\almond-custom.js" />
     <Content Include="Scripts\durandal\activator.js" />
     <Content Include="Scripts\durandal\app.js" />
@@ -294,7 +294,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Start\Content\Site.css" />
+    <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />

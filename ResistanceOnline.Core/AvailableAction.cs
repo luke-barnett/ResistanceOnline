@@ -10,26 +10,26 @@ namespace ResistanceOnline.Core
     {
         public enum Type
         {
-            ActionOnly,
-            List,
+            Action,
+            Items,
             FreeText
         };
 
-        public Action.Type Action { get; set; }
-        public AvailableAction.Type AvailableOptions { get; set; }
-        public List<string> Options { get; set; }
+        public Action.Type ActionType { get; set; }
+        internal AvailableAction.Type AvailableActionType { get; set; }
+        public List<string> ActionItems { get; set; }
 
-        public static AvailableAction ActionOnly(Action.Type action)
+        public static AvailableAction Action(Action.Type action)
         {
-            return new AvailableAction { Action = action, AvailableOptions = Type.ActionOnly };
+            return new AvailableAction { ActionType = action, AvailableActionType = Type.Action };
         }
-        public static AvailableAction List(Action.Type action, List<string> options)
+        public static AvailableAction Items(Action.Type action, List<string> items)
         {
-            return new AvailableAction { Action = action, AvailableOptions = Type.List, Options = options };
+            return new AvailableAction { ActionType = action, AvailableActionType = Type.Items, ActionItems = items };
         }
         public static AvailableAction FreeText(Action.Type action)
         {
-            return new AvailableAction { Action = action, AvailableOptions = Type.FreeText };
+            return new AvailableAction { ActionType = action, AvailableActionType = Type.FreeText };
         }
     }
 }

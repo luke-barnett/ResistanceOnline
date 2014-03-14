@@ -100,6 +100,15 @@ namespace ResistanceOnline.Site.Controllers
                     actions.Add(new Action(PlayerGuid, Action.Type.AddBot, "Chuck"));
                     actions.Add(new Action(PlayerGuid, Action.Type.AddBot, "Dan"));
                     actions.Add(new Action(PlayerGuid, Action.Type.AddBot, "Eve"));
+
+                    actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Merlin.ToString()));
+                    actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Assassin.ToString()));
+                    actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Percival.ToString()));
+                    actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Morgana.ToString()));
+                    actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
+                    actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
+
+                    actions.Add(new Action(PlayerGuid, Action.Type.AddRule, Rule.LadyOfTheLakeExists.ToString()));
                     actions.Add(new Action(PlayerGuid, Action.Type.Start, "0"));
 
                     var game = new Game(actions);
@@ -139,7 +148,7 @@ namespace ResistanceOnline.Site.Controllers
             var computersPlayersInGame = game.Players.Where(p=>p.PlayerType != Core.Player.Type.Human);
             if (game.GameState != Game.State.Lobby)
             {
-                while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.Guid)).Any(a => a.Action != Action.Type.Message)))
+                while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.Guid)).Any(a => a.ActionType != Action.Type.Message)))
                 {
                     foreach (var computerPlayer in computersPlayersInGame)
                     {

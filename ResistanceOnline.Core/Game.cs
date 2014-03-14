@@ -100,7 +100,8 @@ namespace ResistanceOnline.Core
         void ChooseLeader(int seed)
         {
             InitialHolderOfLadyOfTheLake = Players.Random(seed);
-            InitialLeader = Players.Next(InitialHolderOfLadyOfTheLake);
+            CurrentHolderOfLadyOfTheLake = InitialHolderOfLadyOfTheLake;
+            InitialLeader = Players.Next(InitialHolderOfLadyOfTheLake);            
         }
 
 
@@ -256,37 +257,57 @@ namespace ResistanceOnline.Core
                     {
                         actions.Add(AvailableAction.FreeText(Action.Type.Join));
                     }
-                    actions.Add(AvailableAction.FreeText(Action.Type.AddBot));
-                    if (CharacterCards.Count < Players.Count)
+                    else
                     {
-                        actions.Add(AvailableAction.List(Action.Type.AddCharacterCard, Enum.GetNames(typeof(Character)).ToList()));
+                        if (player == Players.First())
+                        {
+                            actions.Add(AvailableAction.FreeText(Action.Type.AddBot));
+
+                            if (CharacterCards.Count < Players.Count)
+                            {
+                                actions.Add(AvailableAction.Items(Action.Type.AddCharacterCard, Enum.GetNames(typeof(Character)).ToList()));
+                            }
+                            if (CharacterCards.Count > 0)
+                            {
+                                actions.Add(AvailableAction.Items(Action.Type.RemoveCharacterCard, CharacterCards.Distinct().Select(t => t.ToString()).ToList()));
+                            }
+
+                            var otherRules = Enum.GetValues(typeof(Rule)).Cast<Rule>().ToList().Except(Rules).Select(r=>r.ToString()).ToList();
+                            if (otherRules.Count>0) 
+                            {
+                                actions.Add(AvailableAction.Items(Action.Type.AddRule, otherRules));
+                            }
+                            if (Rules.Count > 0)
+                            {
+                                actions.Add(AvailableAction.Items(Action.Type.RemoveRule, Rules.Distinct().Select(r=>r.ToString()).ToList()));
+                            }
+
+                            if (CharacterCards.Count == Players.Count) //todo check for valid round tables
+                            {
+                                actions.Add(AvailableAction.FreeText(Action.Type.Start));
+                            }
+                        }
                     }
-                    if (CharacterCards.Count > 0)
-                    {
-                        actions.Add(AvailableAction.List(Action.Type.RemoveCharacterCard, CharacterCards.Distinct().Select(t=>t.ToString()).ToList()));
-                    }
-                    if (CharacterCards.Count == Players.Count) //todo check for valid round tables
-                    {
-                        actions.Add(AvailableAction.FreeText(Action.Type.Start));
-                    }
+
+                    
                     break;
                 case State.ChoosingTeam:
                     if (CurrentVoteTrack != null && player == CurrentVoteTrack.Leader)
                     {
-                        actions.Add(AvailableAction.List(Action.Type.AddToTeam, Players.Except(CurrentVoteTrack.Players).Select(p=>p.Name).ToList()));
+                        actions.Add(AvailableAction.Items(Action.Type.AddToTeam, Players.Except(CurrentVoteTrack.Players).Select(p=>p.Name).ToList()));
                     }
                     break;
                 case State.AssigningExcalibur:
                     if (player == CurrentVoteTrack.Leader)
                     {
-                        actions.Add(AvailableAction.List(Action.Type.AssignExcalibur, CurrentVoteTrack.Players.Where(p=>p!=CurrentVoteTrack.Leader).Select(p => p.Name).ToList()));
+                        actions.Add(AvailableAction.Items(Action.Type.AssignExcalibur, CurrentVoteTrack.Players.Where(p=>p!=CurrentVoteTrack.Leader).Select(p => p.Name).ToList()));
                     }
                     break;
                 case State.VotingForTeam:
                     if (!CurrentVoteTrack.Votes.Any(v => v.Player == player))
                     {
-                        actions.Add(AvailableAction.ActionOnly(Action.Type.VoteApprove));
-                        actions.Add(AvailableAction.ActionOnly(Action.Type.VoteReject));
+                        actions.Add(AvailableAction.Action(Action.Type.VoteApprove));
+                        actions.Add(AvailableAction.Action(Action.Type.VoteReject));
                     }
                     break;
                 case State.Questing:
@@ -295,7 +316,7 @@ namespace ResistanceOnline.Core
                         //good must always vote success
                         if (Rules.Contains(Rule.GoodMustAlwaysSucceedQuests) && !IsCharacterEvil(player.Character, CurrentLancelotAllegianceSwitched))
                         {
-                            actions.Add(AvailableAction.ActionOnly(Action.Type.SucceedQuest));
+                            actions.Add(AvailableAction.Action(Action.Type.SucceedQuest));
                         }
                         else
                         {
@@ -304,17 +325,17 @@ namespace ResistanceOnline.Core
                             {
                                 if (IsCharacterEvil(player.Character, CurrentLancelotAllegianceSwitched))
                                 {
-                                    actions.Add(AvailableAction.ActionOnly(Action.Type.FailQuest));
+                                    actions.Add(AvailableAction.Action(Action.Type.FailQuest));
                                 }
                                 else
                                 {
-                                    actions.Add(AvailableAction.ActionOnly(Action.Type.SucceedQuest));
+                                    actions.Add(AvailableAction.Action(Action.Type.SucceedQuest));
                                 }
                             }
                             else
                             {
-                                actions.Add(AvailableAction.ActionOnly(Action.Type.SucceedQuest));
-                                actions.Add(AvailableAction.ActionOnly(Action.Type.FailQuest));
+                                actions.Add(AvailableAction.Action(Action.Type.SucceedQuest));
+                                actions.Add(AvailableAction.Action(Action.Type.FailQuest));
                             }
                         }
                     }
@@ -322,20 +343,20 @@ namespace ResistanceOnline.Core
                 case State.UsingExcalibur:
                     if (CurrentVoteTrack.Excalibur.Holder == player)
                     {
-                        actions.Add(AvailableAction.List(Action.Type.UseExcalibur, CurrentVoteTrack.Players.Where(p => p != player).Select(p => p.Name).ToList()));
+                        actions.Add(AvailableAction.Items(Action.Type.UseExcalibur, CurrentVoteTrack.Players.Where(p => p != player).Select(p => p.Name).ToList()));
                     }
                     break;
                 case State.LadyOfTheLake:
                     if (Rules.Contains(Rule.LadyOfTheLakeExists) && CurrentQuest.LadyOfTheLake != null && CurrentQuest.LadyOfTheLake.Holder == player && CurrentQuest.LadyOfTheLake.Target == null)
                     {
-                        var list = Players.Where(p => Quests.Any(r => r.LadyOfTheLake != null && r.LadyOfTheLake.Holder == p)).Select(p => p.Name).ToList();
-                        actions.Add(AvailableAction.List(Action.Type.UseTheLadyOfTheLake, list));
+                        var list = Players.Except(Players.Where(p => Quests.Any(r => r.LadyOfTheLake != null && r.LadyOfTheLake.Holder == p))).Select(p => p.Name).ToList();
+                        actions.Add(AvailableAction.Items(Action.Type.UseTheLadyOfTheLake, list));
                     }
                     break;
                 case Game.State.GuessingMerlin:
                     if (player != null && player.Character == Character.Assassin)
                     {
-                        actions.Add(AvailableAction.List(Action.Type.GuessMerlin, Players.Where(p => p != player).Select(p => p.Name).ToList()));
+                        actions.Add(AvailableAction.Items(Action.Type.GuessMerlin, Players.Where(p => p != player).Select(p => p.Name).ToList()));
                     }
                     break;
             }
@@ -368,12 +389,12 @@ namespace ResistanceOnline.Core
         {
             var owner = Players.FirstOrDefault(p => p.Guid == action.Owner);
             var target = Players.FirstOrDefault(p => p.Name == action.Text);
-            var availableAction = AvailableActions(owner).FirstOrDefault(a=>a.Action == action.ActionType);
+            var availableAction = AvailableActions(owner).FirstOrDefault(a=>a.ActionType == action.ActionType);
             if (availableAction == null)
             {
                 throw new InvalidOperationException("Action not valid");
             }
-            if (availableAction.AvailableOptions == AvailableAction.Type.List && !availableAction.Options.Contains(action.Text))
+            if (availableAction.AvailableActionType == AvailableAction.Type.Items && !availableAction.ActionItems.Contains(action.Text))
             {
                 throw new InvalidOperationException("Action option not valid");
             }
@@ -385,6 +406,15 @@ namespace ResistanceOnline.Core
                     break;
                 case Action.Type.AddCharacterCard:
                     AddCard(action.Text);
+                    break;
+                case Action.Type.RemoveCharacterCard:
+                    RemoveCard(action.Text);
+                    break;
+                case Action.Type.AddRule:
+                    AddRule(action.Text);
+                    break;
+                case Action.Type.RemoveRule:
+                    RemoveRule(action.Text);
                     break;
                 case Action.Type.AddBot:
                     JoinGame(action.Text, Guid.NewGuid(), Player.Type.TrustBot);
@@ -425,26 +455,24 @@ namespace ResistanceOnline.Core
             }
         }
 
+        private void AddRule(string rule)
+        {
+            Rules.Add((Rule)Enum.Parse(typeof(Rule), rule));
+        }
+
+        private void RemoveRule(string rule)
+        {
+            Rules.Remove((Rule)Enum.Parse(typeof(Rule), rule));
+        }
+
         private void AddCard(string card)
         {
-            Character character;
-            if (!Enum.TryParse(card, out character))
-            {
-                throw new ArgumentOutOfRangeException("unknown card " + card);
-            }
-
-            CharacterCards.Add(character);
+            CharacterCards.Add((Character)Enum.Parse(typeof(Character), card));
         }
 
         private void RemoveCard(string card)
         {
-            Character character;
-            if (!Enum.TryParse(card, out character))
-            {
-                throw new ArgumentOutOfRangeException("unknown card " + card);
-            }
-
-            CharacterCards.Remove(character);
+            CharacterCards.Remove((Character)Enum.Parse(typeof(Character), card));
         }
 
         void GuessMerlin(Player guess)
@@ -494,6 +522,14 @@ namespace ResistanceOnline.Core
                 {
                     GameState = State.GoodPrevails;
                 }
+                return;
+            }
+
+            //lady of the lake
+            if (Rules.Contains(Rule.LadyOfTheLakeExists) && Quests.Count >= 2)
+            {
+                GameState = State.LadyOfTheLake;
+                CurrentQuest.LadyOfTheLake = new LadyOfTheLakeUse { Holder = CurrentHolderOfLadyOfTheLake };
                 return;
             }
 
@@ -552,17 +588,6 @@ namespace ResistanceOnline.Core
             CurrentVoteTrack.Excalibur.OriginalMissionWasSuccess = CurrentVoteTrack.Excalibur.UsedOn.Success;
             CurrentVoteTrack.Excalibur.UsedOn.Success = !CurrentVoteTrack.Excalibur.UsedOn.Success;
 
-            TeamFinished();
-        }
-
-        void TeamFinished()
-        {
-            if (Rules.Contains(Rule.LadyOfTheLakeExists) && Quests.Count >= 2)
-            {
-                GameState = State.LadyOfTheLake;
-                return;
-            }
-
             QuestFinished();
         }
 
@@ -599,7 +624,7 @@ namespace ResistanceOnline.Core
 
             if (CurrentVoteTrack.QuestCards.Count == CurrentVoteTrack.QuestSize)
             {
-                TeamFinished();
+                QuestFinished();
             }
         }
 

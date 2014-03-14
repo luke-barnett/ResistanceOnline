@@ -95,27 +95,65 @@ namespace ResistanceOnline.Site.Models
 
             AssassinsGuessAtMerlin = game.AssassinsGuessAtMerlin;
 			State = game.GameState.ToString();
-		
-            //can guess anyone but self
-            GuessMerlinPlayersSelectList = new SelectList(game.Players.Where(p => p != player).Select(p => p.Name));
 
-            //can use on anyone who hasn't had it
-            var ladyOfTheLakeHistory = game.Quests.Where(r=>r.LadyOfTheLake!=null).Select(r => r.LadyOfTheLake.Holder);
-            LadyOfTheLakePlayerSelectList = new SelectList(game.Players.Where(p => p != player).Except(ladyOfTheLakeHistory).Select(p => p.Name));
+            var availableActions = game.AvailableActions(player);
 
-            if (game.CurrentQuest != null && game.CurrentQuest.CurrentVoteTrack != null)
+            var guessMerlin = availableActions.FirstOrDefault(a => a.ActionType == Core.Action.Type.GuessMerlin);
+            if (guessMerlin != null)
             {
-                UseExcaliburSelectList = new SelectList(game.CurrentQuest.CurrentVoteTrack.Players.Where(p => p != game.CurrentQuest.CurrentVoteTrack.Leader).Select(p => p.Name));
-                AssignExcaliburSelectList = new SelectList(game.CurrentQuest.CurrentVoteTrack.Players.Select(p => p.Name));
+                GuessMerlinPlayersSelectList = new SelectList(guessMerlin.ActionItems);
             }
 
-            //can put anyone on a team who isn't already on it
-            if (game.CurrentQuest != null)
+            var ladyOfTheLake = availableActions.FirstOrDefault(a => a.ActionType == Core.Action.Type.UseTheLadyOfTheLake);
+            if (ladyOfTheLake != null)
             {
-                AddToTeamPlayersSelectList = new SelectList(game.Players.Where(p => !game.CurrentQuest.CurrentVoteTrack.Players.Select(t => t.Name).ToList().Contains(p.Name)).Select(p => p.Name));
+                LadyOfTheLakePlayerSelectList = new SelectList(ladyOfTheLake.ActionItems);
             }
 
-			Actions = game.AvailableActions(player).Select(i => i.ToString()).ToList();         
+            var useExcalibur = availableActions.FirstOrDefault(a => a.ActionType == Core.Action.Type.UseExcalibur);
+            if (useExcalibur != null)
+            {
+                UseExcaliburSelectList = new SelectList(useExcalibur.ActionItems);
+            }
+
+            var assignExcalibur = availableActions.FirstOrDefault(a => a.ActionType == Core.Action.Type.AssignExcalibur);
+            if (assignExcalibur != null)
+            {
+                AssignExcaliburSelectList = new SelectList(assignExcalibur.ActionItems);
+            }
+
+            var addToTeam = availableActions.FirstOrDefault(a => a.ActionType == Core.Action.Type.AddToTeam);
+            if (addToTeam != null)
+            {
+                AddToTeamPlayersSelectList = new SelectList(addToTeam.ActionItems);
+            }
+
+            var addRule = availableActions.FirstOrDefault(a => a.ActionType == Core.Action.Type.AddRule);
+            if (addRule != null)
+            {
+                AddRuleSelectList = new SelectList(addRule.ActionItems);
+            }
+
+            var removeRule = availableActions.FirstOrDefault(a => a.ActionType == Core.Action.Type.RemoveRule);
+            if (removeRule != null)
+            {
+                RemoveRuleSelectList = new SelectList(removeRule.ActionItems);
+            }
+
+            var addCharacterCard = availableActions.FirstOrDefault(a => a.ActionType == Core.Action.Type.AddCharacterCard);
+            if (addCharacterCard != null)
+            {
+                AddCharacterCardSelectList = new SelectList(addCharacterCard.ActionItems);
+            }
+
+            var removeCharacterCard = availableActions.FirstOrDefault(a => a.ActionType == Core.Action.Type.RemoveCharacterCard);
+            if (removeCharacterCard != null)
+            {
+                RemoveCharacterCardSelectList = new SelectList(removeCharacterCard.ActionItems);
+            }
+
+
+			Actions = game.AvailableActions(player).Select(i => i.ActionType.ToString()).ToList();         
 
 			PlayerInfo = new List<PlayerInfoModel>();
 			var waiting = new List<WaitingActionsModel>();
@@ -136,7 +174,7 @@ namespace ResistanceOnline.Site.Models
 
 				PlayerInfo.Add(playerInfo);
 
-				waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a.Action, Name = p.Name }));
+				waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a.ActionType, Name = p.Name }));
 			}
 
             //build waiting message
@@ -159,5 +197,13 @@ namespace ResistanceOnline.Site.Models
 		}
 
 
+
+        public SelectList AddRuleSelectList { get; set; }
+
+        public SelectList RemoveRuleSelectList { get; set; }
+
+        public SelectList AddCharacterCardSelectList { get; set; }
+
+        public SelectList RemoveCharacterCardSelectList { get; set; }
     }
 }

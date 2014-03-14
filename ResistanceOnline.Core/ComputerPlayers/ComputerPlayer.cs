@@ -123,7 +123,7 @@ namespace ResistanceOnline.Core.ComputerPlayers
             if (availableActions.Count == 0)
                 return null;
 
-            if (availableActions.Any(a=>a.Action==ResistanceOnline.Core.Action.Type.Message) && _thingsIWantToSay.Count > 0)
+            if (availableActions.Any(a=>a.ActionType==ResistanceOnline.Core.Action.Type.Message) && _thingsIWantToSay.Count > 0)
             {
                 var message = _thingsIWantToSay[0];
                 _thingsIWantToSay.RemoveAt(0);
@@ -131,38 +131,38 @@ namespace ResistanceOnline.Core.ComputerPlayers
                 return new Action(PlayerGuid, Action.Type.Message, text: message);
             }
 
-            if (availableActions.Any(a=>a.Action==ResistanceOnline.Core.Action.Type.VoteApprove))
+            if (availableActions.Any(a=>a.ActionType==ResistanceOnline.Core.Action.Type.VoteApprove))
             {
                 return new Action(PlayerGuid, TeamVote() ? Action.Type.VoteApprove : Action.Type.VoteReject);
             }
 
-            if (availableActions.Any(a => a.Action == ResistanceOnline.Core.Action.Type.AssignExcalibur))
+            if (availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.AssignExcalibur))
             {
                 return new Action(PlayerGuid, Action.Type.AssignExcalibur, AssignExcalibur().Name);
             }
 
 
-            if (availableActions.Any(a => a.Action == ResistanceOnline.Core.Action.Type.UseExcalibur))
+            if (availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.UseExcalibur))
             {
                 return new Action(PlayerGuid, Action.Type.UseExcalibur, UseExcalibur().Name);
             }
 
-            if (availableActions.Any(a => a.Action == ResistanceOnline.Core.Action.Type.FailQuest) || availableActions.Any(a => a.Action == ResistanceOnline.Core.Action.Type.SucceedQuest))
+            if (availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.FailQuest) || availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.SucceedQuest))
             {
                 return new Action(PlayerGuid, Quest() ? Action.Type.SucceedQuest : Action.Type.FailQuest);
             }
 
-            if (availableActions.Any(a => a.Action == ResistanceOnline.Core.Action.Type.AddToTeam))
+            if (availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.AddToTeam))
             {
                 return new Action(PlayerGuid, Action.Type.AddToTeam, ChooseTeamPlayer().Name);
             }
 
-            if (availableActions.Any(a => a.Action == ResistanceOnline.Core.Action.Type.GuessMerlin))
+            if (availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.GuessMerlin))
             {
                 return new Action(PlayerGuid, Action.Type.GuessMerlin, GuessMerlin().Name);
             }
 
-            if (availableActions.Any(a => a.Action == ResistanceOnline.Core.Action.Type.UseTheLadyOfTheLake))
+            if (availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.UseTheLadyOfTheLake))
             {
                 return new Action(PlayerGuid, Action.Type.UseTheLadyOfTheLake, LadyOfTheLakeTarget().Name);
             }

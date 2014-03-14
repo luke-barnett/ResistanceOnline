@@ -18,6 +18,8 @@ namespace ResistanceOnline.Core
             AddBot,
             AddCharacterCard,
             RemoveCharacterCard,
+            AddRule,
+            RemoveRule,
             Start,
 
             [Description("Add a player to the current team")]

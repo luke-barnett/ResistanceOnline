@@ -14,7 +14,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 
             for (var i = 0; i < numberOfPlayers; i++)
             {
-                actions.Add(new Action(Guid.NewGuid(), Action.Type.Join, string.Format("player{0}", i)));
+                actions.Add(new Action(i==0?owner:Guid.NewGuid(), Action.Type.Join, string.Format("player{0}", i)));
                 actions.Add(new Action(owner, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
             }
 

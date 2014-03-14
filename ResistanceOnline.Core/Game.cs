@@ -27,7 +27,7 @@ namespace ResistanceOnline.Core
             GoodPrevails,
         }
 
-        public List<Character> AvailableCharacters { get; set; }
+        public List<Character> CharacterCards { get; set; }
         public List<Player> Players { get; set; }
         public List<LoyaltyCard> LoyaltyDeck { get; set; }
         public List<Rule> Rules { get; set; }
@@ -47,7 +47,7 @@ namespace ResistanceOnline.Core
         public Game(List<Action> actions)
         {
             Players = new List<Player>();
-            AvailableCharacters = new List<Character>();
+            CharacterCards = new List<Character>();
             LoyaltyDeck = new List<LoyaltyCard> { LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.NoChange, LoyaltyCard.SwitchAlegiance, LoyaltyCard.SwitchAlegiance };
             Rules = new List<Rule>();
             RoundTables = StandardQuestSizes(0);
@@ -67,23 +67,13 @@ namespace ResistanceOnline.Core
             playerName = playerName.Uniquify(Players.Select(p => p.Name));
 
             Players.Add(new Player() { Name = playerName, Guid = playerGuid, PlayerType = playerType });
-
-            var evilCount = AvailableCharacters.Count(c => IsCharacterEvil(c, false));
-            if (evilCount < (AvailableCharacters.Count / 3.0))
-            {
-                AvailableCharacters.Add(Character.MinionOfMordred);
-            }
-            else
-            {
-                AvailableCharacters.Add(Character.LoyalServantOfArthur);
-            }
-
+           
             RoundTables = StandardQuestSizes(Players.Count);
         }
 
         public bool ContainsLancelot()
         {
-            return (AvailableCharacters.Contains(Character.EvilLancelot) || AvailableCharacters.Contains(Character.Lancelot));
+            return (CharacterCards.Contains(Character.EvilLancelot) || CharacterCards.Contains(Character.Lancelot));
         }
 
         public LoyaltyCard? GetLoyaltyCard(int roundNumber)
@@ -97,7 +87,7 @@ namespace ResistanceOnline.Core
 
         void AllocateCharacters(int seed)
         {
-            var characterCards = AvailableCharacters.ToList();
+            var characterCards = CharacterCards.ToList();
             Random random = new Random(seed);
             foreach (var player in Players)
             {
@@ -256,37 +246,47 @@ namespace ResistanceOnline.Core
         }
 
 
-        public List<Action.Type> AvailableActions(Player player)
+        public List<AvailableAction> AvailableActions(Player player)
         {
-            var actions = new List<Action.Type>();
+            var actions = new List<AvailableAction>();
             switch (GameState)
             {
                 case State.Lobby:
                     if (player == null && Players.Count < 10)
                     {
-                        actions.Add(Action.Type.Join);
+                        actions.Add(AvailableAction.FreeText(Action.Type.Join));
                     }
-                    actions.Add(Action.Type.AddBot);
-                    //todo - prevent game start unless valid
-                    actions.Add(Action.Type.Start);
+                    actions.Add(AvailableAction.FreeText(Action.Type.AddBot));
+                    if (CharacterCards.Count < Players.Count)
+                    {
+                        actions.Add(AvailableAction.List(Action.Type.AddCharacterCard, Enum.GetNames(typeof(Character)).ToList()));
+                    }
+                    if (CharacterCards.Count > 0)
+                    {
+                        actions.Add(AvailableAction.List(Action.Type.RemoveCharacterCard, CharacterCards.Distinct().Select(t=>t.ToString()).ToList()));
+                    }
+                    if (CharacterCards.Count == Players.Count) //todo check for valid round tables
+                    {
+                        actions.Add(AvailableAction.FreeText(Action.Type.Start));
+                    }
                     break;
                 case State.ChoosingTeam:
                     if (CurrentVoteTrack != null && player == CurrentVoteTrack.Leader)
                     {
-                        actions.Add(Action.Type.AddToTeam);
+                        actions.Add(AvailableAction.List(Action.Type.AddToTeam, Players.Except(CurrentVoteTrack.Players).Select(p=>p.Name).ToList()));
                     }
                     break;
                 case State.AssigningExcalibur:
                     if (player == CurrentVoteTrack.Leader)
                     {
-                        actions.Add(Action.Type.AssignExcalibur);
+                        actions.Add(AvailableAction.List(Action.Type.AssignExcalibur, CurrentVoteTrack.Players.Where(p=>p!=CurrentVoteTrack.Leader).Select(p => p.Name).ToList()));
                     }
                     break;
                 case State.VotingForTeam:
                     if (!CurrentVoteTrack.Votes.Any(v => v.Player == player))
                     {
-                        actions.Add(Action.Type.VoteApprove);
-                        actions.Add(Action.Type.VoteReject);
+                        actions.Add(AvailableAction.ActionOnly(Action.Type.VoteApprove));
+                        actions.Add(AvailableAction.ActionOnly(Action.Type.VoteReject));
                     }
                     break;
                 case State.Questing:
@@ -295,7 +295,7 @@ namespace ResistanceOnline.Core
                         //good must always vote success
                         if (Rules.Contains(Rule.GoodMustAlwaysSucceedQuests) && !IsCharacterEvil(player.Character, LancelotAllegianceSwitched))
                         {
-                            actions.Add(Action.Type.SucceedQuest);
+                            actions.Add(AvailableAction.ActionOnly(Action.Type.SucceedQuest));
                         }
                         else
                         {
@@ -304,17 +304,17 @@ namespace ResistanceOnline.Core
                             {
                                 if (IsCharacterEvil(player.Character, LancelotAllegianceSwitched))
                                 {
-                                    actions.Add(Action.Type.FailQuest);
+                                    actions.Add(AvailableAction.ActionOnly(Action.Type.FailQuest));
                                 }
                                 else
                                 {
-                                    actions.Add(Action.Type.SucceedQuest);
+                                    actions.Add(AvailableAction.ActionOnly(Action.Type.SucceedQuest));
                                 }
                             }
                             else
                             {
-                                actions.Add(Action.Type.SucceedQuest);
-                                actions.Add(Action.Type.FailQuest);
+                                actions.Add(AvailableAction.ActionOnly(Action.Type.SucceedQuest));
+                                actions.Add(AvailableAction.ActionOnly(Action.Type.FailQuest));
                             }
                         }
                     }
@@ -322,23 +322,26 @@ namespace ResistanceOnline.Core
                 case State.UsingExcalibur:
                     if (CurrentVoteTrack.Excalibur.Holder == player)
                     {
-                        actions.Add(Action.Type.UseExcalibur);
+                        actions.Add(AvailableAction.List(Action.Type.UseExcalibur, CurrentVoteTrack.Players.Where(p => p != player).Select(p => p.Name).ToList()));
                     }
                     break;
                 case State.LadyOfTheLake:
                     if (Rules.Contains(Rule.LadyOfTheLakeExists) && CurrentQuest.LadyOfTheLake != null && CurrentQuest.LadyOfTheLake.Holder == player && CurrentQuest.LadyOfTheLake.Target == null)
                     {
-                        actions.Add(Action.Type.UseTheLadyOfTheLake);
+                        var list = Players.Where(p => Quests.Any(r => r.LadyOfTheLake != null && r.LadyOfTheLake.Holder == p)).Select(p => p.Name).ToList();
+                        actions.Add(AvailableAction.List(Action.Type.UseTheLadyOfTheLake, list));
                     }
                     break;
                 case Game.State.GuessingMerlin:
                     if (player != null && player.Character == Character.Assassin)
-                        actions.Add(Action.Type.GuessMerlin);
+                    {
+                        actions.Add(AvailableAction.List(Action.Type.GuessMerlin, Players.Where(p => p != player).Select(p => p.Name).ToList()));
+                    }
                     break;
             }
             if (player != null)
             {
-                actions.Add(Action.Type.Message);
+                actions.Add(AvailableAction.FreeText(Action.Type.Message));
             }
             return actions;
         }
@@ -365,16 +368,23 @@ namespace ResistanceOnline.Core
         {
             var owner = Players.FirstOrDefault(p => p.Guid == action.Owner);
             var target = Players.FirstOrDefault(p => p.Name == action.Text);
-            var availableActions = AvailableActions(owner);
-            if (!availableActions.Contains(action.ActionType))
+            var availableAction = AvailableActions(owner).FirstOrDefault(a=>a.Action == action.ActionType);
+            if (availableAction == null)
             {
                 throw new InvalidOperationException("Action not valid");
+            }
+            if (availableAction.AvailableOptions == AvailableAction.Type.List && !availableAction.Options.Contains(action.Text))
+            {
+                throw new InvalidOperationException("Action option not valid");
             }
 
             switch (action.ActionType)
             {
                 case Action.Type.Join:
                     JoinGame(action.Text, action.Owner);
+                    break;
+                case Action.Type.AddCharacterCard:
+                    AddCard(action.Text);
                     break;
                 case Action.Type.AddBot:
                     JoinGame(action.Text, Guid.NewGuid(), Player.Type.TrustBot);
@@ -413,6 +423,28 @@ namespace ResistanceOnline.Core
                     VoteForTeam(owner, false);
                     break;
             }
+        }
+
+        private void AddCard(string card)
+        {
+            Character character;
+            if (!Enum.TryParse(card, out character))
+            {
+                throw new ArgumentOutOfRangeException("unknown card " + card);
+            }
+
+            CharacterCards.Add(character);
+        }
+
+        private void RemoveCard(string card)
+        {
+            Character character;
+            if (!Enum.TryParse(card, out character))
+            {
+                throw new ArgumentOutOfRangeException("unknown card " + card);
+            }
+
+            CharacterCards.Remove(character);
         }
 
         void GuessMerlin(Player guess)
@@ -454,7 +486,7 @@ namespace ResistanceOnline.Core
             //3 successful missions, don't bother going any further
             if (Quests.Count(r => r.IsSuccess.Value) >= 3)
             {
-                if (AvailableCharacters.Contains(Character.Assassin))
+                if (CharacterCards.Contains(Character.Assassin))
                 {
                     GameState = State.GuessingMerlin;
                 }

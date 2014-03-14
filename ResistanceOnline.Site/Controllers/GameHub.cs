@@ -93,19 +93,18 @@ namespace ResistanceOnline.Site.Controllers
                 if (!_gameCache.ContainsKey(0))
                 {
                     //create game 0 for development
-                    var actions = new List<Action>()
-                {
-                    new Action(PlayerGuid, Action.Type.Join, PlayerName),
-                    new Action(PlayerGuid, Action.Type.AddBot, "Alice"),
-                    new Action(PlayerGuid, Action.Type.AddBot, "Bob"),
-                    new Action(PlayerGuid, Action.Type.AddBot, "Chuck"),
-                    new Action(PlayerGuid, Action.Type.AddBot, "Dan"),
-                    new Action(PlayerGuid, Action.Type.AddBot, "Eve"),
-                    new Action(PlayerGuid, Action.Type.Start, "0"),
-                };
+                    var actions = new List<Action>();
+                    actions.Add(new Action(PlayerGuid, Action.Type.Join, PlayerName));
+                    actions.Add(new Action(PlayerGuid, Action.Type.AddBot, "Alice"));
+                    actions.Add(new Action(PlayerGuid, Action.Type.AddBot, "Bob"));
+                    actions.Add(new Action(PlayerGuid, Action.Type.AddBot, "Chuck"));
+                    actions.Add(new Action(PlayerGuid, Action.Type.AddBot, "Dan"));
+                    actions.Add(new Action(PlayerGuid, Action.Type.AddBot, "Eve"));
+                    actions.Add(new Action(PlayerGuid, Action.Type.Start, "0"));
+
                     var game = new Game(actions);
                     _gameCache.Add(0, game);
-                }                
+                }
             }
             Update();
             return base.OnConnected();
@@ -140,7 +139,7 @@ namespace ResistanceOnline.Site.Controllers
             var computersPlayersInGame = game.Players.Where(p=>p.PlayerType != Core.Player.Type.Human);
             if (game.GameState != Game.State.Lobby)
             {
-                while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.Guid)).Any(a => a != Action.Type.Message)))
+                while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.Guid)).Any(a => a.Action != Action.Type.Message)))
                 {
                     foreach (var computerPlayer in computersPlayersInGame)
                     {

@@ -15,7 +15,7 @@ namespace ResistanceOnline.Core.Test.SpecFlow
             for (var i = 0; i < numberOfPlayers; i++)
             {
                 actions.Add(new Action(Guid.NewGuid(), Action.Type.Join, string.Format("player{0}", i)));
-                //actions.Add(new Action(owner, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
+                actions.Add(new Action(owner, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
             }
 
             actions.Add(new Action(owner, Action.Type.Start, "0"));
@@ -81,19 +81,19 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 				assasinPlayer.Character = Character.MinionOfMordred;
 			}
 
-            var merlinCount = game.AvailableCharacters.Count(character => character == Character.Merlin);
+            var merlinCount = game.CharacterCards.Count(character => character == Character.Merlin);
 
-            game.AvailableCharacters.RemoveAll(character => character == Character.Merlin);
+            game.CharacterCards.RemoveAll(character => character == Character.Merlin);
 
 			for (var i = 0; i < merlinCount; i++)
-                game.AvailableCharacters.Add(Character.LoyalServantOfArthur);
+                game.CharacterCards.Add(Character.LoyalServantOfArthur);
 
-            var assasinCount = game.AvailableCharacters.Count(character => character == Character.Assassin);
+            var assasinCount = game.CharacterCards.Count(character => character == Character.Assassin);
 
-            game.AvailableCharacters.RemoveAll(character => character == Character.Assassin);
+            game.CharacterCards.RemoveAll(character => character == Character.Assassin);
 
 			for (var i = 0; i < assasinCount; i++)
-                game.AvailableCharacters.Add(Character.MinionOfMordred);
+                game.CharacterCards.Add(Character.MinionOfMordred);
 		}
 
 		internal void CompleteQuest(int roundNumber, bool successful)
@@ -123,14 +123,14 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 		{
             var game = ContextAccess.Game;
             game.Players.First(p => p.Character == Character.LoyalServantOfArthur).Character = Character.Merlin;
-            game.AvailableCharacters[game.AvailableCharacters.IndexOf(Character.LoyalServantOfArthur)] = Character.Merlin;
+            game.CharacterCards[game.CharacterCards.IndexOf(Character.LoyalServantOfArthur)] = Character.Merlin;
 		}
 
         internal void AddAssassin()
         {
             var game = ContextAccess.Game;
             game.Players.First(p => p.Character == Character.LoyalServantOfArthur).Character = Character.Assassin;
-            game.AvailableCharacters[game.AvailableCharacters.IndexOf(Character.LoyalServantOfArthur)] = Character.Assassin;
+            game.CharacterCards[game.CharacterCards.IndexOf(Character.LoyalServantOfArthur)] = Character.Assassin;
         }
 
 		internal void PickMerlin(bool successfullMerlinPick)

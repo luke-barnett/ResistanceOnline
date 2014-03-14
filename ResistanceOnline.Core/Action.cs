@@ -16,6 +16,8 @@ namespace ResistanceOnline.Core
         {
             Join,
             AddBot,
+            AddCharacterCard,
+            RemoveCharacterCard,
             Start,
 
             [Description("Add a player to the current team")]

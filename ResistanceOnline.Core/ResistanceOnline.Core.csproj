@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action.cs" />
+    <Compile Include="AvailableAction.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="ComputerPlayers\CheatBot.cs" />
     <Compile Include="ComputerPlayers\ComputerPlayer.cs" />

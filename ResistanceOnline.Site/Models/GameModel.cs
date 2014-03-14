@@ -66,8 +66,8 @@ namespace ResistanceOnline.Site.Models
             }
 
             var characters = new List<string>();
-            foreach (var character in game.AvailableCharacters.Distinct()) {
-                var count = game.AvailableCharacters.Count(c=>c==character);
+            foreach (var character in game.CharacterCards.Distinct()) {
+                var count = game.CharacterCards.Count(c=>c==character);
                 if (count > 1)
                 {
                     switch (character)
@@ -136,7 +136,7 @@ namespace ResistanceOnline.Site.Models
 
 				PlayerInfo.Add(playerInfo);
 
-				waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a, Name = p.Name }));
+				waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a.Action, Name = p.Name }));
 			}
 
             //build waiting message

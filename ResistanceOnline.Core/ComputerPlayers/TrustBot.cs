@@ -26,7 +26,7 @@ namespace ResistanceOnline.Core.ComputerPlayers
 
             double evilProbability = 0;
 
-            var evilCharactersInGame = _game.AvailableCharacters.Count(c => _game.IsCharacterEvil(c, false));
+            var evilCharactersInGame = _game.CharacterCards.Count(c => _game.IsCharacterEvil(c, false));
             if (_IAmEvil)
             {
                 evilCharactersInGame--;

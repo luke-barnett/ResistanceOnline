@@ -1,7 +1,7 @@
 ﻿define(['data', 'knockout', 'knockout.punches'], function (data, ko, kop) {
     var viewModel = {
         gameId: ko.observable(),
-        succeed: function () {
+        start: function () {
             $.connection.gameHub.server.startGame(viewModel.gameId());
         },
         activate: function (game) {

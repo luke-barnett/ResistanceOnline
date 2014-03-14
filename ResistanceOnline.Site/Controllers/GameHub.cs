@@ -202,6 +202,7 @@ namespace ResistanceOnline.Site.Controllers
         public void StartGame(int gameId)
         {
             DoAction(gameId, Action.Type.Start, new Random().Next(int.MaxValue).ToString());
+            Update();
         }
 
         public void SucceedQuest(int gameId)

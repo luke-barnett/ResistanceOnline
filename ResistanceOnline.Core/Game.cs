@@ -39,6 +39,8 @@ namespace ResistanceOnline.Core
         public List<Quest> Quests { get; set; }
         public Player AssassinsGuessAtMerlin { get; set; }
 
+        public DateTimeOffset LastActionTime { get; set; }
+
         public bool CurrentLancelotAllegianceSwitched { get; set; }
         public Player CurrentHolderOfLadyOfTheLake { get; set; }
         public Quest CurrentQuest { get { return Quests.LastOrDefault(); } }
@@ -52,6 +54,7 @@ namespace ResistanceOnline.Core
             Rules = new List<Rule>();
             RoundTables = StandardQuestSizes(0);
             Quests = new List<Quest>();
+            LastActionTime = DateTimeOffset.MinValue;
 
             DoActions(actions);
         }
@@ -84,26 +87,6 @@ namespace ResistanceOnline.Core
                 return null;
             return LoyaltyDeck[roundNumber - 1];
         }
-
-        void AllocateCharacters(int seed)
-        {
-            var characterCards = CharacterCards.ToList();
-            Random random = new Random(seed);
-            foreach (var player in Players)
-            {
-                var index = random.Next(characterCards.Count);
-                player.Character = characterCards[index];
-                characterCards.RemoveAt(index);
-            }
-        }
-
-        void ChooseLeader(int seed)
-        {
-            InitialHolderOfLadyOfTheLake = Players.Random(seed);
-            CurrentHolderOfLadyOfTheLake = InitialHolderOfLadyOfTheLake;
-            InitialLeader = Players.Next(InitialHolderOfLadyOfTheLake);            
-        }
-
 
         List<QuestSize> StandardQuestSizes(int GameSize)
         {
@@ -187,9 +170,26 @@ namespace ResistanceOnline.Core
 
         void StartGame(int seed)
         {
-            AllocateCharacters(seed);
-            ChooseLeader(seed);
+            Random random = new Random(seed);
+
+            //allocate characters
+            var characterCards = CharacterCards.ToList();
+            foreach (var player in Players)
+            {
+                var index = random.Next(characterCards.Count);
+                player.Character = characterCards[index];
+                characterCards.RemoveAt(index);
+            }
+
+            //spin the crown
+            InitialHolderOfLadyOfTheLake = Players.Random(seed);
+            CurrentHolderOfLadyOfTheLake = InitialHolderOfLadyOfTheLake;
+            InitialLeader = Players.Next(InitialHolderOfLadyOfTheLake);
+
+            //shuffle the loyalty deck
             LoyaltyDeck = LoyaltyDeck.Shuffle(seed).ToList();
+
+            //start the game
             NextQuest(InitialLeader);
         }
 
@@ -291,6 +291,10 @@ namespace ResistanceOnline.Core
                     if (CurrentVoteTrack != null && player == CurrentVoteTrack.Leader)
                     {
                         actions.Add(AvailableAction.Items(Action.Type.AddToTeam, Players.Except(CurrentVoteTrack.Players).Select(p=>p.Name).ToList()));
+                    }
+                    if (CurrentVoteTrack != null && player == CurrentVoteTrack.Leader && CurrentVoteTrack.Players.Any())
+                    {
+                        actions.Add(AvailableAction.Items(Action.Type.RemoveFromTeam, CurrentVoteTrack.Players.Select(p => p.Name).ToList()));
                     }
                     break;
                 case State.AssigningExcalibur:
@@ -422,6 +426,8 @@ namespace ResistanceOnline.Core
                 throw new InvalidOperationException("Action item not valid");
             }
 
+            LastActionTime = action.Timestamp;
+
             switch (action.ActionType)
             {
                 case Action.Type.Join:
@@ -451,6 +457,9 @@ namespace ResistanceOnline.Core
                 case Action.Type.AddToTeam:
                     AddToTeam(target);
                     break;
+                case Action.Type.RemoveFromTeam:
+                    RemoveFromTeam(target);
+                    break;
                 case Action.Type.AssignExcalibur:
                     AssignExcalibur(target);
                     break;
@@ -476,6 +485,11 @@ namespace ResistanceOnline.Core
                     VoteForTeam(owner, false);
                     break;
             }
+        }
+
+        private void RemoveFromTeam(Player target)
+        {
+            CurrentVoteTrack.Players.Remove(target);
         }
 
         private void AddRule(string rule)
@@ -549,7 +563,7 @@ namespace ResistanceOnline.Core
             }
 
             //lady of the lake
-            if (Rules.Contains(Rule.LadyOfTheLakeExists) && Quests.Count >= 2)
+            if (Rules.Contains(Rule.LadyOfTheLakeExists) && Quests.Count >= 2 && (CurrentQuest.LadyOfTheLake == null || CurrentQuest.LadyOfTheLake.Target == null))
             {
                 GameState = State.LadyOfTheLake;
                 CurrentQuest.LadyOfTheLake = new LadyOfTheLakeUse { Holder = CurrentHolderOfLadyOfTheLake };
@@ -568,9 +582,6 @@ namespace ResistanceOnline.Core
 
         void AddToTeam(Player proposedPlayer)
         {
-            if (CurrentVoteTrack.Players.Contains(proposedPlayer))
-                throw new InvalidOperationException("Player is already on the team");
-
             CurrentVoteTrack.Players.Add(proposedPlayer);
 
             if (CurrentVoteTrack.Players.Count == CurrentVoteTrack.QuestSize)
@@ -588,12 +599,6 @@ namespace ResistanceOnline.Core
 
         void AssignExcalibur(Player proposedPlayer)
         {
-            if (!CurrentVoteTrack.Players.Contains(proposedPlayer))
-                throw new InvalidOperationException("Player is not on team..");
-
-            if (proposedPlayer == CurrentVoteTrack.Leader)
-                throw new InvalidOperationException("Leader cannot assign excalibur to themself");
-
             CurrentVoteTrack.Excalibur.Holder = proposedPlayer;
 
             GameState = State.VotingForTeam;
@@ -601,12 +606,6 @@ namespace ResistanceOnline.Core
 
         void UseExcalibur(Player player, Player proposedPlayer)
         {
-            if (proposedPlayer != null && !CurrentVoteTrack.Players.Contains(proposedPlayer))
-                throw new InvalidOperationException("Player is not on team..");
-
-            if (proposedPlayer == player)
-                throw new InvalidOperationException("Really? On yourself? How would that work? It's a sword..");
-
             CurrentVoteTrack.Excalibur.UsedOn = CurrentVoteTrack.QuestCards.First(p => p.Player == proposedPlayer);
             CurrentVoteTrack.Excalibur.OriginalMissionWasSuccess = CurrentVoteTrack.Excalibur.UsedOn.Success;
             CurrentVoteTrack.Excalibur.UsedOn.Success = !CurrentVoteTrack.Excalibur.UsedOn.Success;
@@ -653,9 +652,6 @@ namespace ResistanceOnline.Core
 
         void UseLadyOfTheLake(Player target)
         {
-            if (Quests.Any(r => r.LadyOfTheLake != null && r.LadyOfTheLake.Holder == target))
-                throw new Exception("Once a lady has gone " + target + ", she does NOT go back..");
-
             CurrentQuest.LadyOfTheLake.Target = target;
             CurrentQuest.LadyOfTheLake.IsEvil = IsCharacterEvil(target.Character, CurrentLancelotAllegianceSwitched);
             CurrentHolderOfLadyOfTheLake = target;

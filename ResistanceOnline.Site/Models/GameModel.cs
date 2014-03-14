@@ -30,6 +30,7 @@ namespace ResistanceOnline.Site.Models
         public SelectList LadyOfTheLakePlayerSelectList { get; set; }
         public SelectList GuessMerlinPlayersSelectList { get; set; }
         public SelectList AddToTeamPlayersSelectList { get; set; }
+        public SelectList RemoveFromTeamSelectList { get; set; }
         public SelectList UseExcaliburSelectList { get; set; }
         public SelectList AssignExcaliburSelectList { get; set; }
         public SelectList AddRulesSelectList { get; set; }
@@ -53,8 +54,9 @@ namespace ResistanceOnline.Site.Models
         public string GameOverMessage { get; set; }
         public string Characters { get; set; }
 
-		public GameModel(Game game, Guid? playerGuid)
+		public GameModel(int gameId, Game game, Guid? playerGuid)
 		{
+            GameId = gameId;
             PlayerCountSummary = ("player".ToQuantity(game.Players.Count, ShowQuantityAs.Words)).ApplyCase(LetterCasing.Sentence);
             GameState = game.GameState.ToString();
 			PlayerGuid = playerGuid;
@@ -131,6 +133,11 @@ namespace ResistanceOnline.Site.Models
             if (addToTeam != null)
             {
                 AddToTeamPlayersSelectList = new SelectList(addToTeam.ActionItems);
+            }
+            var removeFromTeam = availableActions.FirstOrDefault(a => a.ActionType == Core.Action.Type.RemoveFromTeam);
+            if (removeFromTeam != null)
+            {
+                RemoveFromTeamSelectList = new SelectList(removeFromTeam.ActionItems);
             }
 
             var addRule = availableActions.FirstOrDefault(a => a.ActionType == Core.Action.Type.AddRule);

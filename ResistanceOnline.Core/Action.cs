@@ -24,6 +24,8 @@ namespace ResistanceOnline.Core
 
             [Description("Add a player to the current team")]
             AddToTeam,
+            [Description("Remove a player from the current team")]
+            RemoveFromTeam,
             [Description("Approve the current team")]
             VoteApprove,
             [Description("Reject the current team")]
@@ -41,7 +43,7 @@ namespace ResistanceOnline.Core
             [Description("Use Excalibur on a quest card")]
             UseExcalibur,
 
-            Message
+            Message,
         };
 
         public int GameId { get; set; }

@@ -113,8 +113,9 @@ namespace ResistanceOnline.Core.ComputerPlayers
             Say(_teamIsNotOk.OrderBy(x=>Guid.NewGuid()).First());
         }
 
-        public Action DoSomething(Game game) 
+        public List<Action> DoSomething(Game game) 
         {
+            var actions = new List<Action>();
             _game = game;
             _player = _game.Players.First(p => p.Guid == PlayerGuid);
             _IAmEvil = _game.IsCharacterEvil(_player.Character, false);
@@ -123,51 +124,48 @@ namespace ResistanceOnline.Core.ComputerPlayers
             if (availableActions.Count == 0)
                 return null;
 
-            if (availableActions.Any(a=>a.ActionType==ResistanceOnline.Core.Action.Type.Message) && _thingsIWantToSay.Count > 0)
-            {
-                var message = _thingsIWantToSay[0];
-                _thingsIWantToSay.RemoveAt(0);
-
-                return new Action(PlayerGuid, Action.Type.Message, text: message);
-            }
-
             if (availableActions.Any(a=>a.ActionType==ResistanceOnline.Core.Action.Type.VoteApprove))
             {
-                return new Action(PlayerGuid, TeamVote() ? Action.Type.VoteApprove : Action.Type.VoteReject);
+                actions.Add(new Action(PlayerGuid, TeamVote() ? Action.Type.VoteApprove : Action.Type.VoteReject));
             }
 
             if (availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.AssignExcalibur))
             {
-                return new Action(PlayerGuid, Action.Type.AssignExcalibur, AssignExcalibur().Name);
+                actions.Add( new Action(PlayerGuid, Action.Type.AssignExcalibur, AssignExcalibur().Name));
             }
 
 
             if (availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.UseExcalibur))
             {
-                return new Action(PlayerGuid, Action.Type.UseExcalibur, UseExcalibur().Name);
+                actions.Add( new Action(PlayerGuid, Action.Type.UseExcalibur, UseExcalibur().Name));
             }
 
             if (availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.FailQuest) || availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.SucceedQuest))
             {
-                return new Action(PlayerGuid, Quest() ? Action.Type.SucceedQuest : Action.Type.FailQuest);
+                actions.Add( new Action(PlayerGuid, Quest() ? Action.Type.SucceedQuest : Action.Type.FailQuest));
             }
 
             if (availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.AddToTeam))
             {
-                return new Action(PlayerGuid, Action.Type.AddToTeam, ChooseTeamPlayer().Name);
+                actions.Add( new Action(PlayerGuid, Action.Type.AddToTeam, ChooseTeamPlayer().Name));
             }
 
             if (availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.GuessMerlin))
             {
-                return new Action(PlayerGuid, Action.Type.GuessMerlin, GuessMerlin().Name);
+                actions.Add( new Action(PlayerGuid, Action.Type.GuessMerlin, GuessMerlin().Name));
             }
 
             if (availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.UseTheLadyOfTheLake))
             {
-                return new Action(PlayerGuid, Action.Type.UseTheLadyOfTheLake, LadyOfTheLakeTarget().Name);
+                actions.Add( new Action(PlayerGuid, Action.Type.UseTheLadyOfTheLake, LadyOfTheLakeTarget().Name));
             }
 
-            return null;
+            if (availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.Message) && _thingsIWantToSay.Count > 0)
+            {
+                actions.AddRange(_thingsIWantToSay.Select(s => new Action(PlayerGuid, Action.Type.Message, s)).ToList());
+            }
+
+            return actions;
         }
 
         protected abstract Player LadyOfTheLakeTarget();

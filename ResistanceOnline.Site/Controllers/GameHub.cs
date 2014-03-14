@@ -13,6 +13,7 @@ using ResistanceOnline.Database.Entities;
 using Action = ResistanceOnline.Core.Action;
 using Rule = ResistanceOnline.Core.Rule;
 using Character = ResistanceOnline.Core.Character;
+using ResistanceOnline.Site.Infrastructure;
 
 
 namespace ResistanceOnline.Site.Controllers
@@ -65,12 +66,22 @@ namespace ResistanceOnline.Site.Controllers
 
         static Dictionary<Guid, List<string>> _userConnections = new Dictionary<Guid, List<string>>();        
 
-        private void Update()
+        private void Update(bool force=false)
         {
             foreach (var guid in _userConnections.Keys)
             {
-                //todo - don't need all games sent every update
-                var games = _gameCache.Values.ToList().Select(g=>new GameModel(g, PlayerGuid)).ToList();
+                var games = new List<GameModel>();
+                foreach (var gameId in _gameCache.Keys)
+                {
+                    var game = _gameCache[gameId];
+                    var gameModel = new GameModel(gameId, _gameCache[gameId], PlayerGuid);
+
+                    //only send updates for games with recent actions, or when forced on initial connection (page refresh?)
+                    if (force || game.LastActionTime > DateTimeOffset.Now.AddDays(-1))
+                    {
+                        games.Add(gameModel);
+                    }
+                }
 
                 foreach (var connection in _userConnections[guid])
                 {
@@ -90,7 +101,7 @@ namespace ResistanceOnline.Site.Controllers
                 }
                 _userConnections[PlayerGuid].Add(Context.ConnectionId);
 
-                if (!_gameCache.ContainsKey(0))
+                if (!_gameCache.ContainsKey(0) && PlayerGuid != Guid.Empty)
                 {
                     //create game 0 for development
                     var actions = new List<Action>();
@@ -115,7 +126,7 @@ namespace ResistanceOnline.Site.Controllers
                     _gameCache.Add(0, game);
                 }
             }
-            Update();
+            Update(true);
             return base.OnConnected();
         }
 
@@ -152,39 +163,45 @@ namespace ResistanceOnline.Site.Controllers
                 {
                     foreach (var computerPlayer in computersPlayersInGame)
                     {
-                        var computerAction = Core.ComputerPlayers.ComputerPlayer.Factory(computerPlayer.PlayerType, computerPlayer.Guid).DoSomething(game);
-                        if (computerAction != null)
+                        var computerActions = Core.ComputerPlayers.ComputerPlayer.Factory(computerPlayer.PlayerType, computerPlayer.Guid).DoSomething(game);
+                        if (computerActions != null)
                         {
-                            game.DoAction(computerAction);
-                            _simpleDb.AddAction(computerAction);
+                            foreach (var computerAction in computerActions)
+                            {
+                                game.DoAction(computerAction);
+                                _simpleDb.AddAction(computerAction);
+                            }
                         }
                     }
                 }
             }
+
+            Update();
         }
 
         public void AddToTeam(int gameId, string person)
         {
             DoAction(gameId, Action.Type.AddToTeam, person);
-            Update();
         }
 
-        public void AddBot(int gameId, string name)
+        public void RemoveFromTeam(int gameId, string person)
         {
-            DoAction(gameId, Action.Type.AddBot, name);
-            Update();
+            DoAction(gameId, Action.Type.RemoveFromTeam, person);
+        }
+
+        public void AddBot(int gameId)
+        {
+            DoAction(gameId, Action.Type.AddBot, Useful.RandomName());
         }
 
         public void AddCharacterCard(int gameId, string card)
         {
             DoAction(gameId, Action.Type.AddCharacterCard, card);
-            Update();
         }
 
         public void AddRule(int gameId, string rule)
         {
             DoAction(gameId, Action.Type.AddRule, rule);
-            Update();
         }
 
         public void RemoveCharacterCard(int gameId, string card)

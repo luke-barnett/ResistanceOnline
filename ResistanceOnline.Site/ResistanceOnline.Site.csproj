@@ -181,6 +181,8 @@
     <Content Include="App\Widgets\AddCharacterCard.js" />
     <Content Include="App\Widgets\AddBot.html" />
     <Content Include="App\Widgets\AddBot.js" />
+    <Content Include="App\Widgets\RemoveFromTeam.html" />
+    <Content Include="App\Widgets\RemoveFromTeam.js" />
     <Content Include="App\Widgets\RemoveCharacterCard.html" />
     <Content Include="App\Widgets\RemoveCharacterCard.js" />
     <Content Include="App\Widgets\AddRule.html" />

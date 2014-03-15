@@ -13,7 +13,7 @@
             <tr>
                 <td>{{GameId}}</td>
                 <td>{{GameOwner}}</td>
-                <td>{{PlayerCountSummary}}</td>
+                <td>{{PlayersSummary}} ({{PlayerCountSummary}})</td>
                 <td>{{GameState}}</td>
                 <td>
                     <a class="btn btn-info" data-bind="attr: { href: '#/game/' + GameId() }, visible: GameState() != 'Setup' && GameState() != 'Error'">View Game</a>

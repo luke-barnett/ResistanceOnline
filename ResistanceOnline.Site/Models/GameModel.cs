@@ -36,6 +36,7 @@ namespace ResistanceOnline.Site.Models
         public SelectList RemoveCharacterCardSelectList { get; set; }
 
         public string PlayerName { get; set; }
+        public string PlayersSummary { get; set; }
         public Player AssassinsGuessAtMerlin { get; set; }
 		public List<string> Actions { get; set; }
 		public string WaitingMessage { get; set; }
@@ -59,6 +60,7 @@ namespace ResistanceOnline.Site.Models
             GameOwner = game.Players.First().Name;
             IsOwner = game.Players.First().Guid == playerGuid;
             PlayerCountSummary = ("player".ToQuantity(game.Players.Count));
+            PlayersSummary = Useful.CommaQuibbling(game.Players.Select(p => p.Name).ToList());
             GameState = game.GameState.Humanize(LetterCasing.Sentence).ToString();
             GameSize = game.Players.Count;
             Rules = game.Rules.Select(r => r.Humanize()).ToList();

@@ -198,6 +198,7 @@ namespace ResistanceOnline.Site.Controllers
                         {
                             foreach (var computerAction in computerActions)
                             {
+                                computerAction.GameId = gameId;
                                 game.DoAction(computerAction);
                                 _simpleDb.AddAction(computerAction);
                             }

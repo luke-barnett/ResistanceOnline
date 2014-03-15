@@ -1,16 +1,28 @@
 ﻿<div class="jumbotron">
-	<h2>Current Games</h2>
-	<ul data-bind="foreach: games">
-		<li>              
-            <span>{{GameId}}</span>&nbsp;
-            <span>{{GameOwner}}'s game</span>&nbsp;
-            <span>{{PlayerCountSummary}}</span>&nbsp;
-            <span data-bind="visible: GameState() != 'Setup'">{{State}}</span>
-            <a class="btn btn-info" data-bind="attr: { href: '#/game/' + $index() }, visible: GameState() != 'Setup' && GameState() != 'Error'">View Game</a>
-            <a class="btn btn-warning" data-bind="attr: { href: '/game/' + $index() }, visible: GameState() == 'Setup'">View Setup</a>
-            <a class="btn btn-danger" data-bind="click: function() { $parent.deleteGame($index()) }, visible: IsOwner()">Delete</a>
-		</li>
-	</ul>
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Owner</th>
+                <th>Players</th>
+                <th>State</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach: games">
+            <tr>
+                <td>{{GameId}}</td>
+                <td>{{GameOwner}}</td>
+                <td>{{PlayerCountSummary}}</td>
+                <td>{{GameState}}</td>
+                <td>
+                    <a class="btn btn-info" data-bind="attr: { href: '#/game/' + GameId() }, visible: GameState() != 'Setup' && GameState() != 'Error'">View Game</a>
+                    <a class="btn btn-warning" data-bind="attr: { href: '/game/' + GameId() }, visible: GameState() == 'Setup'">View Setup</a>
+                    <a class="btn btn-danger" data-bind="click: function() { $parent.deleteGame(GameId()) }, visible: IsOwner()">Delete</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
 	<form role="form" data-bind="submit: createGame">		
 		<input class="btn btn-danger" type="submit" value="Create New Game">

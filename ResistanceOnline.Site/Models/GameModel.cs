@@ -186,7 +186,10 @@ namespace ResistanceOnline.Site.Models
 
 				PlayerInfo.Add(playerInfo);
 
-				waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a.ActionType, Name = p.Name }));
+                if (p != player)
+                {
+                    waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a.ActionType, Name = p.Name }));
+                }
 			}
 
             //build waiting message
@@ -204,7 +207,7 @@ namespace ResistanceOnline.Site.Models
 
             if (GameOver)
             {
-                GameOverMessage = game.GameState.Humanize(LetterCasing.Sentence);
+                GameOverMessage = String.Format("{0}, {1} win.", game.GameState.Humanize(LetterCasing.Sentence), Useful.CommaQuibbling(game.Winners.Select(p=>p.Name)));
             }
 		}
     }

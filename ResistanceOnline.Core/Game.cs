@@ -34,6 +34,7 @@ namespace ResistanceOnline.Core
         public Player InitialHolderOfLadyOfTheLake { get; set; }
         public Player InitialLeader { get; set; }
         public List<QuestSize> RoundTables;
+        public List<Player> Winners { get; set; }
 
         public State GameState { get; set; }
         public List<Quest> Quests { get; set; }
@@ -55,7 +56,7 @@ namespace ResistanceOnline.Core
             RoundTables = StandardQuestSizes(0);
             Quests = new List<Quest>();
             LastActionTime = DateTimeOffset.MinValue;
-
+            Winners = new List<Player>();
             DoActions(actions);
         }
 
@@ -519,9 +520,11 @@ namespace ResistanceOnline.Core
             if (guess.Character == Character.Merlin)
             {
                 GameState = State.EvilTriumphs;
+                Winners = Players.Where(p => IsCharacterEvil(p.Character, CurrentLancelotAllegianceSwitched)).ToList();
             }
             else
             {
+                Winners = Players.Where(p => !IsCharacterEvil(p.Character, CurrentLancelotAllegianceSwitched)).ToList();
                 GameState = State.GoodPrevails;
             }
         }
@@ -545,6 +548,7 @@ namespace ResistanceOnline.Core
             if (Quests.Count(r => !r.IsSuccess.Value) >= 3)
             {
                 GameState = State.EvilTriumphs;
+                Winners = Players.Where(p => IsCharacterEvil(p.Character, CurrentLancelotAllegianceSwitched)).ToList();
                 return;
             }
 
@@ -558,6 +562,7 @@ namespace ResistanceOnline.Core
                 else
                 {
                     GameState = State.GoodPrevails;
+                    Winners = Players.Where(p => !IsCharacterEvil(p.Character, CurrentLancelotAllegianceSwitched)).ToList();
                 }
                 return;
             }
@@ -627,6 +632,7 @@ namespace ResistanceOnline.Core
                 if (CurrentQuest.VoteTracks.Count == 5)
                 {
                     GameState = State.EternalChaos;
+                    Winners = Players.Where(p => IsCharacterEvil(p.Character, CurrentLancelotAllegianceSwitched)).ToList();
                 }
                 else
                 {

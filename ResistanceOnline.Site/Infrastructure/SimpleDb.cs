@@ -66,5 +66,10 @@ namespace ResistanceOnline.Site.Infrastructure
         {
             return _context.Actions.Where(a=>a.GameId!=0).Select(a => a.GameId).Distinct().ToList();
         }
+
+        public Database.Entities.UserAccount GetUser(string userId)
+        {
+            return _context.Users.FirstOrDefault(user => user.Id == userId);
+        }
     }
 }

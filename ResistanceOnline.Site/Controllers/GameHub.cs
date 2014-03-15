@@ -18,19 +18,21 @@ using ResistanceOnline.Site.Infrastructure;
 
 namespace ResistanceOnline.Site.Controllers
 {
-    //[Authorize]
     public class GameHub : Hub
     {
-        readonly ResistanceOnlineDbContext _dbContext;
-        Infrastructure.SimpleDb _simpleDb;
-        public GameHub()//(ResistanceOnlineDbContext dbContext)
+        readonly Infrastructure.SimpleDb _simpleDb;
+        
+        static Dictionary<Guid, List<string>> _userConnections = new Dictionary<Guid, List<string>>();
+        
+        static object _gameCacheLock = new object();
+        static Dictionary<int, Game> _gameCache = new Dictionary<int, Game>();
+
+        public GameHub()
         {
-            _dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
-            _simpleDb = new Infrastructure.SimpleDb(_dbContext);
+            _simpleDb = new Infrastructure.SimpleDb(new Database.ResistanceOnlineDbContext());
             InitGameCache();
         }
 
-        //todo logged in user
         private Guid PlayerGuid
         {
             get
@@ -54,7 +56,7 @@ namespace ResistanceOnline.Site.Controllers
                 if (Context!= null && Context.User != null)
                 {
                     var userId = Context.User.Identity.GetUserId();
-                    userAccount = _dbContext.Users.FirstOrDefault(user => user.Id == userId);
+                    userAccount = _simpleDb.GetUser(userId);
                 }
                 if (userAccount == null)
                 {
@@ -63,9 +65,6 @@ namespace ResistanceOnline.Site.Controllers
                 return userAccount;
             }
         }
-
-
-        static Dictionary<Guid, List<string>> _userConnections = new Dictionary<Guid, List<string>>();        
 
         private void Update(bool force=false)
         {
@@ -102,60 +101,64 @@ namespace ResistanceOnline.Site.Controllers
                 }
                 _userConnections[PlayerGuid].Add(Context.ConnectionId);
 
-                if (!_gameCache.ContainsKey(0) && PlayerGuid != Guid.Empty)
+                lock (_gameCacheLock)
                 {
-                    //create game 0 for development
-                    var actions = new List<Action>();
-                    actions.Add(new Action(PlayerGuid, Action.Type.Join, PlayerName));
-                    actions.Add(new Action(PlayerGuid, Action.Type.AddBot, "Alice"));
-                    actions.Add(new Action(PlayerGuid, Action.Type.AddBot, "Bob"));
-                    actions.Add(new Action(PlayerGuid, Action.Type.AddBot, "Chuck"));
-                    actions.Add(new Action(PlayerGuid, Action.Type.AddBot, "Dan"));
-                    actions.Add(new Action(PlayerGuid, Action.Type.AddBot, "Eve"));
+                    if (!_gameCache.ContainsKey(0) && PlayerGuid != Guid.Empty)
+                    {
+                        //create game 0 for development
+                        var actions = new List<Action>();
+                        actions.Add(new Action(PlayerGuid, Action.Type.Join, PlayerName));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddBot, Useful.RandomName()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddBot, Useful.RandomName()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddBot, Useful.RandomName()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddBot, Useful.RandomName()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddBot, Useful.RandomName()));
 
-                    actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Merlin.ToString()));
-                    actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Assassin.ToString()));
-                    actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Percival.ToString()));
-                    actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Morgana.ToString()));
-                    actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
-                    actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Merlin.ToString()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Assassin.ToString()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Percival.ToString()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Morgana.ToString()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
 
-                    actions.Add(new Action(PlayerGuid, Action.Type.AddRule, Rule.LadyOfTheLakeExists.ToString()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddRule, Rule.LadyOfTheLakeExists.ToString()));
 
-                    var game = new Game(actions);
-                    _gameCache.Add(0, game);
+                        var game = new Game(actions);
+                        _gameCache.Add(0, game);
+                    }
                 }
             }
             Update(true);
             return base.OnConnected();
         }
 
-        private static Dictionary<int, Game> _gameCache = new Dictionary<int, Game>();
-
         void InitGameCache()
         {
-            var gameIds = _simpleDb.GameIds();
-            foreach (int gameId in gameIds)
+            lock (_gameCacheLock)
             {
-                if (!_gameCache.ContainsKey(gameId))
+                var gameIds = _simpleDb.GameIds();
+                foreach (int gameId in gameIds)
                 {
-                    var actions = _simpleDb.GetActions(gameId);
-                    var game = new Game(new List<Action>());
-                    try
+                    if (!_gameCache.ContainsKey(gameId))
                     {
-                        actions.ForEach(a=> game.DoAction(a));
+                        var actions = _simpleDb.GetActions(gameId);
+                        var game = new Game(new List<Action>());
+                        try
+                        {
+                            actions.ForEach(a => game.DoAction(a));
+                        }
+                        catch (Exception)
+                        {
+                            game.GameState = Game.State.Error;
+                        }
+                        _gameCache.Add(gameId, game);
                     }
-                    catch(Exception)
-                    {
-                        game.GameState = Game.State.Error;
-                    }
-                    _gameCache.Add(gameId, game);
                 }
             }
         }
 
         Game GetGame(int gameId)
-        {
+        {            
             return _gameCache[gameId];
         }
 
@@ -170,6 +173,7 @@ namespace ResistanceOnline.Site.Controllers
             _gameCache.Add(gameId, new Game(new List<Action>()));
             DoAction(gameId, Action.Type.Join, CurrentUser.UserName);
         }
+
         public void DeleteGame(int gameId)
         {
             _simpleDb.DeleteActions(gameId);

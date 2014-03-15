@@ -1,12 +1,16 @@
 ﻿<div class="jumbotron">
 	<h2>Current Games</h2>
-	<ol data-bind="foreach: games">
+	<ul data-bind="foreach: games">
 		<li>              
-            <span>{{GameOwner}}'s Game</span>&nbsp;<span>{{PlayerCountSummary}}</span>&nbsp;<span data-bind="visible: GameState() != 'Setup'">{{State}}</span>
-            <a class="btn btn-info" data-bind="attr: { href: '#/game/' + $index() }, visible: GameState() != 'Setup'">View Game</a>
+            <span>{{GameId}}</span>&nbsp;
+            <span>{{GameOwner}}'s game</span>&nbsp;
+            <span>{{PlayerCountSummary}}</span>&nbsp;
+            <span data-bind="visible: GameState() != 'Setup'">{{State}}</span>
+            <a class="btn btn-info" data-bind="attr: { href: '#/game/' + $index() }, visible: GameState() != 'Setup' && GameState() != 'Error'">View Game</a>
             <a class="btn btn-warning" data-bind="attr: { href: '/game/' + $index() }, visible: GameState() == 'Setup'">View Setup</a>
+            <a class="btn btn-danger" data-bind="click: function() { $parent.deleteGame($index()) }, visible: IsOwner()">Delete</a>
 		</li>
-	</ol>
+	</ul>
 
 	<form role="form" data-bind="submit: createGame">		
 		<input class="btn btn-danger" type="submit" value="Create New Game">

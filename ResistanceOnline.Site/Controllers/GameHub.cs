@@ -86,7 +86,7 @@ namespace ResistanceOnline.Site.Controllers
 
                 foreach (var connection in _userConnections[guid])
                 {
-                    Clients.Client(connection).Update(games);
+                    Clients.Client(connection).Update(games.OrderBy(g=>g.GameId).ToList());
                 }
             }
         }
@@ -121,7 +121,6 @@ namespace ResistanceOnline.Site.Controllers
                     actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
 
                     actions.Add(new Action(PlayerGuid, Action.Type.AddRule, Rule.LadyOfTheLakeExists.ToString()));
-                    //actions.Add(new Action(PlayerGuid, Action.Type.Start, "0"));
 
                     var game = new Game(actions);
                     _gameCache.Add(0, game);
@@ -135,20 +134,22 @@ namespace ResistanceOnline.Site.Controllers
 
         void InitGameCache()
         {
-            foreach (int gameId in _simpleDb.GameIds())
+            var gameIds = _simpleDb.GameIds();
+            foreach (int gameId in gameIds)
             {
                 if (!_gameCache.ContainsKey(gameId))
                 {
                     var actions = _simpleDb.GetActions(gameId);
+                    var game = new Game(new List<Action>());
                     try
                     {
-                        var game = new Game(actions);
-                        _gameCache.Add(gameId, game);
+                        actions.ForEach(a=> game.DoAction(a));
                     }
                     catch(Exception)
                     {
-                        //ignore invalid games
+                        game.GameState = Game.State.Error;
                     }
+                    _gameCache.Add(gameId, game);
                 }
             }
         }
@@ -160,8 +161,20 @@ namespace ResistanceOnline.Site.Controllers
 
         public void CreateGame()
         {
+            if (CurrentUser.PlayerGuid == Guid.Empty)
+            {
+                return;
+            }
+
             var gameId = _simpleDb.NextGameId();
+            _gameCache.Add(gameId, new Game(new List<Action>()));
             DoAction(gameId, Action.Type.Join, CurrentUser.UserName);
+        }
+        public void DeleteGame(int gameId)
+        {
+            _simpleDb.DeleteActions(gameId);
+            _gameCache.Remove(gameId);
+            Update(true);
         }
 
         private void DoAction(int gameId, Action.Type actionType, string text = null)

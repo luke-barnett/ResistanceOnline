@@ -9,6 +9,10 @@
             $.connection.gameHub.server.createGame();
             //todo redirect?
         },
+
+        deleteGame: function (gameId) {
+            $.connection.gameHub.server.deleteGame(gameId);
+        }
     }
 
     return viewModel;

@@ -13,9 +13,6 @@ namespace ResistanceOnline.Site.Models
 	public class GameModel
 	{
 		public int GameId { get; set; }
-
-		public Guid? PlayerGuid { get; set; }
-
 		public string State { get; set; }
 
         public bool GameOver
@@ -54,14 +51,15 @@ namespace ResistanceOnline.Site.Models
         public string GameOverMessage { get; set; }
         public string Characters { get; set; }
         public string GameOwner { get; set; }
+        public bool IsOwner { get; set; }
 
-		public GameModel(int gameId, Game game, Guid? playerGuid)
+		public GameModel(int gameId, Game game, Guid playerGuid)
 		{
             GameId = gameId;
             GameOwner = game.Players.First().Name;
+            IsOwner = game.Players.First().Guid == playerGuid;
             PlayerCountSummary = ("player".ToQuantity(game.Players.Count));
             GameState = game.GameState.Humanize(LetterCasing.Sentence).ToString();
-			PlayerGuid = playerGuid;
             GameSize = game.Players.Count;
             Rules = game.Rules.Select(r => r.Humanize()).ToList();
             RoundTables = game.RoundTables.Select(t=>String.Format("Quest {0} has {1} and requires {2}", (game.RoundTables.IndexOf(t) + 1).ToWords(), "player".ToQuantity(t.TeamSize, ShowQuantityAs.Words), "fail".ToQuantity(t.RequiredFails, ShowQuantityAs.Words))).ToList();

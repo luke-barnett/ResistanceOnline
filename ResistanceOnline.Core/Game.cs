@@ -25,6 +25,7 @@ namespace ResistanceOnline.Core
             EvilTriumphs,
             EternalChaos,
             GoodPrevails,
+            Error
         }
 
         public List<Character> CharacterCards { get; set; }
@@ -416,15 +417,19 @@ namespace ResistanceOnline.Core
         public void DoAction(Action action)
         {
             var owner = Players.FirstOrDefault(p => p.Guid == action.Owner);
+            if (owner == null && action.ActionType != Action.Type.Join)
+            {
+                throw new InvalidOperationException(String.Format("player guid {0} could not be mapped to a valid player", action.Owner));
+            }
             var target = Players.FirstOrDefault(p => p.Name == action.Text);
             var availableAction = AvailableActions(owner).FirstOrDefault(a=>a.ActionType == action.ActionType);
             if (availableAction == null)
             {
-                throw new InvalidOperationException("Action not valid");
+                throw new InvalidOperationException(String.Format("Action {0} not valid for {1} while in state {2}", action.ActionType, owner.Name, GameState));
             }
             if (availableAction.AvailableActionType == AvailableAction.Type.Items && !availableAction.ActionItems.Contains(action.Text))
             {
-                throw new InvalidOperationException("Action item not valid");
+                throw new InvalidOperationException(String.Format("{2} is not a valid choice for {0} by {1}", action.ActionType, owner.Name, action.Text));
             }
 
             LastActionTime = action.Timestamp;

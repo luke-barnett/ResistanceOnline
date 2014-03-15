@@ -53,12 +53,14 @@ namespace ResistanceOnline.Site.Models
         public string PlayerCountSummary { get; set; }
         public string GameOverMessage { get; set; }
         public string Characters { get; set; }
+        public string GameOwner { get; set; }
 
 		public GameModel(int gameId, Game game, Guid? playerGuid)
 		{
             GameId = gameId;
-            PlayerCountSummary = ("player".ToQuantity(game.Players.Count, ShowQuantityAs.Words)).ApplyCase(LetterCasing.Sentence);
-            GameState = game.GameState.ToString();
+            GameOwner = game.Players.First().Name;
+            PlayerCountSummary = ("player".ToQuantity(game.Players.Count));
+            GameState = game.GameState.Humanize(LetterCasing.Sentence).ToString();
 			PlayerGuid = playerGuid;
             GameSize = game.Players.Count;
             Rules = game.Rules.Select(r => r.Humanize()).ToList();

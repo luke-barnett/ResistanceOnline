@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace ResistanceOnline.Core
     /// <summary>
     /// this could probably be better as a base class with classes for different actions
     /// </summary>
+    [DebuggerDisplay("{GameId} {Owner} {ActionType.ToString()} {Text}")]
     public class Action
     {
         public enum Type
@@ -59,6 +61,12 @@ namespace ResistanceOnline.Core
             Text = text;
             Timestamp = DateTime.Now;
         }
+
+        public Action(int gameId, Guid owner, Type actionType, string text = null) : this(owner, actionType, text)
+        {
+            GameId = gameId;
+        }
+
     }
 
 

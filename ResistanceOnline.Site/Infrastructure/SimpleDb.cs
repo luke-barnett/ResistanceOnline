@@ -38,7 +38,7 @@ namespace ResistanceOnline.Site.Infrastructure
         {
             var actions = _context.Actions.Where(a=>a.GameId == gameId).ToList();
             return actions.Select(
-                a=> new Core.Action(a.Owner, (Core.Action.Type)Enum.Parse(typeof(Core.Action.Type), a.Type), a.Text)
+                a=> new Core.Action(gameId, a.Owner, (Core.Action.Type)Enum.Parse(typeof(Core.Action.Type), a.Type), a.Text)
             ).ToList();
 		}
 
@@ -46,6 +46,11 @@ namespace ResistanceOnline.Site.Infrastructure
         {
             var gameId = _context.Actions.Max(a => a.GameId) + 1;
             return gameId;
+        }
+
+        public List<int> GameIds()
+        {
+            return _context.Actions.Select(a => a.GameId).Distinct().ToList();
         }
     }
 }

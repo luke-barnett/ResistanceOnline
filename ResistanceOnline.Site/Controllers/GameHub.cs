@@ -26,7 +26,8 @@ namespace ResistanceOnline.Site.Controllers
         public GameHub()//(ResistanceOnlineDbContext dbContext)
         {
             _dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
-            _simpleDb = new Infrastructure.SimpleDb(_dbContext);            
+            _simpleDb = new Infrastructure.SimpleDb(_dbContext);
+            InitGameCache();
         }
 
         //todo logged in user
@@ -131,14 +132,29 @@ namespace ResistanceOnline.Site.Controllers
         }
 
         private static Dictionary<int, Game> _gameCache = new Dictionary<int, Game>();
+
+        void InitGameCache()
+        {
+            foreach (int gameId in _simpleDb.GameIds())
+            {
+                if (!_gameCache.ContainsKey(gameId))
+                {
+                    var actions = _simpleDb.GetActions(gameId);
+                    try
+                    {
+                        var game = new Game(actions);
+                        _gameCache.Add(gameId, game);
+                    }
+                    catch(Exception)
+                    {
+                        //ignore invalid games
+                    }
+                }
+            }
+        }
+
         Game GetGame(int gameId)
         {
-            if (!_gameCache.ContainsKey(gameId))
-            {
-                var actions = _simpleDb.GetActions(gameId);
-                var game = new Game(actions);
-                _gameCache.Add(gameId, game);
-            }
             return _gameCache[gameId];
         }
 
@@ -151,6 +167,7 @@ namespace ResistanceOnline.Site.Controllers
         private void DoAction(int gameId, Action.Type actionType, string text = null)
         {
             var action = new Action(PlayerGuid, actionType, text);
+            action.GameId = gameId;
 
             var game = GetGame(gameId);
             game.DoAction(action);

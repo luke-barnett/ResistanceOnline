@@ -2,7 +2,7 @@
 	<h2>Current Games</h2>
 	<ol data-bind="foreach: games">
 		<li>              
-            <span>{{PlayerCountSummary}}</span>&nbsp;<span data-bind="visible: GameState() != 'Setup'">{{State}}</span>
+            <span>{{GameOwner}}'s Game</span>&nbsp;<span>{{PlayerCountSummary}}</span>&nbsp;<span data-bind="visible: GameState() != 'Setup'">{{State}}</span>
             <a class="btn btn-info" data-bind="attr: { href: '#/game/' + $index() }, visible: GameState() != 'Setup'">View Game</a>
             <a class="btn btn-warning" data-bind="attr: { href: '/game/' + $index() }, visible: GameState() == 'Setup'">View Setup</a>
 		</li>

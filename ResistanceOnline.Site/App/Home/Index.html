@@ -13,11 +13,10 @@
             <tr>
                 <td>{{GameId}}</td>
                 <td>{{GameOwner}}</td>
-                <td>{{PlayersSummary}} ({{PlayerCountSummary}})</td>
+                <td>{{PlayerCountSummary}}, {{PlayersSummary}}</td>
                 <td>{{GameState}}</td>
                 <td>
-                    <a class="btn btn-info" data-bind="attr: { href: '#/game/' + GameId() }, visible: GameState() != 'Setup' && GameState() != 'Error'">View Game</a>
-                    <a class="btn btn-warning" data-bind="attr: { href: '/game/' + GameId() }, visible: GameState() == 'Setup'">View Setup</a>
+                    <a class="btn btn-success" data-bind="attr: { href: '#/game/' + GameId() }, visible: GameState() != 'Error'">Goto Game</a>
                     <a class="btn btn-danger" data-bind="click: function() { $parent.deleteGame(GameId()) }, visible: IsOwner()">Delete</a>
                 </td>
             </tr>
@@ -25,6 +24,6 @@
     </table>
 
 	<form role="form" data-bind="submit: createGame">		
-		<input class="btn btn-danger" type="submit" value="Create New Game">
+        <input class="btn btn-warning" type="submit" value="Create New Game">
     </form>
 </div>

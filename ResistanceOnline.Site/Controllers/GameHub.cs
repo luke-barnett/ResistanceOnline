@@ -107,8 +107,8 @@ namespace ResistanceOnline.Site.Controllers
                     {
                         //create game 0 for development
                         var actions = new List<Action>();
-						var guid = Guid.NewGuid();
-						actions.Add(new Action(guid, Action.Type.Join, "Test"));
+						var guid = PlayerGuid;
+						actions.Add(new Action(guid, Action.Type.Join, PlayerName));
 						actions.Add(new Action(guid, Action.Type.AddBot, Useful.RandomName()));
 						actions.Add(new Action(guid, Action.Type.AddBot, Useful.RandomName()));
 						actions.Add(new Action(guid, Action.Type.AddBot, Useful.RandomName()));

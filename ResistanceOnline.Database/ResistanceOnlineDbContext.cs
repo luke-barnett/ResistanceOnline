@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 using Ninject;
 using ResistanceOnline.Database.Entities;
+using System.Data.Entity;
 
 namespace ResistanceOnline.Database
 {
@@ -11,5 +12,7 @@ namespace ResistanceOnline.Database
 			: base("ResistanceOnline")
 		{
 		}
-	}
+
+        public DbSet<Action> Actions { get; set; }
+    }
 }

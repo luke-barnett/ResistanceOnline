@@ -12,40 +12,61 @@ namespace ResistanceOnline.Site.Models
         public int FailsRequired { get; set; }
         public List<TeamModel> Teams { get; set; }
         private int _roundNumber;
-        public string Title { get { return String.Format("Round {0}", _roundNumber.ToWords()); } }
-        public string Summary { get { return String.Format("This is a {0} player round and requires {1}", TeamSize.ToWords(), "fail".ToQuantity(FailsRequired, ShowQuantityAs.Words)); } }
-        public List<LadyOfTheLakeUseModel> LadyOfTheLakeUses { get; set; }
+        public string Title { get; set; }
+        public string Summary { get { return String.Format("This is a {0} player quest and requires {1}", TeamSize.ToWords(), "fail".ToQuantity(FailsRequired, ShowQuantityAs.Words)); } }
+
+        public string LadyOfTheLakeUsedBy { get; set; }
+        public string LadyOfTheLakeUsedOn { get; set; }
+        public string LadyOfTheLakeResult { get; set; }
+
+
         public string LoyaltyCard { get; set; }
+        public string Outcome { get; set; }
 
-
-        public RoundModel(Core.Round round, int roundNumber, Core.Game game, Core.Player player)
+        public RoundModel(Core.Quest round, int roundNumber, Core.Game game, Core.Player player, int playerCount)
         {
-            TeamSize = round.TeamSize;
+            TeamSize = round.QuestSize;
             FailsRequired = round.RequiredFails;
             _roundNumber = roundNumber;
 
-            LadyOfTheLakeUses = game.LadyOfTheLakeUses.Where(u=>u.UsedOnRoundNumber == roundNumber+1).Select(u => new LadyOfTheLakeUseModel(u, player)).ToList();
-
-            Teams = new List<TeamModel>();
-            foreach (var team in round.Teams)
+            Title = String.Format("Quest {0}", _roundNumber.ToWords());
+            if (round.IsSuccess.HasValue && round.IsSuccess.Value)
             {
-                Teams.Add(new TeamModel(team, round.TotalPlayers, round.Teams.IndexOf(team)+1));
-            }            
+                Title += " succeeded";
+            }
+            if (round.IsSuccess.HasValue && !round.IsSuccess.Value)
+            {
+                Title += " failed";
+            }
 
-            var state = round.DetermineState();
-            if (state == Core.Round.State.Failed || state == Core.Round.State.FailedAllVotes)
-                Outcome = "evil-wins";
-            if (state == Core.Round.State.Succeeded)
-                Outcome = "good-wins";
+            if (round.LadyOfTheLake!=null && round.LadyOfTheLake.Target!=null) 
+            {
+                LadyOfTheLakeUsedBy = round.LadyOfTheLake.Holder.Name;
+                LadyOfTheLakeUsedOn = round.LadyOfTheLake.Target.Name;
+
+                if (player == round.LadyOfTheLake.Holder)
+                {
+                    LadyOfTheLakeResult = round.LadyOfTheLake.IsEvil ? "evil" : "good";
+                }
+                else
+                {
+                    LadyOfTheLakeResult = "allegiance";
+                }
+            }
+            
+            Teams = new List<TeamModel>();
+            foreach (var voteTrack in round.VoteTracks)
+            {
+                Teams.Add(new TeamModel(voteTrack, playerCount, round.VoteTracks.IndexOf(voteTrack) + 1));
+            }
 
             var loyaltyCard = game.GetLoyaltyCard(roundNumber);
-            if (loyaltyCard.HasValue && round != game.CurrentRound)
+            if (loyaltyCard.HasValue && round != game.CurrentQuest)
             {
                 LoyaltyCard = string.Format("Lancelot loyalty card: {0}", loyaltyCard.Value.Humanize());
             }
 
         }
 
-        public string Outcome { get; set; }
     }
 }

@@ -1,7 +1,6 @@
-﻿<form role="form" data-bind="submit: addRule">
-	<div class="form-group">
-		<select class="form-control" data-bind="options: rules, value: rule, optionsText: 'Text'" style="float:left;"></select>
-		<input class="btn btn-default" type="submit" value="Apply Rule" style="float:left;" />
-	</div>
-	<div class="clear" />
-</form>
+﻿<ul class="rules" data-bind="foreach: rules">
+    <li>
+        <span>{{Text}}</span><button class="btn btn-warning" data-bind="click: function() { $parent.addRule(Text()) }">Add Rule</button>
+    </li>
+</ul>
+

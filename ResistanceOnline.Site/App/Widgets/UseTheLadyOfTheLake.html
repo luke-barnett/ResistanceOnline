@@ -1,6 +1,7 @@
 ﻿<form role="form" data-bind="submit: useTheLadyOfTheLake">
     <div class="form-group">
-        <select data-bind="options: players, value: player, optionsText: 'Text'"></select>
+        <select class="form-control" data-bind="options: players, value: player, optionsText: 'Text'" style="float:left;"></select>
+        <input class="btn btn-warning" type="submit" value="Use Lady of the Lake" style="float:left;" />
     </div>
-    <input class="btn btn-default" type="submit" value="Use Lady of the Lake" />
+    <div class="clear" />
 </form>

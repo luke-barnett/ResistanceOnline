@@ -1,0 +1,5 @@
+﻿<ul class="rules" data-bind="foreach: rules">
+    <li>
+        <span>{{Text}}</span><button class="btn btn-warning" data-bind="click: function() { $parent.removeRule(Text()) }">Delete Rule</button>
+    </li>
+</ul>

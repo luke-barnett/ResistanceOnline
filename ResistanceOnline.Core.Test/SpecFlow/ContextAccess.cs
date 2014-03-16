@@ -13,11 +13,11 @@ namespace ResistanceOnline.Core.Test.SpecFlow
 		{
 			get
 			{
-				return ScenarioContext.Current.Get<Game>("Game");
+                return ScenarioContext.Current.Get<Game>("Game");
 			}
 			set
 			{
-				ScenarioContext.Current["Game"] = value;
+                ScenarioContext.Current["Game"] = value;
 			}
 		}
 	}

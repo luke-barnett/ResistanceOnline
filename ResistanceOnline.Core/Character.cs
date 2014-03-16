@@ -8,7 +8,6 @@ namespace ResistanceOnline.Core
 {
     public enum Character
     {
-        UnAllocated,
         MinionOfMordred,
         LoyalServantOfArthur,
         Merlin,

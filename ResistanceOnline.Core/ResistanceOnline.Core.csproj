@@ -40,7 +40,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action.cs" />
+    <Compile Include="AvailableAction.cs" />
     <Compile Include="Character.cs" />
+    <Compile Include="ComputerPlayers\CheatBot.cs" />
+    <Compile Include="ComputerPlayers\ComputerPlayer.cs" />
+    <Compile Include="ComputerPlayers\SimpleBot.cs" />
+    <Compile Include="ComputerPlayers\TrustBot.cs" />
+    <Compile Include="ExcaliburUse.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Knowledge.cs" />
@@ -48,13 +54,19 @@
     <Compile Include="LoyaltyCard.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerMessage.cs" />
-    <Compile Include="Round.cs" />
     <Compile Include="Quest.cs" />
+    <Compile Include="QuestCard.cs" />
     <Compile Include="Rule.cs" />
-    <Compile Include="Team.cs" />
-    <Compile Include="Vote.cs" />
+    <Compile Include="VoteTrack.cs" />
+    <Compile Include="VoteToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RoundTable.cs" />
+    <Compile Include="QuestSize.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ResistanceOnline.Database\ResistanceOnline.Database.csproj">
+      <Project>{06f8ec69-64df-4e16-ae26-1a9ea44f02d3}</Project>
+      <Name>ResistanceOnline.Database</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

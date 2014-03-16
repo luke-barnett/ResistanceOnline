@@ -1,10 +1,9 @@
 ﻿define(['data', 'knockout', 'knockout.punches'], function (data, ko, kop) {
     var viewModel = {
         gameId: ko.observable(),
-        player: ko.observable(),
         players: ko.observableArray(),
-        addToTeam: function () {
-            $.connection.gameHub.server.addToTeam(viewModel.gameId(), viewModel.player().Text());
+        addToTeam: function (player) {
+            $.connection.gameHub.server.addToTeam(viewModel.gameId(), player);
         },
         activate: function(game) {            
             viewModel.gameId(game.GameId());

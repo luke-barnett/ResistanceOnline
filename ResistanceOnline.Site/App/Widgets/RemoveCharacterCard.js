@@ -1,12 +1,13 @@
 ﻿define(['data', 'knockout', 'knockout.punches'], function (data, ko, kop) {
     var viewModel = {
         gameId: ko.observable(),
-        success: ko.observable(),
-        submitQuestCard: function () {
-            $.connection.gameHub.server.submitQuestCard(viewModel.gameId(), viewModel.success());
+        cards: ko.observableArray(),
+        removeCharacterCard: function (card) {
+            $.connection.gameHub.server.removeCharacterCard(viewModel.gameId(), card);
         },
         activate: function(game) {            
             viewModel.gameId(game.GameId());
+            viewModel.cards(game.RemoveCharacterCardSelectList());
         }
     };
 

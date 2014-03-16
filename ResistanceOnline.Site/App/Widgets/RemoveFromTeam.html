@@ -1,0 +1,10 @@
+﻿<p>Select a player to remove from your team</p>
+<ul class="cards" data-bind="foreach: players">
+    <li>
+        <img class="playercard" src="/images/player.png" />
+        <div class="playername">{{Text}}</div>
+        <button class="btn btn-warning" data-bind="click: function() { $parent.removeFromTeam(Text()) }">Del.</button>
+    </li>
+</ul>
+<div class="clearfix"></div>
+

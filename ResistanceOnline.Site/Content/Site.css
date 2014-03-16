@@ -62,3 +62,7 @@ ul {
 .quest .results {
     margin-top:6px;
 }
+
+td {
+    vertical-align:middle !important;
+}

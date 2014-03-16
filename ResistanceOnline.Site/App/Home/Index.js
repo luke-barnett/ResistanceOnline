@@ -1,16 +1,19 @@
 ﻿define(['data', 'knockout', 'knockout.punches'], function (data, ko, kop) {
     ko.punches.enableAll();
 
-    var viewModel =  {
+    var viewModel = {
         games: data,
 
         //create game
-        players: ko.observable(5),
         createGame: function () {
-            $.connection.gameHub.server.createGame(viewModel.players());
+            $.connection.gameHub.server.createGame();
             //todo redirect?
+        },
+
+        deleteGame: function (gameId) {
+            $.connection.gameHub.server.deleteGame(gameId);
         }
-    };
+    }
 
     return viewModel;
 });

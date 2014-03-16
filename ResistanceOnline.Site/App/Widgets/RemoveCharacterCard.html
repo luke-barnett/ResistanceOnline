@@ -1,0 +1,7 @@
+﻿<ul class="cards" data-bind="foreach: cards">
+    <li>
+        <img class="playercard" data-bind="attr: { src: '/images/' + Text() + '.png' }" />
+        <button class="btn btn-warning" data-bind="click: function() { $parent.removeCharacterCard(Text()) }">Del.</button>
+    </li>
+</ul>
+<div class="clearfix"></div>

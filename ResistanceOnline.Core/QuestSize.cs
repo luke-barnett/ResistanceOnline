@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace ResistanceOnline.Core
 {
-    public class RoundTable
+    public class QuestSize
     {
         public int TeamSize { get; set; }
         public int RequiredFails { get; set; }
 
-        public RoundTable(int teamSize, int requiredFails=1)
+        public QuestSize(int teamSize, int requiredFails=1)
         {
             TeamSize = teamSize;
             RequiredFails = requiredFails;

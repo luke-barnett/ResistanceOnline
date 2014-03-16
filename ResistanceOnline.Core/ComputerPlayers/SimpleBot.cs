@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ResistanceOnline.Site.ComputerPlayers
+namespace ResistanceOnline.Core.ComputerPlayers
 {
     public class SimpleBot : ComputerPlayer
     {
-        public SimpleBot(Game game, Guid playerGuid) : base(game,playerGuid) {  }
+        public SimpleBot(Guid playerGuid) : base(playerGuid) {  }
 
         private int CountEvil(List<Player> list, Game game)
         {
@@ -27,7 +27,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
         private bool IKnowTheyAreEvil(Player player, Game game)
         {
             var knowledge = game.PlayerKnowledge(_player, player);
-            if (knowledge == Knowledge.Evil || (knowledge == Knowledge.EvilLancelot && !game.LancelotAllegianceSwitched) || (knowledge == Knowledge.Lancelot && game.LancelotAllegianceSwitched))
+            if (knowledge == Knowledge.Evil || (knowledge == Knowledge.EvilLancelot && !game.CurrentLancelotAllegianceSwitched) || (knowledge == Knowledge.Lancelot && game.CurrentLancelotAllegianceSwitched))
             {
                 return true;
             }
@@ -36,47 +36,41 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
         protected override Core.Player LadyOfTheLakeTarget()
         {
-            Say("I'm just going use the lady of the lake on someone other than me.");
-
-            if (_game.LadyOfTheLakeUses.Count == 0)
-            {
-                return _game.Players.Random(p => p != _player);
-            }
-
-            return _game.LadyOfTheLakeUses.Select(u => u.UsedBy).Where(p => p != _player).First();
+            var ladyOfTheLakeHistory = _game.Quests.Where(r => r.LadyOfTheLake != null).Select(r => r.LadyOfTheLake.Holder);
+            return Random(_game.Players.Where(p => p != _player).Except(ladyOfTheLakeHistory));
         }
 
         protected override Core.Player GuessMerlin()
         {
             Say("I'm just going to guess anyone I know isn't evil..");
-            return _game.Players.RandomOrDefault(p => p != _player && IKnowTheyAreEvil(p, _game) == false);
+            return Random(_game.Players.Where(p => p != _player && IKnowTheyAreEvil(p, _game) == false));
         }
 
         protected override Core.Player ChooseTeamPlayer()
         {
             //put myself on
-            if (!_game.CurrentRound.CurrentTeam.TeamMembers.Any(p => p == _player))
+            if (!_game.CurrentQuest.CurrentVoteTrack.Players.Any(p => p == _player))
             {
                 return _player;
             }
 
-            var playersNotOnTeam = _game.Players.Where(p => p != _player).Except(_game.CurrentRound.CurrentTeam.TeamMembers);
+            var playersNotOnTeam = _game.Players.Where(p => p != _player).Except(_game.CurrentQuest.CurrentVoteTrack.Players);
             Player player = null;
 
             //if I'm evil, put anyone else on
             if (_IAmEvil)
             {
-                player = playersNotOnTeam.Random();
+                player = Random(playersNotOnTeam);
                 SayTheyAreGood(player.Name);
                 return player;
             }
 
             //if I'm good, try not to put evil on the mission
-            player = playersNotOnTeam.RandomOrDefault(p => IKnowTheyAreEvil(p, _game) == false);
+            player = Random(playersNotOnTeam.Where(p => IKnowTheyAreEvil(p, _game) == false));
             //failing that we need to put someone evil on the mission :(
             if (player == null)
             {
-                player = playersNotOnTeam.Random();
+                player = Random(playersNotOnTeam);
                 SayTheyAreGood(player.Name);
             }
             else
@@ -93,10 +87,10 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
         protected override bool TeamVote()
         {
-            var evilCount = CountEvil(_game.CurrentRound.CurrentTeam.TeamMembers, _game);
+            var evilCount = CountEvil(_game.CurrentQuest.CurrentVoteTrack.Players, _game);
             if (_IAmEvil)
             {
-                if (evilCount >= _game.CurrentRound.RequiredFails)
+                if (evilCount >= _game.CurrentQuest.RequiredFails)
                 {
                     Say("I like this team");
                     return true;
@@ -106,7 +100,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
             }
             else
             {
-                if (evilCount >= _game.CurrentRound.RequiredFails)
+                if (evilCount >= _game.CurrentQuest.RequiredFails)
                 {
                     Say("I really don't like this");
                     return false;
@@ -115,6 +109,11 @@ namespace ResistanceOnline.Site.ComputerPlayers
                 return true;
             }
 
+        }
+
+        protected override Player UseExcalibur()
+        {
+            return null;
         }
     }
         

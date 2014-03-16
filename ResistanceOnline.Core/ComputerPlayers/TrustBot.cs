@@ -5,47 +5,47 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ResistanceOnline.Site.ComputerPlayers
+namespace ResistanceOnline.Core.ComputerPlayers
 {
     public class TrustBot : ComputerPlayer
     {
-        public TrustBot(Game game, Guid playerGuid) : base(game, playerGuid) { }
+        public TrustBot(Guid playerGuid) : base(playerGuid) { }
 
         private double ProbabilityOfEvil(Player player)
         {
             var knowledge = _game.PlayerKnowledge(_player, player);
-            if (knowledge == Knowledge.Evil || (knowledge == Knowledge.EvilLancelot && !_game.LancelotAllegianceSwitched) || (knowledge == Knowledge.Lancelot && _game.LancelotAllegianceSwitched))
+            if (knowledge == Knowledge.Evil || (knowledge == Knowledge.EvilLancelot && !_game.CurrentLancelotAllegianceSwitched) || (knowledge == Knowledge.Lancelot && _game.CurrentLancelotAllegianceSwitched))
             {
                 return 100;
             }
 
-            if (knowledge == Knowledge.Good || (knowledge == Knowledge.EvilLancelot && _game.LancelotAllegianceSwitched) || (knowledge == Knowledge.Lancelot && !_game.LancelotAllegianceSwitched))
+            if (knowledge == Knowledge.Good || (knowledge == Knowledge.EvilLancelot && _game.CurrentLancelotAllegianceSwitched) || (knowledge == Knowledge.Lancelot && !_game.CurrentLancelotAllegianceSwitched))
             {
                 return 0;
             }
 
             double evilProbability = 0;
 
-            var evilCharactersInGame = _game.AvailableCharacters.Count(c => _game.IsCharacterEvil(c));
+            var evilCharactersInGame = _game.CharacterCards.Count(c => _game.IsCharacterEvil(c, false));
             if (_IAmEvil)
             {
                 evilCharactersInGame--;
             }
 
-            evilProbability = (double)evilCharactersInGame / (double)(_game.GameSize - 1);
+            evilProbability = (double)evilCharactersInGame / (double)(_game.Players.Count - 1);
 
             int correctVotes = 0, votesCounted = 0;
 
             //nothing confirmed, look at quest behaviour
-            foreach (var round in _game.Rounds)
+            foreach (var round in _game.Quests)
             {
-                var onTeam = round.Teams.Last().TeamMembers.Contains(player);
+                var onTeam = round.VoteTracks.Last().Players.Contains(player);
                 if (onTeam)
                 {
-                    var fails = round.Teams.Last().Quests.Count(q => !q.Success);
-                    var size = round.Teams.Last().TeamMembers.Count();
+                    var fails = round.VoteTracks.Last().QuestCards.Count(q => !q.Success);
+                    var size = round.VoteTracks.Last().Players.Count();
 
-                    if (round.Teams.Last().TeamMembers.Contains(_player))
+                    if (round.VoteTracks.Last().Players.Contains(_player))
                     {
                         if (_IAmEvil) { fails = fails - 1; }
                         size = size - 1;
@@ -58,12 +58,11 @@ namespace ResistanceOnline.Site.ComputerPlayers
                     }
                 }
 
-                if(round.Teams.Count() < 5) { //ignore last round as everyone votes accept
-                    var state = round.DetermineState();
-                    if (state == Round.State.Succeeded || state == Round.State.Failed)
+                if(round.VoteTracks.Count() < 5) { //ignore last round as everyone votes accept            
+                    if (round.CurrentVoteTrack.Votes.Count == _game.Players.Count)
                     {
-                        var vote = round.Teams.Last().Votes.FirstOrDefault(v => v.Player == player);
-                        if (vote.Approve == (round.DetermineState() == Round.State.Succeeded))
+                        var vote = round.VoteTracks.Last().Votes.FirstOrDefault(v => v.Player == player);
+                        if (vote.Approve == round.IsSuccess.Value)
                             correctVotes++;
                         votesCounted++;
                     }
@@ -85,7 +84,8 @@ namespace ResistanceOnline.Site.ComputerPlayers
 
         protected override Core.Player LadyOfTheLakeTarget()
         {
-            var eligiblePlayers = _game.Players.Where(p => p.Guid != PlayerGuid).Except(_game.LadyOfTheLakeUses.Select(u => u.UsedBy));
+            var ladyOfTheLakeHistory = _game.Quests.Where(r => r.LadyOfTheLake != null).Select(r => r.LadyOfTheLake.Holder);
+            var eligiblePlayers = _game.Players.Where(p => p.Guid != PlayerGuid).Except(ladyOfTheLakeHistory);
 
             //use it on the person you know the least about
             return eligiblePlayers.Select(p => new { Player = p, Confidence = Math.Abs(ProbabilityOfEvil(p) - 0.5) }).OrderBy(p => p.Confidence).Select(p => p.Player).First();
@@ -101,18 +101,18 @@ namespace ResistanceOnline.Site.ComputerPlayers
         protected override Core.Player ChooseTeamPlayer()
         {
             //put myself on
-            if (!_game.CurrentRound.CurrentTeam.TeamMembers.Any(p => p == _player))
+            if (!_game.CurrentQuest.CurrentVoteTrack.Players.Any(p => p == _player))
             {
                 return _player;
             }
 
-            var playersNotOnTeam = _game.Players.Where(p => p != _player).Except(_game.CurrentRound.CurrentTeam.TeamMembers);
+            var playersNotOnTeam = _game.Players.Where(p => p != _player).Except(_game.CurrentQuest.CurrentVoteTrack.Players);
 
             //if I'm evil, put anyone else on
             Player player = null;
             if (_IAmEvil)
             {
-                player = playersNotOnTeam.Random();
+                player = Random(playersNotOnTeam);
                 SayTheyAreGood(player.Name);
                 return player;
             }
@@ -131,17 +131,17 @@ namespace ResistanceOnline.Site.ComputerPlayers
         protected override bool TeamVote()
         {
             //always succeed the last round
-            if (_game.CurrentRound.Teams.Count == 5)
+            if (_game.CurrentQuest.VoteTracks.Count == 5)
             {
                 SayTeamIsOk();
                 return true;
             }
 
             //work out how many evil players I think might be on the team
-            var evilCount = _game.CurrentRound.CurrentTeam.TeamMembers.Select(p => IsProbablyEvil(p)).Count(x => x);
+            var evilCount = _game.CurrentQuest.CurrentVoteTrack.Players.Select(p => IsProbablyEvil(p)).Count(x => x);
             if (_IAmEvil)
             {
-                if (evilCount >= _game.CurrentRound.RequiredFails)
+                if (evilCount >= _game.CurrentQuest.RequiredFails)
                 {
                     SayTeamIsOk();
                     return true;
@@ -151,7 +151,7 @@ namespace ResistanceOnline.Site.ComputerPlayers
             }
             else
             {
-                if (evilCount >= _game.CurrentRound.RequiredFails)
+                if (evilCount >= _game.CurrentQuest.RequiredFails)
                 {
                     SayTeamNotOk();
                     return false;
@@ -167,6 +167,19 @@ namespace ResistanceOnline.Site.ComputerPlayers
             return (new Random().Next(100) < trust);
         }
 
+
+        protected override Player UseExcalibur()
+        {
+            var teamMembers = _game.CurrentQuest.CurrentVoteTrack.Players;
+
+            foreach(var player in teamMembers) {
+                if(ProbabilityOfEvil(player) == (_IAmEvil ? 0 : 100)) {
+                    return player;
+                }
+            }
+
+            return null;
+        }
     }
 
 }

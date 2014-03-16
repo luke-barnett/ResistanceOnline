@@ -1,40 +1,21 @@
-<h3>Game setup</h3>
-<p>
-    {{game().GameSetup}}
-</p>
-<div data-bind="visible:  $root.game().GameState() == 'GameSetup'">
-    Click a card to switch their character
-</div>
-<ul class="cards" data-bind="foreach: game().CharactersInGame">
-    <li class="btn-group">
-        <img class="card" data-bind="attr: { src: image, title: name, 'data-toggle': $root.game().GameState() == 'GameSetup' ? 'dropdown' : '' }" alt="{{$data}}" />
-        <ul data-bind="foreach: $root.game().AllCharactersSelectList" class="dropdown-menu" role="menu">
-            <li><a href="#" data-bind="click: $parent.setCharacter.bind($data, $parentContext.$index())">{{Text}}</a></li>
-        </ul>
-    </li>	
-</ul>
+<ul>
+    <li>{{game().PlayerCountSummary}} <i>({{game().Characters}})</i></li>
 
-<div class="clear"></div>    
-
-<ul class="rules-table" data-bind="foreach: game().Rules">
+    <!-- ko foreach: game().Rules -->
 	<li>{{$data}}</li>
-</ul>
+    <!-- /ko -->
 
-<ul class="round-table" data-bind="foreach: game().RoundTables">
-    <li>{{$data}}</li>    
-</ul>
-
-<ul class="loyaltycards-table" data-bind="foreach: game().LoyaltyCardsDeltInAdvance">
+    <!-- ko foreach: game().RoundTables -->
     <li>{{$data}}</li>
-</ul>
+    <!-- /ko -->
 
-<div data-bind="visible: game().RoundTables().length == 0">
-    This game only supports five to ten players
-</div>
+    <!-- ko foreach: game().LoyaltyCardsDeltInAdvance -->
+    <li>{{$data}}</li>
+    <!-- /ko -->
+</ul>
 
 <div data-bind="visible: game().PlayerInfo">
-    <h3>Oracle</h3>
-    <p>Click any card to see the knowledge you have about that player</p>    
+    <p>Click each card to see the knowledge you have about that player</p>    
     <ul class="cards" data-bind="foreach: game().PlayerInfo">
 		<li>
 			<img class="playercard" data-bind="attr: { src: image }, click: toggleShowActual" />
@@ -48,7 +29,6 @@
 <div data-bind="foreach: game().Rounds">
 	<h3>
         {{Title}}
-        <img  title="{{Outcome}}" data-bind="visible: Outcome, attr: { src: '/images/' + Outcome() + '.png' }" />
     </h3>
     <p>{{Summary}}</p>
 	
@@ -56,8 +36,7 @@
 		<div class="quest">
             <div class="setup">
                 <p>{{TeamSummary}}</p>
-                <ul class="cards">
-                    
+                <ul class="cards">                                       
 
                     <!-- ko foreach: TeamMembers -->
                         <li>
@@ -93,20 +72,23 @@
             <!-- /ko -->
 		</div>
 	</div>
-    
-    <div class="ladyofthelake">
-        <ul class="cards" data-bind="foreach: LadyOfTheLakeUses">
+
+    <div class="clear"></div>    
+
+    <div class="ladyofthelake" data-bind="visible: LadyOfTheLakeUsedBy()!=null">
+        <ul class="cards">
             <li>
                 <img src="/images/ladyofthelake.png" />
-                <div class="playername">{{UsedBy}}</div>
+                <div class="playername">{{LadyOfTheLakeUsedBy}}</div>
             </li>
-            <li>
-                <img class="card" data-bind="attr: { src: '/images/' + Result() + '.png' }" />
-                <div class="playername">{{UsedOn}}</div>
+            <li data-bind="visible: LadyOfTheLakeUsedOn()!=null">
+                <img class="card" data-bind="attr: { src: '/images/' + LadyOfTheLakeResult() + '.png' }" />
+                <div class="playername">{{LadyOfTheLakeUsedOn}}</div>
             </li>
         </ul>
     </div>
-    <div class="clear"></div>     
+    <div class="clear"></div>      
+
 
     <p data-bind="visible: LoyaltyCard!=null">
         {{LoyaltyCard}}
@@ -121,7 +103,7 @@
 
 <div data-bind="visible: game().GameOver">
     <h3>Game Over</h3>
-    <p>{{game().GameState}}</p>
+    <p>{{game().GameOverMessage}}</p>
 </div>
 
 <span class="warning">{{game().WaitingMessage}}</span>

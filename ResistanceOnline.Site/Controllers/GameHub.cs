@@ -10,55 +10,41 @@ using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using System.Web.Mvc;
 using ResistanceOnline.Database.Entities;
-using ResistanceOnline.Site.ComputerPlayers;
+using Action = ResistanceOnline.Core.Action;
+using Rule = ResistanceOnline.Core.Rule;
+using Character = ResistanceOnline.Core.Character;
+using ResistanceOnline.Site.Infrastructure;
 
 
 namespace ResistanceOnline.Site.Controllers
 {
-    //[Authorize]
     public class GameHub : Hub
     {
-        readonly ResistanceOnlineDbContext _dbContext;
-        public GameHub()//(ResistanceOnlineDbContext dbContext)
+        readonly Infrastructure.SimpleDb _simpleDb;
+        
+        static Dictionary<Guid, List<string>> _userConnections = new Dictionary<Guid, List<string>>();
+        
+        static object _gameCacheLock = new object();
+        static Dictionary<int, Game> _gameCache = new Dictionary<int, Game>();
+
+        public GameHub()
         {
-            _dbContext = new Database.ResistanceOnlineDbContext(); //todo injection
-
-            //create a default game to make development easier
-            if (_games.Count == 0)
-            {
-                var game = new Game();
-				game.Rules.Clear();
-				game.Rules.Add(Rule.LancelotsKnowEachOther);
-				game.Rules.Add(Rule.GoodMustAlwaysVoteSucess);
-				game.Rules.Add(Rule.IncludeLadyOfTheLake);
-                
-				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Jordan\"", Guid.NewGuid())));
-				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Luke\"", Guid.NewGuid())));
-				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Jeffrey\"", Guid.NewGuid())));
-				_computerPlayers.Add(new TrustBot(game, game.JoinGame("\"Jayvin\"", Guid.NewGuid())));
-
-                game.SetCharacter(0, Character.LoyalServantOfArthur);
-                game.SetCharacter(1, Character.Assassin);
-                game.SetCharacter(2, Character.Percival);
-                game.SetCharacter(3, Character.Morgana);
-                game.AddCharacter(Character.Merlin);
-
-                _games.Add(game);
-                game.GameId = _games.IndexOf(game);
-            }
+            _simpleDb = new Infrastructure.SimpleDb(new Database.ResistanceOnlineDbContext());
+            InitGameCache();
         }
 
-        //todo logged in user
         private Guid PlayerGuid
         {
             get
             {
-                if (CurrentUser != null)
-                {
-                    //todo fix the horrible threading problem which throws a null ref here
-                    return CurrentUser.PlayerGuid;
-                }
-                return Guid.Empty;
+                return CurrentUser.PlayerGuid;
+            }
+        }
+        private string PlayerName
+        {
+            get
+            {
+                return CurrentUser.UserName;
             }
         }
 
@@ -66,53 +52,40 @@ namespace ResistanceOnline.Site.Controllers
         {
             get
             {
-                if (Context.User == null)
-                    return null;
-                var userId = Context.User.Identity.GetUserId();
-                return _dbContext.Users.FirstOrDefault(user => user.Id == userId);
+                UserAccount userAccount = null;
+                if (Context!= null && Context.User != null)
+                {
+                    var userId = Context.User.Identity.GetUserId();
+                    userAccount = _simpleDb.GetUser(userId);
+                }
+                if (userAccount == null)
+                {
+                    userAccount = new UserAccount { PlayerGuid = Guid.Empty };
+                }
+                return userAccount;
             }
         }
 
-
-        static List<Game> _games = new List<Game>();
-        static List<ComputerPlayer> _computerPlayers = new List<ComputerPlayer>();
-        static Dictionary<Guid, List<string>> _userConnections = new Dictionary<Guid, List<string>>();
-
-
-        private Game GetGame(int? gameId)
-        {
-            //todo - something to do with databases
-            if (gameId.HasValue == false || gameId.Value >= _games.Count)
-                return null;
-
-            return _games[gameId.Value];
-        }
-
-        private void Update()
+        private void Update(bool force=false)
         {
             foreach (var guid in _userConnections.Keys)
             {
-                var games = _games.Select(g => new GameModel(g, guid));
+                var games = new List<GameModel>();
+                foreach (var gameId in _gameCache.Keys)
+                {
+                    var game = _gameCache[gameId];
+                    var gameModel = new GameModel(gameId, _gameCache[gameId], PlayerGuid);
+
+                    //only send updates for games with recent actions, or when forced on initial connection (page refresh?)
+                    if (force || game.LastActionTime > DateTimeOffset.Now.AddDays(-1))
+                    {
+                        games.Add(gameModel);
+                    }
+                }
 
                 foreach (var connection in _userConnections[guid])
                 {
-                    Clients.Client(connection).Update(games);
-                }
-            }
-        }
-
-        private void OnAfterAction(Game game)
-        {
-            var state = game.DetermineState();
-            if (state == Core.Game.State.Playing || state == Core.Game.State.GuessingMerlin)
-            {
-                var computersPlayersInGame = _computerPlayers.Where(c => game.Players.Select(p => p.Guid).Contains(c.PlayerGuid));
-                while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.PlayerGuid)).Any(a => a != Core.Action.Type.Message)))
-                {
-                    foreach (var computerPlayer in computersPlayersInGame)
-                    {
-                        computerPlayer.DoSomething();
-                    }
+                    Clients.Client(connection).Update(games.OrderBy(g=>g.GameId).ToList());
                 }
             }
         }
@@ -127,137 +100,215 @@ namespace ResistanceOnline.Site.Controllers
                     _userConnections[PlayerGuid] = new List<string>();
                 }
                 _userConnections[PlayerGuid].Add(Context.ConnectionId);
+
+                lock (_gameCacheLock)
+                {
+                    if (!_gameCache.ContainsKey(0) && PlayerGuid != Guid.Empty)
+                    {
+                        //create game 0 for development
+                        var actions = new List<Action>();
+                        actions.Add(new Action(PlayerGuid, Action.Type.Join, PlayerName));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddBot, Useful.RandomName()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddBot, Useful.RandomName()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddBot, Useful.RandomName()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddBot, Useful.RandomName()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddBot, Useful.RandomName()));
+
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Merlin.ToString()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Assassin.ToString()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Percival.ToString()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Morgana.ToString()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
+
+                        actions.Add(new Action(PlayerGuid, Action.Type.AddRule, Rule.LadyOfTheLakeExists.ToString()));
+
+                        var game = new Game(actions);
+                        _gameCache.Add(0, game);
+                    }
+                }
             }
-            Update();
+            Update(true);
             return base.OnConnected();
         }
 
-        public Game CreateGame(int players)
+        void InitGameCache()
         {
-            //todo - something with the database :)
-            var game = new Game();
-            _games.Add(game);
-            game.GameId = _games.IndexOf(game);
-
-            Update();
-
-            return game;
+            lock (_gameCacheLock)
+            {
+                var gameIds = _simpleDb.GameIds();
+                foreach (int gameId in gameIds)
+                {
+                    if (!_gameCache.ContainsKey(gameId))
+                    {
+                        var actions = _simpleDb.GetActions(gameId);
+                        var game = new Game(new List<Action>());
+                        try
+                        {
+                            actions.ForEach(a => game.DoAction(a));
+                        }
+                        catch (Exception)
+                        {
+                            game.GameState = Game.State.Error;
+                        }
+                        _gameCache.Add(gameId, game);
+                    }
+                }
+            }
         }
 
-        public void SetCharacter(int gameId, int index, string character)
+        Game GetGame(int gameId)
+        {            
+            return _gameCache[gameId];
+        }
+
+        public void CreateGame()
         {
+            if (CurrentUser.PlayerGuid == Guid.Empty)
+            {
+                return;
+            }
+
+            var gameId = _simpleDb.NextGameId();
+            _gameCache.Add(gameId, new Game(new List<Action>()));
+            DoAction(gameId, Action.Type.Join, CurrentUser.UserName);
+        }
+
+        public void DeleteGame(int gameId)
+        {
+            _simpleDb.DeleteActions(gameId);
+            _gameCache.Remove(gameId);
+            Update(true);
+        }
+
+        private void DoAction(int gameId, Action.Type actionType, string text = null)
+        {
+            var action = new Action(PlayerGuid, actionType, text);
+            action.GameId = gameId;
+
             var game = GetGame(gameId);
-            game.SetCharacter(index, (Character)Enum.Parse(typeof(Character), character));
-            OnAfterAction(game);
+            game.DoAction(action);
+            _simpleDb.AddAction(action);
+
+            var computersPlayersInGame = game.Players.Where(p=>p.PlayerType != Core.Player.Type.Human);
+            if (game.GameState != Game.State.Lobby)
+            {
+                while (computersPlayersInGame.Any(c => game.AvailableActions(game.Players.First(p => p.Guid == c.Guid)).Any(a => a.ActionType != Action.Type.Message)))
+                {
+                    foreach (var computerPlayer in computersPlayersInGame)
+                    {
+                        var computerActions = Core.ComputerPlayers.ComputerPlayer.Factory(computerPlayer.PlayerType, computerPlayer.Guid).DoSomething(game);
+                        if (computerActions != null)
+                        {
+                            foreach (var computerAction in computerActions)
+                            {
+                                computerAction.GameId = gameId;
+                                game.DoAction(computerAction);
+                                _simpleDb.AddAction(computerAction);
+                            }
+                        }
+                    }
+                }
+            }
 
             Update();
         }
-
-		public void AddRule(int gameId, string rule)
-		{
-			var game = GetGame(gameId);
-			game.AddRule((Core.Rule)Enum.Parse(typeof(Core.Rule), rule));
-			OnAfterAction(game);
-
-			Update();
-		}
 
         public void AddToTeam(int gameId, string person)
         {
-            var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
-            game.AddToTeam(player, game.Players.First(p => p.Name == person));
-            OnAfterAction(game);
+            DoAction(gameId, Action.Type.AddToTeam, person);
+        }
 
+        public void RemoveFromTeam(int gameId, string person)
+        {
+            DoAction(gameId, Action.Type.RemoveFromTeam, person);
+        }
+
+        public void AddBot(int gameId)
+        {
+            DoAction(gameId, Action.Type.AddBot, Useful.RandomName());
+        }
+
+        public void AddCharacterCard(int gameId, string card)
+        {
+            DoAction(gameId, Action.Type.AddCharacterCard, card);
+        }
+
+        public void AddRule(int gameId, string rule)
+        {
+            DoAction(gameId, Action.Type.AddRule, rule);
+        }
+
+        public void RemoveCharacterCard(int gameId, string card)
+        {
+            DoAction(gameId, Action.Type.RemoveCharacterCard, card);
             Update();
         }
 
-        public void SubmitQuestCard(int gameId, bool success)
+        public void RemoveRule(int gameId, string rule)
         {
-            var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
-            game.SubmitQuest(player, success);
-            OnAfterAction(game);
-
+            DoAction(gameId, Action.Type.RemoveRule, rule);
             Update();
         }
 
-        public void VoteForTeam(int gameId, bool approve)
+        public void StartGame(int gameId)
         {
-            var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
-            game.VoteForTeam(player, approve);
-            OnAfterAction(game);
-
+            DoAction(gameId, Action.Type.Start, new Random().Next(int.MaxValue).ToString());
             Update();
         }
 
-        public void JoinGame(int gameId)
+        public void SucceedQuest(int gameId)
         {
-            var game = GetGame(gameId);
-            game.JoinGame(CurrentUser.UserName, PlayerGuid);
-            OnAfterAction(game);
+            DoAction(gameId, Action.Type.SucceedQuest);
+            Update();
+        }
 
+        public void FailQuest(int gameId)
+        {
+            DoAction(gameId, Action.Type.FailQuest);
+            Update();
+        }
+
+        public void VoteApprove(int gameId)
+        {
+            DoAction(gameId, Action.Type.VoteApprove);
+            Update();
+        }
+
+        public void VoteReject(int gameId)
+        {
+            DoAction(gameId, Action.Type.VoteReject);
             Update();
         }
 
         public void GuessMerlin(int gameId, string guess)
         {
-            var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
-            game.GuessMerlin(player, game.Players.First(p => p.Name == guess));
-            OnAfterAction(game);
-
+            DoAction(gameId, Action.Type.GuessMerlin, guess);
             Update();
         }
 
         public void LadyOfTheLake(int gameId, string target)
         {
-            var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
-            game.UseLadyOfTheLake(player, game.Players.First(p => p.Name == target));
-            OnAfterAction(game);
-
+            DoAction(gameId, Action.Type.UseTheLadyOfTheLake, target);
             Update();
         }
 
 
         public void Message(int gameId, string message)
         {
-            var game = GetGame(gameId);
-            var player = game.Players.First(p => p.Guid == PlayerGuid);
-            game.PerformAction(player, new Core.Action { ActionType = Core.Action.Type.Message, Message = message });
-            OnAfterAction(game);
-
+            DoAction(gameId, Action.Type.Message, text: message);
             Update();
         }
 
-        public void StartGame(int gameId)
+        public void AssignExcalibur(int gameId, string proposedPlayerName)
         {
-            var game = GetGame(gameId);
-            game.StartGame();
-            OnAfterAction(game);
+            DoAction(gameId, Action.Type.AssignExcalibur, proposedPlayerName);
             Update();
         }
 
-
-        public void AddComputerPlayer(int gameId, string bot, string name)
+        public void UseExcalibur(int gameId, string proposedPlayerName)
         {
-            var game = GetGame(gameId);
-            switch (bot)
-            {
-                case "trustbot":
-                    _computerPlayers.Add(new ComputerPlayers.TrustBot(game, game.JoinGame(name, Guid.NewGuid())));
-                    break;
-                case "cheatbot":
-                    _computerPlayers.Add(new ComputerPlayers.CheatBot(game, game.JoinGame(name, Guid.NewGuid())));
-                    break;
-                case "simplebot":
-                default:
-                    _computerPlayers.Add(new ComputerPlayers.SimpleBot(game, game.JoinGame(name, Guid.NewGuid())));
-                    break;
-            }
-            OnAfterAction(game);
+            DoAction(gameId, Action.Type.UseExcalibur, proposedPlayerName);
             Update();
         }
     }

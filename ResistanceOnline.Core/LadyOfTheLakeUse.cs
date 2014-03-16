@@ -7,9 +7,8 @@ namespace ResistanceOnline.Core
 {
     public class LadyOfTheLakeUse
     {
-        public Player UsedBy { get; set; }
-        public Player UsedOn { get; set; }
-        public bool ResultWasEvil { get; set; }
-        public int UsedOnRoundNumber { get; set; }
+        public Player Holder { get; set; }
+        public Player Target { get; set; }
+        public bool IsEvil { get; set; }
     }
 }

@@ -1,8 +1,10 @@
-﻿<form role="form" data-bind="submit: addToTeam">
-    <p>Select a player to add to this team</p>
-    <div class="form-group">
-        <select class="form-control" data-bind="options: players, value: player, optionsText: 'Text'" style="float:left;"></select>
-        <input class="btn btn-default" type="submit" value="Add to Team" style="float:left;" />
-    </div>
-    <div class="clear" />
-</form>
+﻿<p>Select a player to add to your team</p>
+<ul class="cards" data-bind="foreach: players">
+    <li>
+        <img class="playercard" src="/images/player.png" />
+        <div class="playername">{{Text}}</div>
+        <button class="btn btn-warning" data-bind="click: function() { $parent.addToTeam(Text()) }">Add</button>
+    </li>
+</ul>
+<div class="clearfix"></div>
+

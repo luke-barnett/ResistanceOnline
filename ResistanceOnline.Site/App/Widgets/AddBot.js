@@ -1,12 +1,10 @@
-﻿define(['data', 'knockout', 'knockout.punches'], function (data, ko, kop) {        
+﻿define(['data', 'knockout', 'knockout.punches'], function (data, ko, kop) {
     var viewModel = {
         gameId: ko.observable(),
-        name: ko.observable(),
-        bot: ko.observable(),
-        addComputerPlayer: function () {
-            $.connection.gameHub.server.addComputerPlayer(viewModel.gameId(), viewModel.bot(), viewModel.name());
+        addBot: function () {
+            $.connection.gameHub.server.addBot(viewModel.gameId());
         },
-        activate: function(game) {            
+        activate: function (game) {
             viewModel.gameId(game.GameId());
         }
     };

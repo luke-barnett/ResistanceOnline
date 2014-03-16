@@ -6,21 +6,22 @@ using System.Threading.Tasks;
 
 namespace ResistanceOnline.Core
 {
-	public enum Rule
-	{
-        GoodMustAlwaysVoteSucess,
-        IncludeLadyOfTheLake,
-		/// <summary>
-		/// Lancelot Variation #3
-		/// </summary>
-		LancelotsKnowEachOther,
-		/// <summary>
-		/// Lancelot Variation #2
-		/// </summary>
-		LancelotsMustVoteFanatically,
-		/// <summary>
-		/// Lancelot Variation #2
-		/// </summary>
-		LoyaltyCardsDeltInAdvance
-	}
+    public enum Rule
+    {
+        GoodMustAlwaysSucceedQuests,
+        LadyOfTheLakeExists,
+        /// <summary>
+        /// Lancelot Variation #3
+        /// </summary>
+        LancelotsKnowEachOther,
+        /// <summary>
+        /// Lancelot Variation #2
+        /// </summary>
+        LancelotsMustVoteFanatically,
+        /// <summary>
+        /// Lancelot Variation #2
+        /// </summary>
+        LoyaltyCardsAreDeltInAdvance,
+        ExcaliburExists
+    }
 }

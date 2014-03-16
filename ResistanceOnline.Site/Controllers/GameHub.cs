@@ -74,7 +74,7 @@ namespace ResistanceOnline.Site.Controllers
                 foreach (var gameId in _gameCache.Keys)
                 {
                     var game = _gameCache[gameId];
-                    var gameModel = new GameModel(gameId, _gameCache[gameId], PlayerGuid);
+					var gameModel = new GameModel(gameId, _gameCache[gameId], guid);
 
                     //only send updates for games with recent actions, or when forced on initial connection (page refresh?)
                     if (force || game.LastActionTime > DateTimeOffset.Now.AddDays(-1))
@@ -107,21 +107,22 @@ namespace ResistanceOnline.Site.Controllers
                     {
                         //create game 0 for development
                         var actions = new List<Action>();
-                        actions.Add(new Action(PlayerGuid, Action.Type.Join, PlayerName));
-                        actions.Add(new Action(PlayerGuid, Action.Type.AddBot, Useful.RandomName()));
-                        actions.Add(new Action(PlayerGuid, Action.Type.AddBot, Useful.RandomName()));
-                        actions.Add(new Action(PlayerGuid, Action.Type.AddBot, Useful.RandomName()));
-                        actions.Add(new Action(PlayerGuid, Action.Type.AddBot, Useful.RandomName()));
-                        actions.Add(new Action(PlayerGuid, Action.Type.AddBot, Useful.RandomName()));
+						var guid = Guid.NewGuid();
+						actions.Add(new Action(guid, Action.Type.Join, "Test"));
+						actions.Add(new Action(guid, Action.Type.AddBot, Useful.RandomName()));
+						actions.Add(new Action(guid, Action.Type.AddBot, Useful.RandomName()));
+						actions.Add(new Action(guid, Action.Type.AddBot, Useful.RandomName()));
+						actions.Add(new Action(guid, Action.Type.AddBot, Useful.RandomName()));
+						actions.Add(new Action(guid, Action.Type.AddBot, Useful.RandomName()));
 
-                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Merlin.ToString()));
-                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Assassin.ToString()));
-                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Percival.ToString()));
-                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.Morgana.ToString()));
-                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
-                        actions.Add(new Action(PlayerGuid, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
+						actions.Add(new Action(guid, Action.Type.AddCharacterCard, Character.Merlin.ToString()));
+						actions.Add(new Action(guid, Action.Type.AddCharacterCard, Character.Assassin.ToString()));
+						actions.Add(new Action(guid, Action.Type.AddCharacterCard, Character.Percival.ToString()));
+						actions.Add(new Action(guid, Action.Type.AddCharacterCard, Character.Morgana.ToString()));
+						actions.Add(new Action(guid, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
+						actions.Add(new Action(guid, Action.Type.AddCharacterCard, Character.LoyalServantOfArthur.ToString()));
 
-                        actions.Add(new Action(PlayerGuid, Action.Type.AddRule, Rule.LadyOfTheLakeExists.ToString()));
+						actions.Add(new Action(guid, Action.Type.AddRule, Rule.LadyOfTheLakeExists.ToString()));
 
                         var game = new Game(actions);
                         _gameCache.Add(0, game);
@@ -228,6 +229,11 @@ namespace ResistanceOnline.Site.Controllers
         {
             DoAction(gameId, Action.Type.AddBot, Useful.RandomName());
         }
+
+		public void JoinGame(int gameId)
+		{
+			DoAction(gameId, Action.Type.Join, PlayerName);
+		}
 
         public void AddCharacterCard(int gameId, string card)
         {

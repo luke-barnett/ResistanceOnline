@@ -205,8 +205,8 @@
     <Content Include="App\Widgets\UseTheLadyOfTheLake.js" />
     <Content Include="App\Widgets\GuessMerlin.html" />
     <Content Include="App\Widgets\GuessMerlin.js" />
-    <Content Include="App\Widgets\JoinGame.html" />
-    <Content Include="App\Widgets\JoinGame.js" />
+    <Content Include="App\Widgets\Join.html" />
+    <Content Include="App\Widgets\Join.js" />
     <Content Include="App\Widgets\SucceedQuest.html" />
     <Content Include="App\Widgets\SucceedQuest.js" />
     <Content Include="App\Widgets\VoteReject.js" />

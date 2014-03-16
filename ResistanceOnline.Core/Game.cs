@@ -268,7 +268,7 @@ namespace ResistanceOnline.Core
 
                             if (CharacterCards.Count > 0)
                             {
-                                actions.Add(AvailableAction.Items(Action.Type.RemoveCharacterCard, CharacterCards.Distinct().Select(t => t.ToString()).ToList()));
+                                actions.Add(AvailableAction.Items(Action.Type.RemoveCharacterCard, CharacterCards.Select(t => t.ToString()).ToList()));
                             }
 
                             var otherRules = Enum.GetValues(typeof(Rule)).Cast<Rule>().ToList().Except(Rules).Select(r=>r.ToString()).ToList();
@@ -278,7 +278,7 @@ namespace ResistanceOnline.Core
                             }
                             if (Rules.Count > 0)
                             {
-                                actions.Add(AvailableAction.Items(Action.Type.RemoveRule, Rules.Distinct().Select(r=>r.ToString()).ToList()));
+                                actions.Add(AvailableAction.Items(Action.Type.RemoveRule, Rules.Select(r=>r.ToString()).ToList()));
                             }
 
                             if (IsValid())

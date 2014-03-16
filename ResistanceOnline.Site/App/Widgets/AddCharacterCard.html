@@ -1,7 +1,8 @@
-﻿<form role="form" data-bind="submit: addCharacterCard">
-    <div class="form-group">
-        <select class="form-control" data-bind="options: cards, value: card, optionsText: 'Text'" style="float:left;"></select>
-        <input class="btn btn-warning" type="submit" value="Add Character Card" style="float:left;" />
-    </div>
-    <div class="clear" />
-</form>
+﻿<ul class="cards" data-bind="foreach: cards">
+    <li>
+        <img class="playercard" data-bind="attr: { src: '/images/' + Text() + '.png' }" />
+        <button class="btn btn-warning" data-bind="click: function() { $parent.addCharacterCard(Text()) }">Add</button>
+    </li>
+</ul>
+<div class="clearfix"></div>
+

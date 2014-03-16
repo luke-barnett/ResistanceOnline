@@ -54,8 +54,29 @@ namespace ResistanceOnline.Site.Models
         public string GameOwner { get; set; }
         public bool IsOwner { get; set; }
 
+        private Game _game;
+
+        public string HomeRowClass
+        {
+            get
+            {
+                switch (_game.GameState)
+                {
+                    case Game.State.EternalChaos:
+                    case Game.State.EvilTriumphs:
+                        return "danger";
+                    case Game.State.GoodPrevails:
+                        return "success";
+                    case Game.State.Lobby:
+                        return "info";
+                }
+                return "default";
+            }
+        }
+
 		public GameModel(int gameId, Game game, Guid playerGuid)
 		{
+            _game = game;
             GameId = gameId;
             GameOwner = game.Players.First().Name;
             IsOwner = game.Players.First().Guid == playerGuid;

@@ -1,7 +1,7 @@
-﻿<form role="form" data-bind="submit: removeCharacterCard">
-    <div class="form-group">
-        <select class="form-control" data-bind="options: cards, value: card, optionsText: 'Text'" style="float:left;"></select>
-        <input class="btn btn-warning" type="submit" value="Remove Character Card" style="float:left;" />
-    </div>
-    <div class="clear" />
-</form>
+﻿<ul class="cards" data-bind="foreach: cards">
+    <li>
+        <img class="playercard" data-bind="attr: { src: '/images/' + Text() + '.png' }" />
+        <button class="btn btn-warning" data-bind="click: function() { $parent.removeCharacterCard(Text()) }">Del.</button>
+    </li>
+</ul>
+<div class="clearfix"></div>

@@ -10,10 +10,10 @@
             </tr>
         </thead>
         <tbody data-bind="foreach: games">
-            <tr>
+            <tr data-bind="attr: { 'class': HomeRowClass }">
                 <td>{{GameId}}</td>
                 <td>{{GameOwner}}</td>
-                <td>{{PlayerCountSummary}}, {{PlayersSummary}}</td>
+                <td>{{PlayerCountSummary}}; {{PlayersSummary}}</td>
                 <td>{{GameState}}</td>
                 <td>
                     <a class="btn btn-success" data-bind="attr: { href: '#/game/' + GameId() }, visible: GameState() != 'Error'">Goto Game</a>

@@ -1,10 +1,9 @@
 ﻿define(['data', 'knockout', 'knockout.punches'], function (data, ko, kop) {
     var viewModel = {
         gameId: ko.observable(),
-        rule: ko.observable(),
         rules: ko.observableArray(),
-        removeRule: function () {
-            $.connection.gameHub.server.removeRule(viewModel.gameId(), viewModel.rule().Text());
+        removeRule: function (rule) {
+            $.connection.gameHub.server.removeRule(viewModel.gameId(), rule);
         },
         activate: function(game) {            
             viewModel.gameId(game.GameId());

@@ -3,10 +3,20 @@
     var deferred = new $.Deferred();
     data.subscribe(function () { deferred.resolve() });
     var viewModel = {
-        index: ko.observable(0),
-        game: ko.computed(function () { return data()[viewModel.index()]; }, this, { deferEvaluation: true })
+    	gameid: ko.observable(0),
+    	game: ko.computed(function ()
+    	{
+    		return $.grep(data(), function (item)
+    		{
+    			return item.GameId() == viewModel.gameid();
+    		})[0]
+    	}, this, { deferEvaluation: true })
     };
-    viewModel.activate = function (index) { viewModel.index(index); if(!data().length) return deferred;};
+    viewModel.activate = function (gameid) {
+    	viewModel.gameid(gameid);
+    	if (!data().length)
+    		return deferred;
+    };
 
     return viewModel;
 });

@@ -14,7 +14,7 @@
                 <td>{{GameId}}</td>
                 <td>{{GameOwner}}</td>
                 <td>{{PlayerCountSummary}}; {{PlayersSummary}}</td>
-                <td>{{GameState}}</td>
+                <td>{{GameState}}. {{WaitingMessage}}</td>
                 <td>
                     <a class="btn btn-success" data-bind="attr: { href: '#/game/' + GameId() }, visible: GameState() != 'Error'">Goto Game</a>
                     <a class="btn btn-danger" data-bind="click: function() { $parent.deleteGame(GameId()) }, visible: IsOwner()">Delete</a>

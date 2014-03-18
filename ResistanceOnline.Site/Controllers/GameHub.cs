@@ -74,7 +74,7 @@ namespace ResistanceOnline.Site.Controllers
                 foreach (var gameId in _gameCache.Keys)
                 {
                     var game = _gameCache[gameId];
-					var gameModel = new GameModel(gameId, _gameCache[gameId], guid);
+					var gameModel = new GameModel(gameId, game, guid);
 
                     //only send updates for games with recent actions, or when forced on initial connection (page refresh?)
                     if (force || game.LastActionTime > DateTimeOffset.Now.AddDays(-1))

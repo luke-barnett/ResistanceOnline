@@ -226,6 +226,7 @@
     <Content Include="Images\assassin.png" />
     <Content Include="Images\avalon.png" />
     <Content Include="Images\excaliburtoken.png" />
+    <Content Include="Images\null.png" />
     <Content Include="Images\unallocated.png" />
     <Content Include="Images\evil-wins.png" />
     <Content Include="Images\evil.png" />

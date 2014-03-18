@@ -209,10 +209,7 @@ namespace ResistanceOnline.Site.Models
 
 				PlayerInfo.Add(playerInfo);
 
-                if (p != player)
-                {
-                    waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a.ActionType, Name = p.Name }));
-                }
+                waiting.AddRange(game.AvailableActions(p).Select(a => new WaitingActionsModel { Action = a.ActionType, Name = p.Name }));
 			}
 
             //build waiting message

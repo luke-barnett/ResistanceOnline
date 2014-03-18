@@ -306,7 +306,7 @@ namespace ResistanceOnline.Core
                     }
                     break;
                 case State.VotingForTeam:
-                    if (!CurrentVoteTrack.Votes.Any(v => v.Player == player))
+                    if (player!=null && !CurrentVoteTrack.Votes.Any(v => v.Player == player))
                     {
                         actions.Add(AvailableAction.Action(Action.Type.VoteApprove));
                         actions.Add(AvailableAction.Action(Action.Type.VoteReject));

@@ -21,24 +21,6 @@
         return this;
     }
 
-
-    function Character(data, game) {
-        var self = this;
-        map.fromJS(data, {}, this);
-        
-        self.image = ko.computed(function () {
-           return "/Images/" + data + ".png";
-        });
-
-        self.name = data;
-
-        self.setCharacter = function (index) {
-            $.connection.gameHub.server.setCharacter(game.GameId(), index, this.Value());
-        }
-
-        return this;
-    }
-
    
     var update = function (g) {
         var mapping = {

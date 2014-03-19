@@ -1,10 +1,9 @@
 ﻿define(['data', 'knockout', 'knockout.punches'], function (data, ko, kop) {
     var viewModel = {
         gameId: ko.observable(),
-        player: ko.observable(),
         players: ko.observableArray(),
-        useExcalibur: function () {
-            $.connection.gameHub.server.useExcalibur(viewModel.gameId(), viewModel.player().Text());
+        useExcalibur: function (player) {
+            $.connection.gameHub.server.useExcalibur(viewModel.gameId(), player);
         },
         activate: function(game) {            
             viewModel.gameId(game.GameId());

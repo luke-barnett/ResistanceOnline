@@ -137,7 +137,9 @@ namespace ResistanceOnline.Core.ComputerPlayers
 
             if (availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.UseExcalibur))
             {
-                actions.Add( new Action(PlayerGuid, Action.Type.UseExcalibur, UseExcalibur().Name));
+                var target = UseExcalibur();
+                var name = target==null? string.Empty : target.Name;
+                actions.Add( new Action(PlayerGuid, Action.Type.UseExcalibur, name));
             }
 
             if (availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.FailQuest) || availableActions.Any(a => a.ActionType == ResistanceOnline.Core.Action.Type.SucceedQuest))

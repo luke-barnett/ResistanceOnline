@@ -1,8 +1,10 @@
-﻿<form role="form" data-bind="submit: useExcalibur">
-    <p>Select a player to use excalibur on</p>
-    <div class="form-group">
-        <select class="form-control" data-bind="options: players, value: player, optionsText: 'Text'" style="float:left;"></select>
-        <input class="btn btn-warning" type="submit" value="Use Excalibur" style="float:left;" />
-    </div>
-    <div class="clear" />
-</form>
+﻿<p>Select a player to use excalibur on</p>
+<ul class="cards" data-bind="foreach: players">
+    <li>
+        <img class="playercard" src="/images/excaliburtoken.png" data-bind="visible: Text()!=''" />
+        <div class="playername" data-bind="visible: Text()!=''">{{Text}}</div>
+        <button class="btn btn-warning" data-bind="click: function() { $parent.useExcalibur(Text()) },visible: Text()!=''">Use</button>
+        <button class="btn btn-warning" data-bind="click: function() { $parent.useExcalibur(Text()) },visible: Text()==''">Skip</button>
+    </li>
+</ul>
+<div class="clearfix"></div>

@@ -1,7 +1,9 @@
-﻿<form role="form" data-bind="submit: useTheLadyOfTheLake">
-    <div class="form-group">
-        <select class="form-control" data-bind="options: players, value: player, optionsText: 'Text'" style="float:left;"></select>
-        <input class="btn btn-warning" type="submit" value="Use Lady of the Lake" style="float:left;" />
-    </div>
-    <div class="clear" />
-</form>
+﻿<p>Select a player to use the lady of the lake on</p>
+<ul class="cards" data-bind="foreach: players">
+    <li>
+        <img class="playercard" src="/images/ladyofthelake.png" />
+        <div class="playername">{{Text}}</div>
+        <button class="btn btn-warning" data-bind="click: function() { $parent.useTheLadyOfTheLake(Text()) }">Use</button>
+    </li>
+</ul>
+<div class="clearfix"></div>

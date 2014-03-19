@@ -346,6 +346,7 @@ namespace ResistanceOnline.Core
                     if (CurrentVoteTrack.Excalibur.Holder == player)
                     {
                         actions.Add(AvailableAction.Items(Action.Type.UseExcalibur, CurrentVoteTrack.Players.Where(p => p != player).Select(p => p.Name).ToList()));
+                        actions.Last().ActionItems.Insert(0, "");
                     }
                     break;
                 case State.LadyOfTheLake:
@@ -609,16 +610,23 @@ namespace ResistanceOnline.Core
 
         void AssignExcalibur(Player proposedPlayer)
         {
-            CurrentVoteTrack.Excalibur.Holder = proposedPlayer;
+            CurrentVoteTrack.Excalibur = new ExcaliburUse { Holder = proposedPlayer };
 
             GameState = State.VotingForTeam;
         }
 
         void UseExcalibur(Player player, Player proposedPlayer)
         {
-            CurrentVoteTrack.Excalibur.UsedOn = CurrentVoteTrack.QuestCards.First(p => p.Player == proposedPlayer);
-            CurrentVoteTrack.Excalibur.OriginalMissionWasSuccess = CurrentVoteTrack.Excalibur.UsedOn.Success;
-            CurrentVoteTrack.Excalibur.UsedOn.Success = !CurrentVoteTrack.Excalibur.UsedOn.Success;
+            if (proposedPlayer!=null)
+            {
+                CurrentVoteTrack.Excalibur.UsedOn = CurrentVoteTrack.QuestCards.First(p => p.Player == proposedPlayer);
+                CurrentVoteTrack.Excalibur.OriginalMissionWasSuccess = CurrentVoteTrack.Excalibur.UsedOn.Success;
+                CurrentVoteTrack.Excalibur.UsedOn.Success = !CurrentVoteTrack.Excalibur.UsedOn.Success;
+            }
+            else
+            {
+                CurrentVoteTrack.Excalibur.Skipped = true;
+            }
 
             QuestFinished();
         }
@@ -657,7 +665,14 @@ namespace ResistanceOnline.Core
 
             if (CurrentVoteTrack.QuestCards.Count == CurrentVoteTrack.QuestSize)
             {
-                QuestFinished();
+                if (CurrentVoteTrack.Excalibur != null)
+                {
+                    GameState = State.UsingExcalibur;
+                }
+                else
+                {
+                    QuestFinished();
+                }
             }
         }
 

@@ -8,6 +8,10 @@
     padding-right: 15px;
 }
 
+.navbar {
+    margin-bottom:0;
+}
+
 /* Set width on the form input elements since they're 100% wide by default */
 input,
 select,
@@ -45,6 +49,10 @@ ul.cards > li {
     margin-right:4px;
     list-style-type:none;
     width:52px;    
+}
+
+li {
+    margin-bottom:4px;
 }
 
 .clear {

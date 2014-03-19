@@ -82,7 +82,7 @@
                 <div class="playername">{{LadyOfTheLakeUsedBy}}</div>
             </li>
             <li data-bind="visible: LadyOfTheLakeUsedOn()!=null">
-                <img class="card" data-bind="attr: { src: '/images/' + LadyOfTheLakeResult() + '.png' }" />
+                <img class="card" src="/images/allegiance.png" data-bind="attr: { 'data-result': '/images/' + LadyOfTheLakeResult() + '.png'}, click: function(item, event) { var swap = $(event.target).attr('src'); $(event.target).attr('src', $(event.target).attr('data-result')); $(event.target).attr('data-result', swap); }" />
                 <div class="playername">{{LadyOfTheLakeUsedOn}}</div>
             </li>
         </ul>

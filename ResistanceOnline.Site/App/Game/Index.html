@@ -40,8 +40,9 @@
 
                     <!-- ko foreach: TeamMembers -->
                         <li>
-                            <img src="/Images/teamtoken.png" title="{{$data}}" />
-                            <div class="playername">{{$data}}</div>
+                            <img src="/Images/teamtoken.png" data-bind="visible: !HasExcalibur()" />
+                            <img src="/Images/excaliburtoken.png" data-bind="visible: HasExcalibur()" />
+                            <div class="playername">{{Player}}</div>
                         </li>
                     
                     <!-- /ko -->

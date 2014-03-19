@@ -332,6 +332,7 @@
     <Compile Include="Models\LadyOfTheLakeUseModel.cs" />
     <Compile Include="Models\LoginConfirmationViewModel.cs" />
     <Compile Include="Models\MessageModel.cs" />
+    <Compile Include="Models\TeamMemberModel.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\GameHub.cs" />

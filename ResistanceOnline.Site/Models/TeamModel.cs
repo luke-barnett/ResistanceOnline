@@ -10,7 +10,7 @@ namespace ResistanceOnline.Site.Models
 	{
 		public string Leader { get; set; }
         public ExcaliburUseModel Excalibur { get; set; }
-		public List<string> TeamMembers { get; set; }
+		public List<TeamMemberModel> TeamMembers { get; set; }
 		public List<VoteModel> Vote { get; set; }
 		public List<QuestCardModel> QuestCards { get; set; }
         public List<MessageModel> Messages { get; set; }
@@ -26,9 +26,14 @@ namespace ResistanceOnline.Site.Models
             {
                 Excalibur = new ExcaliburUseModel(team.Excalibur, team.Excalibur.Holder);
             }
-			TeamMembers = team.Players.Select(p => p.Name).ToList();
+            TeamMembers = team.Players.Select(p => new TeamMemberModel { Player = p.Name, HasExcalibur = Excalibur != null && p.Name == Excalibur.UsedBy }).ToList();
 			Vote = team.Votes.OrderBy(v=>v.Player.Name).Select(v => new VoteModel(v, team.Votes.Count != totalPlayers)).ToList();
-			QuestCards = team.QuestCards.OrderBy(q=> q.Success).Select(q => new QuestCardModel(q.Success, team.QuestCards.Count != TeamMembers.Count)).ToList();
+
+            var hidden = team.QuestCards.Count != TeamMembers.Count;
+            if (team.Excalibur != null && team.Excalibur.UsedOn == null && !team.Excalibur.Skipped)
+                hidden = true;
+            QuestCards = team.QuestCards.OrderBy(q=> q.Success).Select(q => new QuestCardModel(q.Success, hidden)).ToList();
+            
             Messages = team.Messages.Select(m => new MessageModel(m.Player.Name, m.Message)).ToList();
 		}
 	}

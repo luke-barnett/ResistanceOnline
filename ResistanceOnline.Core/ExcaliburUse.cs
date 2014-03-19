@@ -10,5 +10,6 @@ namespace ResistanceOnline.Core
         public Player Holder { get; set; }
         public QuestCard UsedOn { get; set; }
         public bool? OriginalMissionWasSuccess { get; set; }
+        public bool Skipped { get; set; }
     }
 }

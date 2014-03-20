@@ -51,6 +51,10 @@ ul.cards > li {
     width:52px;    
 }
 
+ul.cards > li > button {
+    width:52px;    
+}
+
 li {
     margin-bottom:4px;
 }

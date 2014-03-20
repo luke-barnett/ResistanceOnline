@@ -57,7 +57,7 @@ namespace ResistanceOnline.Site.Models
             Teams = new List<TeamModel>();
             foreach (var voteTrack in round.VoteTracks)
             {
-                Teams.Add(new TeamModel(voteTrack, playerCount, round.VoteTracks.IndexOf(voteTrack) + 1));
+                Teams.Add(new TeamModel(player, voteTrack, playerCount, round.VoteTracks.IndexOf(voteTrack) + 1));
             }
 
             var loyaltyCard = game.GetLoyaltyCard(roundNumber);

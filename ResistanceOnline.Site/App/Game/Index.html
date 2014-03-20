@@ -55,6 +55,21 @@
 
                 </ul>
             </div>
+
+            <div class="clear"></div>
+            <div class="excalibur" data-bind="visible: ExcaliburUsedOn()!=null && ExcaliburUsedOn()!='No One'">
+                <ul class="cards">
+                    <li>
+                        <img src="/images/excaliburtoken.png" />
+                        <div class="playername">{{ExcaliburUsedBy}}</div>
+                    </li>
+                    <li data-bind="visible: ExcaliburUsedOn()!=null">
+                        <img class="card" src="/images/quest.png" data-bind="attr: { 'data-result': '/images/' + ExcaliburResult() + '.png'}, click: function(item, event) { var swap = $(event.target).attr('src'); $(event.target).attr('src', $(event.target).attr('data-result')); $(event.target).attr('data-result', swap); }" />
+                        <div class="playername">{{ExcaliburUsedOn}}</div>
+                    </li>
+                </ul>
+            </div>
+
             <div class="clear"></div>
             <div class="results">
                 <ul class="cards" data-bind="foreach: QuestCards">                    

@@ -37,8 +37,10 @@ namespace ResistanceOnline.Site.Models
 
         public string PlayerName { get; set; }
         public string PlayersSummary { get; set; }
-        public Player AssassinsGuessAtMerlin { get; set; }
-		public List<string> Actions { get; set; }
+        public string Assassin { get; set; }
+        public string AssassinsGuessAtMerlinPlayerName { get; set; }
+        public string AssassinsGuessAtMerlinCharacter { get; set; }
+        public List<string> Actions { get; set; }
 		public string WaitingMessage { get; set; }
 		public List<PlayerInfoModel> PlayerInfo { get; set; }
 		public List<RoundModel> Rounds { get; set; }
@@ -123,7 +125,13 @@ namespace ResistanceOnline.Site.Models
 			IsSpectator = player == null;
             PlayerName = player == null ? "Spectator" : player.Name;
 
-            AssassinsGuessAtMerlin = game.AssassinsGuessAtMerlin;
+            if (game.AssassinsGuessAtMerlin != null)
+            {
+                AssassinsGuessAtMerlinPlayerName = game.AssassinsGuessAtMerlin.Name;
+                AssassinsGuessAtMerlinCharacter = game.AssassinsGuessAtMerlin.Character.ToString();
+                Assassin = game.Players.First(p => p.Character == Character.Assassin).Name;
+            }
+
 			State = game.GameState.ToString();
 
             var availableActions = game.AvailableActions(player);

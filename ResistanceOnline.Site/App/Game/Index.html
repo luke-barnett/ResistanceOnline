@@ -112,9 +112,21 @@
     
 </div>
 
-<div data-bind="visible: game().AssassinsGuessAtMerlin">
+<div data-bind="visible: game().AssassinsGuessAtMerlinName != null && game().AssassinsGuessAtMerlinName != ''">
     <h3>Guess at merlin</h3>
-    {{game().AssassinsGuessAtMerlin != null ? game().AssassinsGuessAtMerlin.Name : ''}}
+    <ul class="cards">
+        <li>
+            <img src="/images/assassin.png" />
+            <div class="playername">{{game().Assassin}}</div>
+        </li>
+        <li>
+            <img data-bind="attr: { src: '/images/' + game().AssassinsGuessAtMerlinCharacter() + '.png' }" />
+            <div class="playername">{{game().AssassinsGuessAtMerlinPlayerName}}</div>
+        </li>
+    </ul>
+
+    <div class="clear"></div>
+
 </div>
 
 <div data-bind="visible: game().GameOver">

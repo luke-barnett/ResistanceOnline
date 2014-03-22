@@ -418,6 +418,11 @@ namespace ResistanceOnline.Core
         public void DoAction(Action action)
         {
             var owner = Players.FirstOrDefault(p => p.Guid == action.Owner);
+            if (action.ActionType == Action.Type.AddBot)
+            {
+                owner = Players.First();
+            }
+
             if (owner == null && action.ActionType != Action.Type.Join)
             {
                 throw new InvalidOperationException(String.Format("player guid {0} could not be mapped to a valid player", action.Owner));
@@ -453,7 +458,7 @@ namespace ResistanceOnline.Core
                     RemoveRule(action.Text);
                     break;
                 case Action.Type.AddBot:
-                    JoinGame(action.Text, Guid.NewGuid(), Player.Type.TrustBot);
+                    JoinGame(action.Text, action.Owner, Player.Type.TrustBot);
                     break;
                 case Action.Type.Start:
                     StartGame(int.Parse(action.Text));

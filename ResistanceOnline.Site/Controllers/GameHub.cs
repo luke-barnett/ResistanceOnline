@@ -109,11 +109,11 @@ namespace ResistanceOnline.Site.Controllers
                         var actions = new List<Action>();
 						var guid = PlayerGuid;
 						actions.Add(new Action(guid, Action.Type.Join, PlayerName));
-						actions.Add(new Action(guid, Action.Type.AddBot, Useful.RandomName()));
-						actions.Add(new Action(guid, Action.Type.AddBot, Useful.RandomName()));
-						actions.Add(new Action(guid, Action.Type.AddBot, Useful.RandomName()));
-						actions.Add(new Action(guid, Action.Type.AddBot, Useful.RandomName()));
-						actions.Add(new Action(guid, Action.Type.AddBot, Useful.RandomName()));
+						actions.Add(new Action(Guid.NewGuid(), Action.Type.AddBot, Useful.RandomName()));
+                        actions.Add(new Action(Guid.NewGuid(), Action.Type.AddBot, Useful.RandomName()));
+                        actions.Add(new Action(Guid.NewGuid(), Action.Type.AddBot, Useful.RandomName()));
+                        actions.Add(new Action(Guid.NewGuid(), Action.Type.AddBot, Useful.RandomName()));
+                        actions.Add(new Action(Guid.NewGuid(), Action.Type.AddBot, Useful.RandomName()));
 
 						actions.Add(new Action(guid, Action.Type.AddCharacterCard, Character.Merlin.ToString()));
 						actions.Add(new Action(guid, Action.Type.AddCharacterCard, Character.Assassin.ToString()));
@@ -182,9 +182,20 @@ namespace ResistanceOnline.Site.Controllers
             Update(true);
         }
 
+        /// <summary>
+        /// do an action as the logged on user
+        /// </summary>
         private void DoAction(int gameId, Action.Type actionType, string text = null)
         {
-            var action = new Action(PlayerGuid, actionType, text);
+            DoAction(gameId, PlayerGuid, actionType, text);
+        }
+
+        /// <summary>
+        /// do an action as a specific player
+        /// </summary>
+        private void DoAction(int gameId, Guid owner, Action.Type actionType, string text = null)
+        {
+            var action = new Action(owner, actionType, text);
             action.GameId = gameId;
 
             var game = GetGame(gameId);
@@ -227,7 +238,7 @@ namespace ResistanceOnline.Site.Controllers
 
         public void AddBot(int gameId)
         {
-            DoAction(gameId, Action.Type.AddBot, Useful.RandomName());
+            DoAction(gameId, Guid.NewGuid(), Action.Type.AddBot, Useful.RandomName());
         }
 
 		public void JoinGame(int gameId)

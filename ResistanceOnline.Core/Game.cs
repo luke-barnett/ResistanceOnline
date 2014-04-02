@@ -232,7 +232,7 @@ namespace ResistanceOnline.Core
             //merlin knows minions (except mordred)
             if (myself.Character == Character.Merlin)
             {
-                if (someoneelse.Character == Character.Assassin || someoneelse.Character == Character.Morgana || someoneelse.Character == Character.MinionOfMordred || someoneelse.Character == Character.Oberon)
+				if (someoneelse.Character == Character.Assassin || someoneelse.Character == Character.Morgana || someoneelse.Character == Character.MinionOfMordred || someoneelse.Character == Character.Oberon || someoneelse.Character == Character.EvilLancelot)
                 {
                     return Knowledge.Evil;
                 }

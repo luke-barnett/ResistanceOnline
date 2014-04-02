@@ -103,7 +103,7 @@ namespace ResistanceOnline.Site.Controllers
 
                 lock (_gameCacheLock)
                 {
-                    if (!_gameCache.ContainsKey(0) && PlayerGuid != Guid.Empty)
+                    if (!_gameCache.ContainsKey(0) && PlayerGuid != Guid.Empty && false)
                     {
                         //create game 0 for development
                         var actions = new List<Action>();

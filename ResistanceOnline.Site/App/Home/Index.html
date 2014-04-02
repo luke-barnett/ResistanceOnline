@@ -3,7 +3,7 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>Owner</th>
+                <th>Game</th>
                 <th>Players</th>
                 <th>State</th>
                 <th></th>
@@ -12,7 +12,7 @@
         <tbody data-bind="foreach: games">
             <tr data-bind="attr: { 'class': HomeRowClass }">
                 <td>{{GameId}}</td>
-                <td>{{GameOwner}}</td>
+                <td>{{GameName}}</td>
                 <td>{{PlayerCountSummary}}; {{PlayersSummary}}</td>
                 <td>{{GameState}}. {{WaitingMessage}}</td>
                 <td>

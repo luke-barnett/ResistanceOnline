@@ -17,6 +17,7 @@ namespace ResistanceOnline.Core
         public enum Type
         {
             Join,
+            SetGameName,
             AddBot,
             AddCharacterCard,
             RemoveCharacterCard,

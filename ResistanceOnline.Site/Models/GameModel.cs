@@ -36,6 +36,7 @@ namespace ResistanceOnline.Site.Models
         public SelectList RemoveCharacterCardSelectList { get; set; }
 
         public string PlayerName { get; set; }
+        public string GameName { get; set; }
         public string PlayersSummary { get; set; }
         public string Assassin { get; set; }
         public string AssassinsGuessAtMerlinPlayerName { get; set; }
@@ -80,6 +81,7 @@ namespace ResistanceOnline.Site.Models
 		{
             _game = game;
             GameId = gameId;
+            GameName = game.GameName;
             GameOwner = game.Players.First().Name;
             IsOwner = game.Players.First().Guid == playerGuid;
             PlayerCountSummary = ("player".ToQuantity(game.Players.Count));

@@ -37,6 +37,8 @@ namespace ResistanceOnline.Core
         public List<QuestSize> RoundTables;
         public List<Player> Winners { get; set; }
 
+        public string GameName { get; set; }
+
         public State GameState { get; set; }
         public List<Quest> Quests { get; set; }
         public Player AssassinsGuessAtMerlin { get; set; }
@@ -263,6 +265,7 @@ namespace ResistanceOnline.Core
                     {
                         if (player == Players.First())
                         {
+                            actions.Add(AvailableAction.FreeText(Action.Type.SetGameName));
                             actions.Add(AvailableAction.FreeText(Action.Type.AddBot));
                             actions.Add(AvailableAction.Items(Action.Type.AddCharacterCard, Enum.GetNames(typeof(Character)).ToList()));
 
@@ -444,6 +447,9 @@ namespace ResistanceOnline.Core
             {
                 case Action.Type.Join:
                     JoinGame(action.Text, action.Owner);
+                    break;
+                case Action.Type.SetGameName:
+                    GameName = action.Text;
                     break;
                 case Action.Type.AddCharacterCard:
                     AddCard(action.Text);
@@ -689,6 +695,7 @@ namespace ResistanceOnline.Core
 
             QuestFinished();
         }
+
 
     }
 }

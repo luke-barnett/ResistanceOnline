@@ -108,6 +108,9 @@
     <Reference Include="Owin">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
+    <Reference Include="Postal">
+      <HintPath>..\packages\Postal.0.9.1\lib\net40\Postal.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="Owin">
@@ -301,6 +304,9 @@
     <Content Include="Scripts\jquery-2.1.0.min.map" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\LoginConfirmation.cshtml" />
+    <Content Include="Views\Emails\Web.config" />
+    <Content Include="Views\Emails\_ViewStart.cshtml" />
+    <Content Include="Views\Emails\HailUser.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -328,6 +334,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Infrastructure\ChallengeResult.cs" />
+    <Compile Include="Infrastructure\Messaging\IMessageService.cs" />
+    <Compile Include="Infrastructure\Messaging\Implementations\EmailService.cs" />
+    <Compile Include="Infrastructure\NinjectSignalRDependencyResolver.cs" />
     <Compile Include="Infrastructure\SimpleDb.cs" />
     <Compile Include="Infrastructure\Useful.cs" />
     <Compile Include="Models\ExcaliburUseModel.cs" />

@@ -4,6 +4,8 @@ using ResistanceOnline.Database.Entities;
 using ResistanceOnline.Site.Infrastructure;
 using ResistanceOnline.Site.Models;
 using System;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -129,7 +131,19 @@ namespace ResistanceOnline.Site.Controllers
 		private async Task SignInAsync(UserAccount user)
 		{
 			AuthenticationManager.SignOut(DefaultAuthenticationTypes.ExternalCookie);
+
 			var identity = await _userManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
+
+			if (!identity.HasClaim(c => c.Type == ClaimTypes.Email))
+			{
+				var externalId = await AuthenticationManager.GetExternalIdentityAsync(DefaultAuthenticationTypes.ExternalCookie);
+
+				if (externalId.HasClaim(c => c.Type == ClaimTypes.Email))
+				{
+					_userManager.AddClaim(identity.GetUserId(), externalId.Claims.First(claim => claim.Type == ClaimTypes.Email));
+				}
+			}
+
 			AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = true }, identity);
 		}
 

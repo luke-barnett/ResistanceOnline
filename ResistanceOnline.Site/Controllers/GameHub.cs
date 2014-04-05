@@ -57,7 +57,13 @@ namespace ResistanceOnline.Site.Controllers
 				if (Context != null && Context.User != null)
 				{
 					var userId = Context.User.Identity.GetUserId();
-					userAccount = _simpleDb.GetUser(userId);
+                    try
+                    {
+                        userAccount = _simpleDb.GetUser(userId);
+                    }
+                    catch
+                    {
+                    }
 				}
 				if (userAccount == null)
 				{
@@ -90,6 +96,25 @@ namespace ResistanceOnline.Site.Controllers
 				}
 			}
 		}
+
+        public override System.Threading.Tasks.Task OnDisconnected()
+        {
+            var keysToRemove = new List<Guid>();
+            foreach (var key in _userConnections.Keys)
+            {                
+                if (_userConnections[key].Contains(Context.ConnectionId))
+                {
+                    _userConnections[key].Remove(Context.ConnectionId);
+                    if (_userConnections[key].Count == 0)
+                    {
+                        keysToRemove.Add(key);
+                    }
+                }
+            }
+            keysToRemove.ForEach(k => _userConnections.Remove(k));
+
+            return base.OnDisconnected();
+        }
 
 		public override System.Threading.Tasks.Task OnConnected()
 		{

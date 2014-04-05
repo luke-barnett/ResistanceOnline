@@ -227,7 +227,7 @@ namespace ResistanceOnline.Site.Controllers
 			action.GameId = gameId;
 
 			var game = GetGame(gameId);
-
+            var previousState = game.GameState;
 			game.DoAction(action);
 
 			_simpleDb.AddAction(action);
@@ -253,8 +253,10 @@ namespace ResistanceOnline.Site.Controllers
 				}
 			}
 
-            SendMessagesAsAppropriate(game);
-
+            if (game.GameState != previousState)
+            {
+                SendMessagesAsAppropriate(game);
+            }
 
 			Update();
 		}

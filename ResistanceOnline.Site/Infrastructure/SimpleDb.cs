@@ -71,5 +71,10 @@ namespace ResistanceOnline.Site.Infrastructure
         {
             return _context.Users.FirstOrDefault(user => user.Id == userId);
         }
+
+		public Database.Entities.UserAccount GetUser(Guid playerGuid)
+		{
+			return _context.Users.FirstOrDefault(user => user.PlayerGuid == playerGuid);
+		}
     }
 }

@@ -336,6 +336,7 @@
     <Compile Include="Infrastructure\ChallengeResult.cs" />
     <Compile Include="Infrastructure\Messaging\IMessageService.cs" />
     <Compile Include="Infrastructure\Messaging\Implementations\EmailService.cs" />
+    <Compile Include="Infrastructure\NinjectSignalRDependencyResolver.cs" />
     <Compile Include="Infrastructure\SimpleDb.cs" />
     <Compile Include="Infrastructure\Useful.cs" />
     <Compile Include="Models\ExcaliburUseModel.cs" />

@@ -191,6 +191,22 @@ namespace ResistanceOnline.Site.Controllers
 			}
 		}
 
+		void ProcessMessaging(Game game, Game.State previousState)
+		{
+			if(game.GameState != previousState)
+			{
+				foreach(var player in game.Players.Where(player => player.PlayerType == Player.Type.Human))
+				{
+					if(!_userConnections.ContainsKey(player.Guid))
+					{
+						var user = _simpleDb.GetUser(player.Guid);
+
+						SendMessage(user.Id, "Your attention is required on Resistance Online", "Things have happened");
+					}
+				}
+			}
+		}
+
 		/// <summary>
 		/// do an action as the logged on user
 		/// </summary>
@@ -208,7 +224,13 @@ namespace ResistanceOnline.Site.Controllers
 			action.GameId = gameId;
 
 			var game = GetGame(gameId);
+
+			var previousState = game.GameState;
+
 			game.DoAction(action);
+
+			ProcessMessaging(game, previousState);
+
 			_simpleDb.AddAction(action);
 
 			var computersPlayersInGame = game.Players.Where(p => p.PlayerType != Core.Player.Type.Human);

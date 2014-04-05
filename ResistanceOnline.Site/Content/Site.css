@@ -78,3 +78,7 @@ ul {
 td {
     vertical-align:middle !important;
 }
+
+.playername {
+    overflow-x: hidden;
+}

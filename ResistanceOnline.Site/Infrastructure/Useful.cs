@@ -8,12 +8,12 @@ namespace ResistanceOnline.Site.Infrastructure
 {
     public static class Useful
     {
-        public static string CommaQuibbling(IEnumerable<string> items)
+        public static string CommaQuibbling(IEnumerable<string> items, string conjunction = "and")
         {
             var itemArray = items.ToArray();
 
             var commaSeparated = String.Join(", ", itemArray, 0, Math.Max(itemArray.Length - 1, 0));
-            if (commaSeparated.Length > 0) commaSeparated += " and ";
+            if (commaSeparated.Length > 0) commaSeparated += " " + conjunction + " ";
 
             return commaSeparated + itemArray.LastOrDefault();
         }

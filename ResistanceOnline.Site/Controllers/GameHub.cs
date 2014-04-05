@@ -9,6 +9,7 @@ using ResistanceOnline.Site.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Humanizer;
 using Action = ResistanceOnline.Core.Action;
 using Character = ResistanceOnline.Core.Character;
 using Rule = ResistanceOnline.Core.Rule;
@@ -191,18 +192,20 @@ namespace ResistanceOnline.Site.Controllers
 			}
 		}
 
-		void ProcessMessaging(Game game, Game.State previousState)
+		void SendMessagesAsAppropriate(Game game)
 		{
-			if(game.GameState != previousState)
+			foreach(var player in game.Players.Where(player => player.PlayerType == Player.Type.Human))
 			{
-				foreach(var player in game.Players.Where(player => player.PlayerType == Player.Type.Human))
+                var actions = game.AvailableActions(player).Select(a=>a.ActionType).Where(a => a != Action.Type.Message);
+				if(actions.Any() && !_userConnections.ContainsKey(player.Guid))
 				{
-					if(!_userConnections.ContainsKey(player.Guid))
-					{
-						var user = _simpleDb.GetUser(player.Guid);
+					var user = _simpleDb.GetUser(player.Guid);
 
-						SendMessage(user.Id, "Your attention is required on Resistance Online", "Things have happened");
-					}
+                    SendMessage(
+                        user.Id, 
+                        "Your attention is required on Resistance Online, " + game.GameName, 
+                        ("Things have happened and you need to " + Useful.CommaQuibbling(actions.Select(a => a.Humanize()), "or")).Humanize(LetterCasing.Sentence)
+                    );
 				}
 			}
 		}
@@ -224,12 +227,8 @@ namespace ResistanceOnline.Site.Controllers
 			action.GameId = gameId;
 
 			var game = GetGame(gameId);
-
-			var previousState = game.GameState;
-
+            var previousState = game.GameState;
 			game.DoAction(action);
-
-			ProcessMessaging(game, previousState);
 
 			_simpleDb.AddAction(action);
 
@@ -253,6 +252,11 @@ namespace ResistanceOnline.Site.Controllers
 					}
 				}
 			}
+
+            if (game.GameState != previousState)
+            {
+                SendMessagesAsAppropriate(game);
+            }
 
 			Update();
 		}

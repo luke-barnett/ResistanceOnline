@@ -42,6 +42,7 @@ namespace ResistanceOnline.Site.Infrastructure.Messaging.Implementations
 
 				return new SmtpClient(SMTPServer, int.Parse(SMTPPort))
 				{
+					EnableSsl = true,
 					Credentials = new NetworkCredential(SMTPUsername, SMTPPassword)
 				};
 			});

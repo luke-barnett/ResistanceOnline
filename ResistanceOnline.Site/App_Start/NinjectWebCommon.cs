@@ -3,30 +3,30 @@
 
 namespace ResistanceOnline.Site.App_Start
 {
+	using Microsoft.AspNet.SignalR;
+	using Microsoft.Web.Infrastructure.DynamicModuleHelper;
+	using Ninject;
+	using Ninject.Web.Common;
+	using ResistanceOnline.Site.Infrastructure;
+	using ResistanceOnline.Site.Infrastructure.Messaging;
+	using ResistanceOnline.Site.Infrastructure.Messaging.Implementations;
 	using System;
 	using System.Web;
 
-	using Microsoft.Web.Infrastructure.DynamicModuleHelper;
-
-	using Ninject;
-	using Ninject.Web.Common;
-	using ResistanceOnline.Site.Infrastructure.Messaging;
-	using ResistanceOnline.Site.Infrastructure.Messaging.Implementations;
-
-	public static class NinjectWebCommon 
+	public static class NinjectWebCommon
 	{
 		private static readonly Bootstrapper bootstrapper = new Bootstrapper();
 
 		/// <summary>
 		/// Starts the application
 		/// </summary>
-		public static void Start() 
+		public static void Start()
 		{
 			DynamicModuleUtility.RegisterModule(typeof(OnePerRequestHttpModule));
 			DynamicModuleUtility.RegisterModule(typeof(NinjectHttpModule));
 			bootstrapper.Initialize(CreateKernel);
 		}
-		
+
 		/// <summary>
 		/// Stops the application.
 		/// </summary>
@@ -34,7 +34,7 @@ namespace ResistanceOnline.Site.App_Start
 		{
 			bootstrapper.ShutDown();
 		}
-		
+
 		/// <summary>
 		/// Creates the kernel that will manage your application.
 		/// </summary>
@@ -45,7 +45,10 @@ namespace ResistanceOnline.Site.App_Start
 			kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
 			kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
 			kernel.Bind<IMessageService>().To<EmailService>();
+
+			GlobalHost.DependencyResolver = new NinjectSignalRDependencyResolver(kernel);
+
 			return kernel;
-		}  
+		}
 	}
 }

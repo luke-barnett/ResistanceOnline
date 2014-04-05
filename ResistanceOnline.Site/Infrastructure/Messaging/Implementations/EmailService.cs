@@ -19,7 +19,7 @@ namespace ResistanceOnline.Site.Infrastructure.Messaging.Implementations
 			_userManager = userManager;
 		}
 
-		public async Task NotifyPlayerForAttention(string userId, string subject, string message)
+		public async Task NotifyPlayerForAttention(string userId, string subject, string message, string gameId)
 		{
 			var userClaims = await _userManager.GetClaimsAsync(userId);
 
@@ -32,6 +32,7 @@ namespace ResistanceOnline.Site.Infrastructure.Messaging.Implementations
 			email.To = emailClaim.Value;
 			email.Subject = subject;
 			email.Message = message;
+            email.GameId = gameId;
 
 			var service = new Postal.EmailService(System.Web.Mvc.ViewEngines.Engines, () =>
 			{

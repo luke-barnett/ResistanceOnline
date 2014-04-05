@@ -209,15 +209,15 @@ namespace ResistanceOnline.Site.Controllers
 			Update(true);
 		}
 
-		void SendMessage(string userId, string subject, string message)
+		void SendMessage(string userId, string subject, string message, string gameId)
 		{
 			foreach(var services in _messageServices)
 			{
-				services.NotifyPlayerForAttention(userId, subject, message);
+				services.NotifyPlayerForAttention(userId, subject, message, gameId);
 			}
 		}
 
-		void SendMessagesAsAppropriate(Game game)
+		void SendMessagesAsAppropriate(Game game, int gameId)
 		{
 			foreach(var player in game.Players.Where(player => player.PlayerType == Player.Type.Human))
 			{
@@ -228,8 +228,9 @@ namespace ResistanceOnline.Site.Controllers
 
                     SendMessage(
                         user.Id, 
-                        "Your attention is required on Resistance Online, " + game.GameName, 
-                        ("Things have happened and you need to " + Useful.CommaQuibbling(actions.Select(a => a.Humanize()), "or")).Humanize(LetterCasing.Sentence)
+                        ("Your attention is required on " + game.GameName).Humanize(LetterCasing.Sentence), 
+                        ("Things have happened and you need to " + Useful.CommaQuibbling(actions.Select(a => a.Humanize()), "or") + ".").Humanize(LetterCasing.Sentence),
+                        gameId.ToString()
                     );
 				}
 			}
@@ -280,7 +281,7 @@ namespace ResistanceOnline.Site.Controllers
 
             if (game.GameState != previousState)
             {
-                SendMessagesAsAppropriate(game);
+                SendMessagesAsAppropriate(game, gameId);
             }
 
 			Update();
